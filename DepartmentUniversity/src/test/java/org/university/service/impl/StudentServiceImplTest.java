@@ -1,13 +1,20 @@
 package org.university.service.impl;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.never;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.university.config.ApplicationContextInjector;
-import org.university.dao.ScriptExecutor;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.university.dao.impl.CourseDaoImpl;
+import org.university.dao.impl.GroupDaoImpl;
 import org.university.dao.impl.StudentDaoImpl;
 import org.university.entity.Course;
 import org.university.entity.Group;
@@ -16,34 +23,33 @@ import org.university.exceptions.AuthorisationFailException;
 import org.university.exceptions.EntityAlreadyExistException;
 import org.university.exceptions.EntityNotExistException;
 import org.university.exceptions.InvalidEmailException;
+import org.university.service.validator.UserValidator;
 import org.university.utils.CreatorTestEntities;
 
 class StudentServiceImplTest {
 
     private static StudentServiceImpl studentService;
-    private static ScriptExecutor executor;
-    private static StudentDaoImpl studentDao;
+    private static StudentDaoImpl studentDaoMock;
 
     @BeforeAll
     static void init() {
-        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(
-                ApplicationContextInjector.class);
-        studentService = context.getBean(StudentServiceImpl.class);
-        executor = context.getBean(ScriptExecutor.class);
-        studentDao = context.getBean(StudentDaoImpl.class);
-    }
-
-    @BeforeEach
-    void createTablesAndData() {
-        executor.executeScript("inittestdb.sql");
+        studentDaoMock = createStudentDaoMock();
+        studentService = new StudentServiceImpl(studentDaoMock, createGroupDaoMock(), createCourseDaoMock(),
+                new UserValidator<Student>(), createEncoderMock());
     }
 
     @Test
     void registerShouldSaveStudentToDatabaseWhenInputStudentNotExistThere() {
         Student student = getTestStudent();
         studentService.register(student);
-        student = studentService.login("test@test.ru", "Test");
-        assertThat(studentService.findNumberOfUsers(7, 0)).contains(student);
+        Student studentWithEncodePassword = Student.builder()
+                .withSex("Test")
+                .withName("Test")
+                .withEmail("test@test.ru")
+                .withPhone("Test")
+                .withPassword("encodePassword")
+                .build();
+        verify(studentDaoMock).save(studentWithEncodePassword);
     }
 
     @Test
@@ -74,7 +80,7 @@ class StudentServiceImplTest {
     void deleteShouldDeleteStudentFromDatabase() {
         Student student = CreatorTestEntities.createStudents().get(0);
         studentService.delete(student);
-        assertThat(studentService.findNumberOfUsers(2, 0)).doesNotContain(student);
+        verify(studentDaoMock).deleteById(1);
     }
 
     @Test
@@ -84,34 +90,33 @@ class StudentServiceImplTest {
 
     @Test
     void findNumberOfUsersShouldReturnExpectedTStudentsWhenInputLimitAndOffset() {
+        List<Student> students = new ArrayList<>();
+        students.add(CreatorTestEntities.createStudents().get(0));
+        when(studentDaoMock.findAll(1, 0)).thenReturn(students);
         assertThat(studentService.findNumberOfUsers(1, 0)).containsExactly(CreatorTestEntities.createStudents().get(0));
     }
 
     @Test
     void findNumberOfUsersShouldReturnEmptyListWhenInputOffsetMoreTableSize() {
+        when(studentDaoMock.findAll(2, 10)).thenReturn(new ArrayList<>());
         assertThat(studentService.findNumberOfUsers(2, 10)).isEmpty();
     }
 
     @Test
     void loginShouldReturnExpectedStudentWhenStudentExistsInDatabase() {
-        Student student = getTestStudent();
-        studentService.register(student);
-        String password = studentService.login("test@test.ru", "Test").getPassword();
-        student = Student.builder()
+        Student student = Student.builder()
                 .withId(7)
                 .withSex("Test")
                 .withName("Test")
                 .withEmail("test@test.ru")
                 .withPhone("Test")
-                .withPassword(password)
+                .withPassword("encodePassword")
                 .build();
         assertThat(studentService.login("test@test.ru", "Test")).isEqualTo(student);
     }
 
     @Test
     void loginShouldThrowAuthorisationFailExceptionWhenInputNotValide() {
-        Student student = getTestStudent();
-        studentService.register(student);
         assertThatThrownBy(() -> studentService.login("test@test.ru", "invalidpassword"))
                 .isInstanceOf(AuthorisationFailException.class);
     }
@@ -127,7 +132,15 @@ class StudentServiceImplTest {
         Student student = CreatorTestEntities.createStudents().get(0);
         Group group = CreatorTestEntities.createGroups().get(1);
         studentService.addStudentToGroup(student, group);
-        assertThat(studentDao.findAllByGroup("FR-33")).contains(student);
+        verify(studentDaoMock).insertStudentToGroup(student, group);
+    }
+
+    @Test
+    void addStudentToGroupShouldNotAddStudentToGroupWhenStudentInThisGroupYet() {
+        Student student = CreatorTestEntities.createStudents().get(5);
+        Group group = CreatorTestEntities.createGroups().get(1);
+        studentService.addStudentToGroup(student, group);
+        verify(studentDaoMock, never()).insertStudentToGroup(student, group);
     }
 
     @Test
@@ -141,10 +154,7 @@ class StudentServiceImplTest {
     @Test
     void addStudentToGroupShouldThrowEntityNotExistExceptionWhenInputGroupNotExists() {
         Student student = CreatorTestEntities.createStudents().get(0);
-        Group group = Group.builder()
-                .withId(5)
-                .withName("notExist")
-                .build();
+        Group group = Group.builder().withId(5).withName("notExist").build();
         assertThatThrownBy(() -> studentService.addStudentToGroup(student, group))
                 .isInstanceOf(EntityNotExistException.class);
     }
@@ -168,7 +178,7 @@ class StudentServiceImplTest {
         Student student = CreatorTestEntities.createStudents().get(0);
         Group group = CreatorTestEntities.createGroups().get(0);
         studentService.deleteStudentFromGroup(student, group);
-        assertThat(studentDao.findAllByGroup("AB-22")).doesNotContain(student);
+        verify(studentDaoMock).deleteStudentFromGroup(1, 1);
     }
 
     @Test
@@ -189,8 +199,20 @@ class StudentServiceImplTest {
     void addStudentToCourseShouldAddStudentToCourseWhenInputCourseAndStudentExists() {
         Student student = CreatorTestEntities.createStudents().get(5);
         Course course = CreatorTestEntities.createCourses().get(0);
+        List<Course> courses = new ArrayList<>();
+        courses.add(course);
         studentService.addStudentToCourse(student, course);
-        assertThat(studentDao.findAllByCourse("Law")).contains(student);
+        verify(studentDaoMock).insertStudentToCourses(student, courses);
+    }
+
+    @Test
+    void addStudentToCourseShouldNotAddStudentToCourseWhenStudentHasThisCourseYet() {
+        Student student = CreatorTestEntities.createStudents().get(0);
+        Course course = CreatorTestEntities.createCourses().get(0);
+        List<Course> courses = new ArrayList<>();
+        courses.add(course);
+        studentService.addStudentToCourse(student, course);
+        verify(studentDaoMock, never()).insertStudentToCourses(student, courses);
     }
 
     @Test
@@ -232,7 +254,7 @@ class StudentServiceImplTest {
         Student student = CreatorTestEntities.createStudents().get(0);
         Course course = CreatorTestEntities.createCourses().get(0);
         studentService.deleteStudentFromCourse(student, course);
-        assertThat(studentDao.findAllByCourse("Law")).doesNotContain(student);
+        verify(studentDaoMock).deleteStudentFromCourse(1, 1);
     }
 
     @Test
@@ -258,5 +280,50 @@ class StudentServiceImplTest {
                 .withPhone("Test")
                 .withPassword("Test")
                 .build();
+    }
+
+    private static CourseDaoImpl createCourseDaoMock() {
+        CourseDaoImpl courseDaoMock = mock(CourseDaoImpl.class);
+        when(courseDaoMock.findById(1)).thenReturn(Optional.ofNullable(CreatorTestEntities.createCourses().get(0)));
+        return courseDaoMock;
+    }
+
+    private static GroupDaoImpl createGroupDaoMock() {
+        GroupDaoImpl groupDaoMock = mock(GroupDaoImpl.class);
+        when(groupDaoMock.findById(2)).thenReturn(Optional.ofNullable(CreatorTestEntities.createGroups().get(1)));
+        when(groupDaoMock.findById(1)).thenReturn(Optional.ofNullable(CreatorTestEntities.createGroups().get(0)));
+        return groupDaoMock;
+    }
+
+    private static PasswordEncoder createEncoderMock() {
+        PasswordEncoder encoderMock = mock(PasswordEncoder.class);
+        when(encoderMock.encode("Test")).thenReturn("encodePassword");
+        when(encoderMock.matches("Test", "encodePassword")).thenReturn(true);
+        return encoderMock;
+    }
+
+    private static StudentDaoImpl createStudentDaoMock() {
+        StudentDaoImpl studentDaoMock = mock(StudentDaoImpl.class);
+        Student student = Student.builder()
+                .withId(7)
+                .withSex("Test")
+                .withName("Test")
+                .withEmail("test@test.ru")
+                .withPhone("Test")
+                .withPassword("encodePassword")
+                .build();
+        when(studentDaoMock.findByEmail("test@test.ru")).thenReturn(Optional.ofNullable(student));
+        when(studentDaoMock.findById(7)).thenReturn(Optional.empty());
+        when(studentDaoMock.findById(1)).thenReturn(Optional.ofNullable(CreatorTestEntities.createStudents().get(0)));
+        when(studentDaoMock.findById(6)).thenReturn(Optional.ofNullable(CreatorTestEntities.createStudents().get(5)));       
+        List<Student> students = CreatorTestEntities.createStudents();
+        students.remove(5);
+        students.remove(4);
+        when(studentDaoMock.findAllByCourse("Law")).thenReturn(students);
+        students = new ArrayList<>();
+        students.add(CreatorTestEntities.createStudents().get(4));
+        students.add(CreatorTestEntities.createStudents().get(5));
+        when(studentDaoMock.findAllByGroup("FR-33")).thenReturn(students);
+        return studentDaoMock;
     }
 }

@@ -1,44 +1,50 @@
 package org.university.service.impl;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.university.config.ApplicationContextInjector;
-import org.university.dao.ScriptExecutor;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.university.dao.impl.TeacherDaoImpl;
 import org.university.entity.Teacher;
 import org.university.exceptions.AuthorisationFailException;
 import org.university.exceptions.EntityAlreadyExistException;
 import org.university.exceptions.EntityNotExistException;
 import org.university.exceptions.InvalidEmailException;
+import org.university.service.validator.UserValidator;
 import org.university.utils.CreatorTestEntities;
 
 class TeacherServiceImplTest {
 
     private static TeacherServiceImpl teacherService;
-    private static ScriptExecutor executor;
+    private static TeacherDaoImpl teacherDaoMock;
 
     @BeforeAll
     static void init() {
-        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(
-                ApplicationContextInjector.class);
-        teacherService = context.getBean(TeacherServiceImpl.class);
-        executor = context.getBean(ScriptExecutor.class);
-    }
-
-    @BeforeEach
-    void createTablesAndData() {
-        executor.executeScript("inittestdb.sql");
+        teacherDaoMock = createTeacherDaoMock();
+        teacherService = new TeacherServiceImpl(teacherDaoMock, new UserValidator<Teacher>(), createEncoderMock());
     }
 
     @Test
     void registerShouldSaveTeacherToDatabaseWhenInputTeacherNotExistThere() {
         Teacher teacher = getTestTeacher();
         teacherService.register(teacher);
-        teacher = teacherService.login("test@test.ru", "Test");
-        assertThat(teacherService.findNumberOfUsers(3, 0)).contains(teacher);
+        Teacher teacherWithEncodePassword = Teacher.builder()
+                .withSex("Test")
+                .withName("Test")
+                .withEmail("test@test.ru")
+                .withPhone("Test")
+                .withPassword("encodePassword")
+                .withDegree("Test")
+                .build();
+        verify(teacherDaoMock).save(teacherWithEncodePassword);
     }
 
     @Test
@@ -70,7 +76,7 @@ class TeacherServiceImplTest {
     void deleteShouldDeleteTeacherFromDatabase() {
         Teacher teacher = CreatorTestEntities.createTeachers().get(0);
         teacherService.delete(teacher);
-        assertThat(teacherService.findNumberOfUsers(2, 0)).doesNotContain(teacher);
+        verify(teacherDaoMock).deleteById(1);
     }
 
     @Test
@@ -80,41 +86,41 @@ class TeacherServiceImplTest {
 
     @Test
     void findNumberOfUsersShouldReturnExpectedTeachersWhenInputLimitAndOffset() {
+        List<Teacher> teachers = new ArrayList<>();
+        teachers.add(CreatorTestEntities.createTeachers().get(0));
+        when(teacherDaoMock.findAll(1, 0)).thenReturn(teachers);
         assertThat(teacherService.findNumberOfUsers(1, 0)).containsExactly(CreatorTestEntities.createTeachers().get(0));
     }
 
     @Test
     void findNumberOfUsersShouldReturnEmptyListWhenInputOffsetMoreTableSize() {
+        List<Teacher> teachers = new ArrayList<>();
+        when(teacherDaoMock.findAll(2, 10)).thenReturn(teachers);
         assertThat(teacherService.findNumberOfUsers(2, 10)).isEmpty();
     }
 
     @Test
     void loginShouldReturnExpectedTeacherWhenTeacherExistsInDatabase() {
-        Teacher teacher = getTestTeacher();
-        teacherService.register(teacher);
-        String password = teacherService.login("test@test.ru", "Test").getPassword();
-        teacher = Teacher.builder()
-                .withId(3)
+        Teacher teacherWithEncodePassword = Teacher.builder()
                 .withSex("Test")
                 .withName("Test")
                 .withEmail("test@test.ru")
                 .withPhone("Test")
-                .withPassword(password)
+                .withPassword("encodePassword")
                 .withDegree("Test")
                 .build();
-        assertThat(teacherService.login("test@test.ru", "Test")).isEqualTo(teacher);
+        assertThat(teacherService.login("test@test.ru", "Test")).isEqualTo(teacherWithEncodePassword);
     }
 
     @Test
     void loginShouldThrowAuthorisationFailExceptionWhenInputNotValide() {
-        Teacher teacher = getTestTeacher();
-        teacherService.register(teacher);
         assertThatThrownBy(() -> teacherService.login("test@test.ru", "invalidpassword"))
                 .isInstanceOf(AuthorisationFailException.class);
     }
 
     @Test
     void loginShouldThrowEntityNotExistExceptionWhenInputEmailNotExistsInDatabase() {
+        when(teacherDaoMock.findByEmail("notExistenEmail")).thenReturn(Optional.empty());
         assertThatThrownBy(() -> teacherService.login("notExistenEmail", "test@test.ru"))
                 .isInstanceOf(EntityNotExistException.class);
     }
@@ -129,5 +135,28 @@ class TeacherServiceImplTest {
                 .withPassword("Test")
                 .withDegree("Test")
                 .build();
+    }
+
+    private static TeacherDaoImpl createTeacherDaoMock() {
+        TeacherDaoImpl teacherDaoMock = mock(TeacherDaoImpl.class);
+        when(teacherDaoMock.findById(1)).thenReturn(Optional.ofNullable(CreatorTestEntities.createTeachers().get(0)));
+        when(teacherDaoMock.findById(3)).thenReturn(Optional.empty());
+        Teacher teacherWithEncodePassword = Teacher.builder()
+                .withSex("Test")
+                .withName("Test")
+                .withEmail("test@test.ru")
+                .withPhone("Test")
+                .withPassword("encodePassword")
+                .withDegree("Test")
+                .build();
+        when(teacherDaoMock.findByEmail("test@test.ru")).thenReturn(Optional.ofNullable(teacherWithEncodePassword));
+        return teacherDaoMock;
+    }
+
+    private static PasswordEncoder createEncoderMock() {
+        PasswordEncoder encoderMock = mock(PasswordEncoder.class);
+        when(encoderMock.encode("Test")).thenReturn("encodePassword");
+        when(encoderMock.matches("Test", "encodePassword")).thenReturn(true);
+        return encoderMock;
     }
 }

@@ -29,10 +29,8 @@ public abstract class AbstractUserServiceImpl<E> implements UserService<E> {
 
     @Override
     public void delete(E user) {
-        validator.validate(user);
-        if (existsUser(user)) {
-            userDao.deleteById(((User) user).getId());
-        }
+        validator.validate(user);        
+        userDao.deleteById(((User) user).getId());        
     }
 
     @Override

@@ -1,7 +1,11 @@
 package org.university.dao.impl;
 
 import java.util.List;
+import java.util.Optional;
+
 import javax.sql.DataSource;
+
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 import org.university.dao.LessonDao;
@@ -24,9 +28,17 @@ public class LessonDaoImpl extends AbstractCrudImpl<Lesson> implements LessonDao
             + "ORDER BY lesson_id LIMIT ? OFFSET ?;";
     private static final String DELETE_BY_ID_QUERY = "DELETE FROM lessons WHERE lesson_id = ?";
     private static final String FIND_ALL_BY_DATE_AND_TEACHER_QUERY = SELECT_INNER_JOIN_OTHERS_TABLES
-            + "WHERE lesson_start::date = ? AND lesson_teacher = ? ORDER BY lesson_id";
+            + "WHERE lesson_start::date = ? AND lesson_teacher = ? ORDER BY lesson_start";
     private static final String FIND_ALL_BY_DATE_AND_GROUP_QUERY = SELECT_INNER_JOIN_OTHERS_TABLES
-            + "WHERE lesson_start::date = ? AND lesson_group = ? ORDER BY lesson_id";
+            + "WHERE lesson_start::date = ? AND lesson_group = ? ORDER BY lesson_start";
+    private static final String FIND_BY_DATE_AND_TEACHER_AND_GROUP_QUERY = SELECT_INNER_JOIN_OTHERS_TABLES
+            + "WHERE lesson_start = ? AND teacher_email = ? AND group_name = ?";
+    private static final String FIND_ALL_BY_MONTH_AND_TEACHER_QUERY = SELECT_INNER_JOIN_OTHERS_TABLES
+            + "WHERE EXTRACT(MONTH FROM lesson_start) = ? AND lesson_teacher = ? ORDER BY lesson_start";
+    private static final String FIND_ALL_BY_MONTH_AND_GROUP_QUERY = SELECT_INNER_JOIN_OTHERS_TABLES
+            + "WHERE EXTRACT(MONTH FROM lesson_start) = ? AND lesson_group = ? ORDER BY lesson_start";
+    private static final String FIND_ALL_BY_DATE_QUERY = SELECT_INNER_JOIN_OTHERS_TABLES
+            + "WHERE lesson_start::date = ? ORDER BY lesson_start";
 
     public LessonDaoImpl(DataSource dataSource) {
         super(dataSource, SAVE_QUERY, FIND_BY_ID_QUERY, FIND_ALL_QUERY, FIND_ALL_PAGINATION_QUERY, DELETE_BY_ID_QUERY);
@@ -59,5 +71,30 @@ public class LessonDaoImpl extends AbstractCrudImpl<Lesson> implements LessonDao
     @Override
     public List<Lesson> findAllByDateAndGroup(String date, int groupId) {
         return jdbcTemplate.query(FIND_ALL_BY_DATE_AND_GROUP_QUERY, getMapper(), date, groupId);
+    }
+
+    @Override
+    public Optional<Lesson> findByDateAndTeacherAndGroup(String date, String teacherEmail, String groupName) {
+        try {
+            return Optional.ofNullable(jdbcTemplate.queryForObject(FIND_BY_DATE_AND_TEACHER_AND_GROUP_QUERY,
+                    getMapper(), date, teacherEmail, groupName));
+        } catch (EmptyResultDataAccessException e) {
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public List<Lesson> findAllByMonthAndTeacher(int month, int teacherId) {
+        return jdbcTemplate.query(FIND_ALL_BY_MONTH_AND_TEACHER_QUERY, getMapper(), month, teacherId);
+    }
+
+    @Override
+    public List<Lesson> findAllByMonthAndGroup(int month, int groupId) {
+        return jdbcTemplate.query(FIND_ALL_BY_MONTH_AND_GROUP_QUERY, getMapper(), month, groupId);
+    }
+
+    @Override
+    public List<Lesson> findAllByDate(String date) {
+        return jdbcTemplate.query(FIND_ALL_BY_DATE_QUERY, getMapper(), date);
     }
 }

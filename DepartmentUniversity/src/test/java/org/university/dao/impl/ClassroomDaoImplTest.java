@@ -1,6 +1,7 @@
 package org.university.dao.impl;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -95,5 +96,15 @@ class ClassroomDaoImplTest {
         int id = CreatorTestEntities.createClassrooms().get(0).getId();
         classroomDao.deleteById(id);
         assertThat(classroomDao.findAll()).doesNotContain(CreatorTestEntities.createClassrooms().get(0));
+    }
+    
+    @Test
+    void findByNumberShouldReturnEmptyOptionalWhenInputNumberNotExists() {
+        assertThat(classroomDao.findByNumber(10)).isEmpty();
+    }
+
+    @Test
+    void findByNumberShouldReturnExpectedClassroomWhenInputExistentNumber() {
+        assertThat(classroomDao.findByNumber(1).get()).isEqualTo(CreatorTestEntities.createClassrooms().get(0));
     }
 }

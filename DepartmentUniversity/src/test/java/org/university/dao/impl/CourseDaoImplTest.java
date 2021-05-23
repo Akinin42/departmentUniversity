@@ -1,6 +1,7 @@
 package org.university.dao.impl;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -94,5 +95,15 @@ class CourseDaoImplTest {
         int id = CreatorTestEntities.createCourses().get(0).getId();
         courseDao.deleteById(id);
         assertThat(courseDao.findAll()).doesNotContain(CreatorTestEntities.createCourses().get(0));
+    }
+    
+    @Test
+    void findByNameShouldReturnEmptyOptionalWhenInputNameNotExists() {
+        assertThat(courseDao.findByName("notexistname")).isEmpty();
+    }
+
+    @Test
+    void findByNameShouldReturnExpectedCourseWhenInputExistentName() {
+        assertThat(courseDao.findByName("Law").get()).isEqualTo(CreatorTestEntities.createCourses().get(0));
     }
 }

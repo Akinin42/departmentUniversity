@@ -66,10 +66,8 @@ public class StudentServiceImpl extends AbstractUserServiceImpl<Student> impleme
 
     @Override
     public void deleteStudentFromGroup(Student student, Group group) {
-        existsStudentAndGroup(student, group);
-        if (studentDao.findAllByGroup(group.getName()).contains(student)) {
-            studentDao.deleteStudentFromGroup(student.getId(), group.getId());
-        }
+        existsStudentAndGroup(student, group);        
+        studentDao.deleteStudentFromGroup(student.getId(), group.getId());        
     }
 
     @Override
@@ -84,10 +82,8 @@ public class StudentServiceImpl extends AbstractUserServiceImpl<Student> impleme
 
     @Override
     public void deleteStudentFromCourse(Student student, Course course) {
-        existsStudentAndCourse(student, course);
-        if (studentDao.findAllByCourse(course.getName()).contains(student)) {
-            studentDao.deleteStudentFromCourse(student.getId(), course.getId());
-        }
+        existsStudentAndCourse(student, course);        
+        studentDao.deleteStudentFromCourse(student.getId(), course.getId());        
     }
 
     private void existsStudentAndCourse(Student student, Course course) {

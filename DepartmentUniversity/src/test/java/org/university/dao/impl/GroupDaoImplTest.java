@@ -1,6 +1,7 @@
 package org.university.dao.impl;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -92,5 +93,15 @@ class GroupDaoImplTest {
         int id = CreatorTestEntities.createGroups().get(0).getId();
         groupDao.deleteById(id);
         assertThat(groupDao.findAll()).doesNotContain(CreatorTestEntities.createGroups().get(0));
+    }
+    
+    @Test
+    void findByNameShouldReturnEmptyOptionalWhenInputNameNotExists() {
+        assertThat(groupDao.findByName("notexistname")).isEmpty();
+    }
+
+    @Test
+    void findByNameShouldReturnExpectedGroupWhenInputExistentName() {
+        assertThat(groupDao.findByName("AB-22").get()).isEqualTo(CreatorTestEntities.createGroups().get(0));
     }
 }

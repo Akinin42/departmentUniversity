@@ -1,6 +1,10 @@
 package org.university.dao.impl;
 
+import java.util.Optional;
+
 import javax.sql.DataSource;
+
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 import org.university.dao.CourseDao;
@@ -15,6 +19,7 @@ public class CourseDaoImpl extends AbstractCrudImpl<Course> implements CourseDao
     private static final String FIND_ALL_QUERY = "SELECT * FROM courses ORDER BY course_id;";
     private static final String FIND_ALL_PAGINATION_QUERY = "SELECT * FROM courses ORDER BY course_id LIMIT ? OFFSET ?;";
     private static final String DELETE_BY_ID_QUERY = "DELETE FROM courses WHERE course_id = ?;";
+    private static final String FIND_BY_NAME_QUERY = "SELECT  * FROM courses WHERE course_name =  ?;";
 
     public CourseDaoImpl(DataSource dataSource) {
         super(dataSource, SAVE_QUERY, FIND_BY_ID_QUERY, FIND_ALL_QUERY, FIND_ALL_PAGINATION_QUERY, DELETE_BY_ID_QUERY);
@@ -31,5 +36,14 @@ public class CourseDaoImpl extends AbstractCrudImpl<Course> implements CourseDao
     @Override
     protected RowMapper<Course> getMapper() {
         return new CourseMapper();
+    }
+
+    @Override
+    public Optional<Course> findByName(String name) {
+        try {
+            return Optional.ofNullable(jdbcTemplate.queryForObject(FIND_BY_NAME_QUERY, getMapper(), name));
+        } catch (EmptyResultDataAccessException e) {
+            return Optional.empty();
+        }
     }
 }
