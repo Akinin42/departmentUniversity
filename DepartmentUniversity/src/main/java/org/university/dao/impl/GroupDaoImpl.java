@@ -1,10 +1,8 @@
 package org.university.dao.impl;
 
 import java.util.Optional;
-
-import javax.sql.DataSource;
-
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 import org.university.dao.GroupDao;
@@ -21,8 +19,9 @@ public class GroupDaoImpl extends AbstractCrudImpl<Group> implements GroupDao {
     private static final String DELETE_BY_ID_QUERY = "DELETE FROM groups WHERE group_id = ?;";
     private static final String FIND_BY_NAME_QUERY = "SELECT  * FROM groups WHERE group_name =  ?;";
 
-    public GroupDaoImpl(DataSource dataSource) {
-        super(dataSource, SAVE_QUERY, FIND_BY_ID_QUERY, FIND_ALL_QUERY, FIND_ALL_PAGINATION_QUERY, DELETE_BY_ID_QUERY);
+    public GroupDaoImpl(JdbcTemplate jdbcTemplate) {
+        super(jdbcTemplate, SAVE_QUERY, FIND_BY_ID_QUERY, FIND_ALL_QUERY, FIND_ALL_PAGINATION_QUERY,
+                DELETE_BY_ID_QUERY);
     }
 
     @Override

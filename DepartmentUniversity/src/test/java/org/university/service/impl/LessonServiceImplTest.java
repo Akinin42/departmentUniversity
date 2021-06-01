@@ -183,6 +183,11 @@ class LessonServiceImplTest {
         lessonService.delete(lessonMock);
         verify(lessonDaoMock).deleteById(1);
     }
+    
+    @Test 
+    void deleteShouldThrowIllegalArgumentExceptionWhenInputNull() {
+        assertThatThrownBy(() -> lessonService.delete(null)).isInstanceOf(IllegalArgumentException.class);
+    }
 
     private static Lesson createLessonMock() {
         Lesson lessonMock = mock(Lesson.class);

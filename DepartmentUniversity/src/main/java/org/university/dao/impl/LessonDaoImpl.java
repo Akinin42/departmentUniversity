@@ -2,10 +2,8 @@ package org.university.dao.impl;
 
 import java.util.List;
 import java.util.Optional;
-
-import javax.sql.DataSource;
-
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 import org.university.dao.LessonDao;
@@ -40,8 +38,9 @@ public class LessonDaoImpl extends AbstractCrudImpl<Lesson> implements LessonDao
     private static final String FIND_ALL_BY_DATE_QUERY = SELECT_INNER_JOIN_OTHERS_TABLES
             + "WHERE lesson_start::date = ? ORDER BY lesson_start";
 
-    public LessonDaoImpl(DataSource dataSource) {
-        super(dataSource, SAVE_QUERY, FIND_BY_ID_QUERY, FIND_ALL_QUERY, FIND_ALL_PAGINATION_QUERY, DELETE_BY_ID_QUERY);
+    public LessonDaoImpl(JdbcTemplate jdbcTemplate) {
+        super(jdbcTemplate, SAVE_QUERY, FIND_BY_ID_QUERY, FIND_ALL_QUERY, FIND_ALL_PAGINATION_QUERY,
+                DELETE_BY_ID_QUERY);
     }
 
     @Override

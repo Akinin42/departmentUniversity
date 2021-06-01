@@ -8,15 +8,19 @@ import org.university.entity.Course;
 import org.university.exceptions.EntityAlreadyExistException;
 import org.university.exceptions.EntityNotExistException;
 import org.university.service.CourseService;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.NonNull;
+import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 
 @Component
+@AllArgsConstructor
+@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
+@Slf4j
 public class CourseServiceImpl implements CourseService {
 
-    private final CourseDao courseDao;
-
-    public CourseServiceImpl(CourseDao courseDao) {
-        this.courseDao = courseDao;
-    }
+    CourseDao courseDao;
 
     @Override
     public Course createCourse(String courseName) {
@@ -27,11 +31,12 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public void addCourse(Course course) {
+    public void addCourse(@NonNull Course course) {
         if (existCourse(course)) {
             throw new EntityAlreadyExistException();
         }
         courseDao.save(course);
+        log.info("Course with name {} added succesfull!", course.getName());
     }
 
     @Override
@@ -40,16 +45,14 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public void delete(Course course) {
-        if(existCourse(course)) {
+    public void delete(@NonNull Course course) {
+        if (existCourse(course)) {
             courseDao.deleteById(course.getId());
-        }        
+            log.info("Course with name {} deleted!", course.getName());
+        }
     }
 
     private boolean existCourse(Course course) {
-        if (course == null) {
-            throw new IllegalArgumentException();
-        }
         return !courseDao.findById(course.getId()).equals(Optional.empty());
     }
 }

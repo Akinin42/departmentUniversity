@@ -10,8 +10,8 @@ public class GroupMapper implements RowMapper<Group> {
     @Override
     public Group mapRow(ResultSet resultSet, int rowNum) throws SQLException {        
         return Group.builder()
-                .id(resultSet.getInt("group_id"))
-                .name(resultSet.getString("group_name"))
+                .withId(resultSet.getInt("group_id"))
+                .withName(resultSet.getString("group_name"))
                 .build();
     }
 }

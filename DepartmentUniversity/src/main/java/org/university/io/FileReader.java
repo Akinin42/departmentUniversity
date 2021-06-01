@@ -10,15 +10,13 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.springframework.stereotype.Component;
 import org.university.exceptions.NoFileException;
+import lombok.NonNull;
 
 @Component
 public class FileReader {
 
-    public List<String> read(String fileName) {
-        if (fileName == null) {
-            throw new IllegalArgumentException("File name can't be null!");
-        }
-        URL fileURL = getClass().getClassLoader().getResource(fileName);      
+    public List<String> read(@NonNull String fileName) {
+        URL fileURL = getClass().getClassLoader().getResource(fileName);
         try (Stream<String> fileLines = Files.lines(Paths.get(fileURL.toURI()))) {
             return fileLines.collect(Collectors.toList());
         } catch (URISyntaxException | IOException | NullPointerException e) {

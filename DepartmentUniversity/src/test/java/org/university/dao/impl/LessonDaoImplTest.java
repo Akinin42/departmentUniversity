@@ -37,7 +37,7 @@ class LessonDaoImplTest {
     @Test
     void saveShouldSaveLessonWhenInputValidLesson() {       
         Lesson lesson = Lesson.builder()
-                .withId(1)
+                .withId(4)
                 .withStartLesson(LocalDateTime.of(2021, Month.JULY, 9, 11, 00, 00))
                 .withEndLesson(LocalDateTime.of(2021, Month.JULY, 9, 13, 00, 00))
                 .withOnlineLesson(false)

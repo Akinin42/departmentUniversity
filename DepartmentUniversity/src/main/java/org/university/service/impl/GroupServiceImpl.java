@@ -12,19 +12,21 @@ import org.university.exceptions.EntityAlreadyExistException;
 import org.university.exceptions.EntityNotExistException;
 import org.university.service.GroupService;
 import org.university.service.validator.GroupValidator;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.NonNull;
+import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 
 @Component
+@AllArgsConstructor
+@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
+@Slf4j
 public class GroupServiceImpl implements GroupService {
 
-    private final GroupDao groupDao;
-    private final StudentDao studentDao;
-    private final GroupValidator validator;
-
-    public GroupServiceImpl(GroupDao groupDao, StudentDao studentDao, GroupValidator validator) {
-        this.groupDao = groupDao;
-        this.studentDao = studentDao;
-        this.validator = validator;
-    }
+    GroupDao groupDao;
+    StudentDao studentDao;
+    GroupValidator validator;
 
     @Override
     public Group createGroup(String name) {
@@ -33,14 +35,14 @@ public class GroupServiceImpl implements GroupService {
         }
         Group group = groupDao.findByName(name).get();
         return Group.builder()
-                .id(group.getId())
-                .name(group.getName())
-                .students(studentDao.findAllByGroup(group.getName()))
+                .withId(group.getId())
+                .withName(group.getName())
+                .withStudents(studentDao.findAllByGroup(group.getName()))
                 .build();
     }
 
     @Override
-    public void addGroup(Group group) {
+    public void addGroup(@NonNull Group group) {
         validator.validate(group);
         if (existGroup(group)) {
             throw new EntityAlreadyExistException();
@@ -49,6 +51,7 @@ public class GroupServiceImpl implements GroupService {
         for (Student student : group.getStudents()) {
             studentDao.insertStudentToGroup(student, group);
         }
+        log.info("Group with name {} added succesfull!", group.getName());
     }
 
     @Override
@@ -61,8 +64,7 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
-    public void delete(Group group) {
-        validator.validate(group);
+    public void delete(@NonNull Group group) {
         groupDao.deleteById(group.getId());
     }
 

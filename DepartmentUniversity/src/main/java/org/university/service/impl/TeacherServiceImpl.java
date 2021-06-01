@@ -8,12 +8,17 @@ import org.university.exceptions.AuthorisationFailException;
 import org.university.exceptions.EntityNotExistException;
 import org.university.service.TeacherService;
 import org.university.service.validator.Validator;
+import lombok.AccessLevel;
+import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 
 @Component
+@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
+@Slf4j
 public class TeacherServiceImpl extends AbstractUserServiceImpl<Teacher> implements TeacherService {
 
-    private final TeacherDao teacherDao;
-    private final PasswordEncoder encoder;
+    TeacherDao teacherDao;
+    PasswordEncoder encoder;
 
     public TeacherServiceImpl(TeacherDao teacherDao, Validator<Teacher> validator, PasswordEncoder encoder) {
         super(teacherDao, validator);
@@ -29,7 +34,7 @@ public class TeacherServiceImpl extends AbstractUserServiceImpl<Teacher> impleme
                 .withEmail(user.getEmail())
                 .withPhone(user.getPhone())
                 .withPassword(encoder.encode(user.getPassword()))
-                .withDegree(user.getScientificDegree())
+                .withScientificDegree(user.getScientificDegree())
                 .build();
     }
 
@@ -42,6 +47,7 @@ public class TeacherServiceImpl extends AbstractUserServiceImpl<Teacher> impleme
         if (!encoder.matches(password, teacher.getPassword())) {
             throw new AuthorisationFailException();
         }
+        log.info("Authorisation for teacher with id {} succesfull!", teacher.getId());
         return teacher;
     }
 }

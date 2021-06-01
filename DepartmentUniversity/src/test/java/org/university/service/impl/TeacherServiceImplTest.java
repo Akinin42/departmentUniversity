@@ -42,7 +42,7 @@ class TeacherServiceImplTest {
                 .withEmail("test@test.ru")
                 .withPhone("Test")
                 .withPassword("encodePassword")
-                .withDegree("Test")
+                .withScientificDegree("Test")
                 .build();
         verify(teacherDaoMock).save(teacherWithEncodePassword);
     }
@@ -62,7 +62,7 @@ class TeacherServiceImplTest {
                 .withEmail("invalidemail")
                 .withPhone("Test")
                 .withPassword("Test")
-                .withDegree("Test")
+                .withScientificDegree("Test")
                 .build();
         assertThatThrownBy(() -> teacherService.register(teacher)).isInstanceOf(InvalidEmailException.class);
     }
@@ -107,7 +107,7 @@ class TeacherServiceImplTest {
                 .withEmail("test@test.ru")
                 .withPhone("Test")
                 .withPassword("encodePassword")
-                .withDegree("Test")
+                .withScientificDegree("Test")
                 .build();
         assertThat(teacherService.login("test@test.ru", "Test")).isEqualTo(teacherWithEncodePassword);
     }
@@ -133,7 +133,7 @@ class TeacherServiceImplTest {
                 .withEmail("test@test.ru")
                 .withPhone("Test")
                 .withPassword("Test")
-                .withDegree("Test")
+                .withScientificDegree("Test")
                 .build();
     }
 
@@ -147,7 +147,7 @@ class TeacherServiceImplTest {
                 .withEmail("test@test.ru")
                 .withPhone("Test")
                 .withPassword("encodePassword")
-                .withDegree("Test")
+                .withScientificDegree("Test")
                 .build();
         when(teacherDaoMock.findByEmail("test@test.ru")).thenReturn(Optional.ofNullable(teacherWithEncodePassword));
         return teacherDaoMock;

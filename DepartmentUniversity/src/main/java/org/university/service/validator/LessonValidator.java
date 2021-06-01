@@ -15,9 +15,6 @@ public class LessonValidator implements Validator<Lesson> {
 
     @Override
     public void validate(Lesson lesson) {
-        if (lesson == null) {
-            throw new IllegalArgumentException();
-        }
         if (lesson.getGroup().getStudents().size() > lesson.getClassroom().getCapacity()) {
             throw new InvalidClassroomCapacityException();
         }

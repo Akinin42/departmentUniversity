@@ -14,8 +14,8 @@ public class LessonMapper implements RowMapper<Lesson> {
     @Override
     public Lesson mapRow(ResultSet resultSet, int rowNum) throws SQLException {
         Group group = Group.builder()
-                .id(resultSet.getInt("group_id"))
-                .name(resultSet.getString("group_name"))
+                .withId(resultSet.getInt("group_id"))
+                .withName(resultSet.getString("group_name"))
                 .build();
         Teacher teacher = Teacher.builder()
                 .withId(resultSet.getInt("teacher_id"))
@@ -24,7 +24,7 @@ public class LessonMapper implements RowMapper<Lesson> {
                 .withEmail(resultSet.getString("teacher_email"))
                 .withPhone(resultSet.getString("teacher_phone"))
                 .withPassword(resultSet.getString("teacher_password"))
-                .withDegree(resultSet.getString("teacher_degree"))
+                .withScientificDegree(resultSet.getString("teacher_degree"))
                 .build();
         Classroom classroom = Classroom.builder()
                 .withId(resultSet.getInt("classroom_id"))
@@ -33,9 +33,9 @@ public class LessonMapper implements RowMapper<Lesson> {
                 .withCapacity(resultSet.getInt("classroom_capacity"))
                 .build();
         Course course = Course.builder()
-                .id(resultSet.getInt("course_id"))
-                .name(resultSet.getString("course_name"))
-                .description(resultSet.getString("course_description"))
+                .withId(resultSet.getInt("course_id"))
+                .withName(resultSet.getString("course_name"))
+                .withDescription(resultSet.getString("course_description"))
                 .build();
         return Lesson.builder()
                 .withId(resultSet.getInt("lesson_id"))

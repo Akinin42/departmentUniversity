@@ -2,8 +2,8 @@ package org.university.dao.impl;
 
 import java.util.List;
 import java.util.Optional;
-import javax.sql.DataSource;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 import org.university.dao.StudentDao;
@@ -13,7 +13,7 @@ import org.university.entity.Group;
 import org.university.entity.Student;
 
 @Component
-public class StudentDaoImpl extends AbstractCrudImpl<Student> implements StudentDao{
+public class StudentDaoImpl extends AbstractCrudImpl<Student> implements StudentDao {
 
     private static final String SAVE_QUERY = "INSERT INTO students (student_sex, student_name, student_email, student_phone, student_password)"
             + " VALUES(?,?,?,?,?);";
@@ -35,8 +35,9 @@ public class StudentDaoImpl extends AbstractCrudImpl<Student> implements Student
     private static final String DELETE_STUDENT_FROM_COURSE_QUERY = "DELETE FROM students_to_courses "
             + "WHERE student_id = ? AND course_id = ?";
 
-    public StudentDaoImpl(DataSource dataSource) {
-        super(dataSource, SAVE_QUERY, FIND_BY_ID_QUERY, FIND_ALL_QUERY, FIND_ALL_PAGINATION_QUERY, DELETE_BY_ID_QUERY);
+    public StudentDaoImpl(JdbcTemplate jdbcTemplate) {
+        super(jdbcTemplate, SAVE_QUERY, FIND_BY_ID_QUERY, FIND_ALL_QUERY, FIND_ALL_PAGINATION_QUERY,
+                DELETE_BY_ID_QUERY);
     }
 
     @Override

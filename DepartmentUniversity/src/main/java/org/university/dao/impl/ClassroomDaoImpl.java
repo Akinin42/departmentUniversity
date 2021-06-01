@@ -1,10 +1,8 @@
 package org.university.dao.impl;
 
 import java.util.Optional;
-
-import javax.sql.DataSource;
-
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 import org.university.dao.ClassroomDao;
@@ -21,8 +19,9 @@ public class ClassroomDaoImpl extends AbstractCrudImpl<Classroom> implements Cla
     private static final String DELETE_BY_ID_QUERY = "DELETE FROM classrooms WHERE classroom_id = ?;";
     private static final String FIND_BY_NUMBER_QUERY = "SELECT * FROM classrooms WHERE classroom_number = ?;";
 
-    public ClassroomDaoImpl(DataSource dataSource) {
-        super(dataSource, SAVE_QUERY, FIND_BY_ID_QUERY, FIND_ALL_QUERY, FIND_ALL_PAGINATION_QUERY, DELETE_BY_ID_QUERY);
+    public ClassroomDaoImpl(JdbcTemplate jdbcTemplate) {
+        super(jdbcTemplate, SAVE_QUERY, FIND_BY_ID_QUERY, FIND_ALL_QUERY, FIND_ALL_PAGINATION_QUERY,
+                DELETE_BY_ID_QUERY);
     }
 
     @Override

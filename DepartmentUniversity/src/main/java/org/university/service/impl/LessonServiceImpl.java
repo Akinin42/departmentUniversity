@@ -13,17 +13,20 @@ import org.university.exceptions.EntityNotExistException;
 import org.university.exceptions.InvalidLessonTimeException;
 import org.university.service.LessonService;
 import org.university.service.validator.LessonValidator;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.NonNull;
+import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 
 @Component
+@AllArgsConstructor
+@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
+@Slf4j
 public class LessonServiceImpl implements LessonService {
 
-    private final LessonDao lessonDao;
-    private final LessonValidator validator;
-
-    public LessonServiceImpl(LessonDao lessonDao, LessonValidator validator) {
-        this.lessonDao = lessonDao;
-        this.validator = validator;
-    }
+    LessonDao lessonDao;
+    LessonValidator validator;
 
     @Override
     public Lesson createLesson(String startLesson, String teacherEmail, String groupName) {
@@ -34,7 +37,7 @@ public class LessonServiceImpl implements LessonService {
     }
 
     @Override
-    public void addLesson(Lesson lesson) {
+    public void addLesson(@NonNull Lesson lesson) {
         validator.validate(lesson);
         if (existLesson(lesson)) {
             throw new EntityAlreadyExistException();
@@ -49,12 +52,14 @@ public class LessonServiceImpl implements LessonService {
             throw new ClassroomBusyException();
         }
         lessonDao.save(lesson);
+        log.info("Lesson added succesfull!");
+
     }
 
     @Override
-    public void delete(Lesson lesson) {
-        validator.validate(lesson);
+    public void delete(@NonNull Lesson lesson) {
         lessonDao.deleteById(lesson.getId());
+        log.info("Lesson deleted succesfull!");
     }
 
     private boolean existLesson(Lesson lesson) {

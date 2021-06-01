@@ -15,14 +15,20 @@ import org.university.exceptions.AuthorisationFailException;
 import org.university.exceptions.EntityNotExistException;
 import org.university.service.StudentService;
 import org.university.service.validator.UserValidator;
+import lombok.AccessLevel;
+import lombok.NonNull;
+import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 
 @Component
+@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
+@Slf4j
 public class StudentServiceImpl extends AbstractUserServiceImpl<Student> implements StudentService {
 
-    private final StudentDao studentDao;
-    private final GroupDao groupDao;
-    private final CourseDao courseDao;
-    private final PasswordEncoder encoder;
+    StudentDao studentDao;
+    GroupDao groupDao;
+    CourseDao courseDao;
+    PasswordEncoder encoder;
 
     public StudentServiceImpl(StudentDao studentDao, GroupDao groupDao, CourseDao courseDao,
             UserValidator<Student> validator, PasswordEncoder encoder) {
@@ -35,13 +41,14 @@ public class StudentServiceImpl extends AbstractUserServiceImpl<Student> impleme
 
     @Override
     public Student login(String email, String password) {
-        if(!studentDao.findByEmail(email).isPresent()) {
+        if (!studentDao.findByEmail(email).isPresent()) {
             throw new EntityNotExistException();
         }
         Student student = studentDao.findByEmail(email).get();
         if (!encoder.matches(password, student.getPassword())) {
             throw new AuthorisationFailException();
         }
+        log.info("Authorisation for student with id {} succesfull!", student.getId());
         return student;
     }
 
@@ -57,48 +64,46 @@ public class StudentServiceImpl extends AbstractUserServiceImpl<Student> impleme
     }
 
     @Override
-    public void addStudentToGroup(Student student, Group group) {
+    public void addStudentToGroup(@NonNull Student student, @NonNull Group group) {
         existsStudentAndGroup(student, group);
         if (!studentDao.findAllByGroup(group.getName()).contains(student)) {
             studentDao.insertStudentToGroup(student, group);
+            log.info("Student with id {} added to group {}!", student.getId(), group.getName());
         }
     }
 
     @Override
-    public void deleteStudentFromGroup(Student student, Group group) {
-        existsStudentAndGroup(student, group);        
-        studentDao.deleteStudentFromGroup(student.getId(), group.getId());        
+    public void deleteStudentFromGroup(@NonNull Student student, @NonNull Group group) {
+        existsStudentAndGroup(student, group);
+        studentDao.deleteStudentFromGroup(student.getId(), group.getId());
+        log.info("Student with id {} deleted from group {}!", student.getId(), group.getName());
     }
 
     @Override
-    public void addStudentToCourse(Student student, Course course) {
+    public void addStudentToCourse(@NonNull Student student, @NonNull Course course) {
         existsStudentAndCourse(student, course);
         if (!studentDao.findAllByCourse(course.getName()).contains(student)) {
             List<Course> courses = new ArrayList<>();
             courses.add(course);
             studentDao.insertStudentToCourses(student, courses);
+            log.info("Student with id {} added to course {}!", student.getId(), course.getName());
         }
     }
 
     @Override
-    public void deleteStudentFromCourse(Student student, Course course) {
-        existsStudentAndCourse(student, course);        
-        studentDao.deleteStudentFromCourse(student.getId(), course.getId());        
+    public void deleteStudentFromCourse(@NonNull Student student, @NonNull Course course) {
+        existsStudentAndCourse(student, course);
+        studentDao.deleteStudentFromCourse(student.getId(), course.getId());
+        log.info("Student with id {} deleted from course {}!", student.getId(), course.getName());
     }
 
     private void existsStudentAndCourse(Student student, Course course) {
-        if(student == null || course == null) {
-            throw new IllegalArgumentException();
-        }
         if (!existsUser(student) || courseDao.findById(course.getId()).equals(Optional.empty())) {
             throw new EntityNotExistException();
         }
     }
 
     private void existsStudentAndGroup(Student student, Group group) {
-        if(student == null || group == null) {
-            throw new IllegalArgumentException();
-        }
         if (!existsUser(student) || groupDao.findById(group.getId()).equals(Optional.empty())) {
             throw new EntityNotExistException();
         }

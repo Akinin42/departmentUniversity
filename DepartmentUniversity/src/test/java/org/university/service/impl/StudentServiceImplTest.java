@@ -155,8 +155,8 @@ class StudentServiceImplTest {
     void addStudentToGroupShouldThrowEntityNotExistExceptionWhenInputGroupNotExists() {
         Student student = CreatorTestEntities.createStudents().get(0);
         Group group = Group.builder()
-                .id(5)
-                .name("notExist")
+                .withId(5)
+                .withName("notExist")
                 .build();
         assertThatThrownBy(() -> studentService.addStudentToGroup(student, group))
                 .isInstanceOf(EntityNotExistException.class);
@@ -230,9 +230,9 @@ class StudentServiceImplTest {
     void addStudentToCourseShouldThrowEntityNotExistExceptionWhenInputCourseNotExists() {
         Student student = CreatorTestEntities.createStudents().get(0);
         Course course = Course.builder()
-                .id(5)
-                .name("notExist")
-                .description("test")
+                .withId(5)
+                .withName("notExist")
+                .withDescription("test")
                 .build();
         assertThatThrownBy(() -> studentService.addStudentToCourse(student, course))
                 .isInstanceOf(EntityNotExistException.class);

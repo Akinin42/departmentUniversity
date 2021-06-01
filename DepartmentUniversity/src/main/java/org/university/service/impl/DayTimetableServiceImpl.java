@@ -14,19 +14,18 @@ import org.university.entity.Lesson;
 import org.university.entity.Teacher;
 import org.university.exceptions.EntityNotExistException;
 import org.university.service.DayTimetableService;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.experimental.FieldDefaults;
 
 @Component
+@AllArgsConstructor
+@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 public class DayTimetableServiceImpl implements DayTimetableService {
 
-    private final LessonDao lessonDao;
-    private final TeacherDao teacherDao;
-    private final GroupDao groupDao;
-
-    public DayTimetableServiceImpl(LessonDao lessonDao, TeacherDao teacherDao, GroupDao groupDao) {
-        this.lessonDao = lessonDao;
-        this.teacherDao = teacherDao;
-        this.groupDao = groupDao;
-    }
+    LessonDao lessonDao;
+    TeacherDao teacherDao;
+    GroupDao groupDao;
 
     @Override
     public DayTimetable createTeacherTimetable(String date, String teacherEmail) {

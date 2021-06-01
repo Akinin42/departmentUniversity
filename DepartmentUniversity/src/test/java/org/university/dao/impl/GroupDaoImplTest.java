@@ -34,8 +34,8 @@ class GroupDaoImplTest {
     @Test
     void saveShouldSaveGroupWhenInputValidGroup() {
         Group group = Group.builder()
-                .id(3)
-                .name("DS-45")
+                .withId(3)
+                .withName("DS-45")
                 .build();
         groupDao.save(group);
         assertThat(groupDao.findAll()).contains(group);
@@ -44,7 +44,7 @@ class GroupDaoImplTest {
     @Test
     void saveShouldThrowDataIntegrityViolationExceptionWhenInputInvalidGroup() {
         Group invalidGroup = Group.builder()
-                .name(null)
+                .withName(null)
                 .build();
         assertThatThrownBy(() -> groupDao.save(invalidGroup)).isInstanceOf(DataIntegrityViolationException.class);
     }

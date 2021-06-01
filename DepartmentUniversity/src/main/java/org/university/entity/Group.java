@@ -4,13 +4,16 @@ import java.util.List;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.AccessLevel;
+import lombok.experimental.FieldDefaults;
 
 @Getter
 @EqualsAndHashCode
-@Builder
+@Builder(setterPrefix = "with")
+@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 public class Group {
 
-    private final Integer id;
-    private final String name;
-    private final List<Student> students;
+    Integer id;
+    String name;
+    List<Student> students;
 }

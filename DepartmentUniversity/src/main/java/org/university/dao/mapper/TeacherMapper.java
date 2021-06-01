@@ -16,7 +16,7 @@ public class TeacherMapper implements RowMapper<Teacher> {
                 .withEmail(resultSet.getString("teacher_email"))
                 .withPhone(resultSet.getString("teacher_phone"))
                 .withPassword(resultSet.getString("teacher_password"))
-                .withDegree(resultSet.getString("teacher_degree"))
+                .withScientificDegree(resultSet.getString("teacher_degree"))
                 .build();
     }
 }

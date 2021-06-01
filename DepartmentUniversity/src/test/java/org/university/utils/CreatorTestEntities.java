@@ -16,21 +16,21 @@ public class CreatorTestEntities {
     public static List<Course> createCourses() {
         List<Course> courses = new ArrayList<>();
         Course course = Course.builder()
-                .id(1)
-                .name("Law")
-                .description("test-courses")
+                .withId(1)
+                .withName("Law")
+                .withDescription("test-courses")
                 .build();
         courses.add(course);
         course = Course.builder()
-                .id(2)
-                .name("Math")
-                .description("test-courses")
+                .withId(2)
+                .withName("Math")
+                .withDescription("test-courses")
                 .build();
         courses.add(course);
         course = Course.builder()
-                .id(3)
-                .name("Art")
-                .description("test-courses")
+                .withId(3)
+                .withName("Art")
+                .withDescription("test-courses")
                 .build();
         courses.add(course);
         return courses;
@@ -39,13 +39,13 @@ public class CreatorTestEntities {
     public static List<Group> createGroups() {
         List<Group> groups = new ArrayList<>();
         Group group = Group.builder()
-                .id(1)
-                .name("AB-22")
+                .withId(1)
+                .withName("AB-22")
                 .build();
         groups.add(group);
         group = Group.builder()
-                .id(2)
-                .name("FR-33")
+                .withId(2)
+                .withName("FR-33")
                 .build();
         groups.add(group);
         return groups;
@@ -79,7 +79,7 @@ public class CreatorTestEntities {
                 .withEmail("Bob@mail.ru")
                 .withPhone("89758657788")
                 .withPassword("test-password")
-                .withDegree("professor")
+                .withScientificDegree("professor")
                 .build();
         teachers.add(teacher);
         teacher = Teacher.builder()
@@ -89,7 +89,7 @@ public class CreatorTestEntities {
                 .withEmail("Ann@mail.ru")
                 .withPhone("89758651122")
                 .withPassword("test-password")
-                .withDegree("doctor")
+                .withScientificDegree("doctor")
                 .build();
         teachers.add(teacher);
         return teachers;

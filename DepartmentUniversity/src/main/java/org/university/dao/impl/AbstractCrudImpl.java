@@ -2,32 +2,24 @@ package org.university.dao.impl;
 
 import java.util.List;
 import java.util.Optional;
-
-import javax.sql.DataSource;
-
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.university.dao.CrudDao;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.experimental.FieldDefaults;
 
+@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
+@AllArgsConstructor
 public abstract class AbstractCrudImpl<E> implements CrudDao<E, Integer> {
 
-    protected final JdbcTemplate jdbcTemplate;
-    private final String saveQuery;
-    private final String findByIdQuery;
-    private final String findAllQuery;
-    private final String findAllPaginationQuery;
-    private final String deleteByIdQuery;
-
-    protected AbstractCrudImpl(DataSource dataSource, String saveQuery, String getByIdQuery, String getAllQuery,
-            String findAllPaginationQuery, String deleteByIdQuery) {
-        jdbcTemplate = new JdbcTemplate(dataSource);
-        this.saveQuery = saveQuery;
-        this.findByIdQuery = getByIdQuery;
-        this.findAllQuery = getAllQuery;
-        this.findAllPaginationQuery = findAllPaginationQuery;
-        this.deleteByIdQuery = deleteByIdQuery;
-    }
+    protected JdbcTemplate jdbcTemplate;
+    String saveQuery;
+    String findByIdQuery;
+    String findAllQuery;
+    String findAllPaginationQuery;
+    String deleteByIdQuery;
 
     @Override
     public void save(E entity) {

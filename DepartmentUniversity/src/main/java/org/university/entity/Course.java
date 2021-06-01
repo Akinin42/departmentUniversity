@@ -4,8 +4,8 @@ import lombok.Value;
 import lombok.Builder;
 
 @Value
-@Builder
-public class Course{
+@Builder(setterPrefix = "with")
+public class Course {
 
     Integer id;
     String name;

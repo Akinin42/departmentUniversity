@@ -9,15 +9,19 @@ import org.university.exceptions.EntityAlreadyExistException;
 import org.university.exceptions.EntityNotExistException;
 import org.university.exceptions.InvalidClassroomCapacityException;
 import org.university.service.ClassroomService;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.NonNull;
+import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 
 @Component
+@AllArgsConstructor
+@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
+@Slf4j
 public class ClassroomServiceImpl implements ClassroomService {
 
-    private final ClassroomDao classroomDao;
-
-    public ClassroomServiceImpl(ClassroomDao classroomDao) {
-        this.classroomDao = classroomDao;
-    }
+    ClassroomDao classroomDao;
 
     @Override
     public Classroom createClassroom(int classroomNumber) {
@@ -28,14 +32,15 @@ public class ClassroomServiceImpl implements ClassroomService {
     }
 
     @Override
-    public void addClassroom(Classroom classroom) {
+    public void addClassroom(@NonNull Classroom classroom) {
         if (existClassroom(classroom)) {
             throw new EntityAlreadyExistException();
         }
-        if(classroom.getCapacity()<=0){
+        if (classroom.getCapacity() <= 0) {
             throw new InvalidClassroomCapacityException();
         }
         classroomDao.save(classroom);
+        log.info("Classroom with number {} added succesfull!", classroom.getNumber());
     }
 
     @Override
@@ -44,16 +49,14 @@ public class ClassroomServiceImpl implements ClassroomService {
     }
 
     @Override
-    public void delete(Classroom classroom) {
+    public void delete(@NonNull Classroom classroom) {
         if (existClassroom(classroom)) {
             classroomDao.deleteById(classroom.getId());
+            log.info("Classroom with number {} deleted!", classroom.getNumber());
         }
     }
 
     private boolean existClassroom(Classroom classroom) {
-        if (classroom == null) {
-            throw new IllegalArgumentException();
-        }
         return !classroomDao.findById(classroom.getId()).equals(Optional.empty());
     }
 }

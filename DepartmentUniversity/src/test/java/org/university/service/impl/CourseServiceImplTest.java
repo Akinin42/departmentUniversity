@@ -45,6 +45,11 @@ class CourseServiceImplTest {
         Course course = CreatorTestEntities.createCourses().get(0);
         assertThatThrownBy(() -> courseService.addCourse(course)).isInstanceOf(EntityAlreadyExistException.class);
     }
+    
+    @Test
+    void addCourseShouldThrowIllegalArgumentExceptionWhenInputNull() {        
+        assertThatThrownBy(() -> courseService.addCourse(null)).isInstanceOf(IllegalArgumentException.class);
+    }
 
     @Test
     void addCourseShouldSaveCourseInDatabaseWhenInputValidCourse() {
@@ -96,9 +101,9 @@ class CourseServiceImplTest {
 
     private Course createTestCourse() {
         return Course.builder()
-                .id(4)
-                .name("test")
-                .description("test")
+                .withId(4)
+                .withName("test")
+                .withDescription("test")
                 .build();
     }
 }

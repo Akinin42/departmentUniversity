@@ -40,7 +40,7 @@ class TeacherDaoImplTest {
                 .withEmail("Test")
                 .withPhone("Test")
                 .withPassword("Test")
-                .withDegree("Test")
+                .withScientificDegree("Test")
                 .build();
         teacherDao.save(teacher);
         assertThat(teacherDao.findAll()).contains(teacher);
