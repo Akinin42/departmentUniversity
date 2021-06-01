@@ -14,8 +14,8 @@ public class LessonMapper implements RowMapper<Lesson> {
     @Override
     public Lesson mapRow(ResultSet resultSet, int rowNum) throws SQLException {
         Group group = Group.builder()
-                .withId(resultSet.getInt("group_id"))
-                .withName(resultSet.getString("group_name"))
+                .id(resultSet.getInt("group_id"))
+                .name(resultSet.getString("group_name"))
                 .build();
         Teacher teacher = Teacher.builder()
                 .withId(resultSet.getInt("teacher_id"))
@@ -33,9 +33,9 @@ public class LessonMapper implements RowMapper<Lesson> {
                 .withCapacity(resultSet.getInt("classroom_capacity"))
                 .build();
         Course course = Course.builder()
-                .withId(resultSet.getInt("course_id"))
-                .withName(resultSet.getString("course_name"))
-                .withDescription(resultSet.getString("course_description"))
+                .id(resultSet.getInt("course_id"))
+                .name(resultSet.getString("course_name"))
+                .description(resultSet.getString("course_description"))
                 .build();
         return Lesson.builder()
                 .withId(resultSet.getInt("lesson_id"))

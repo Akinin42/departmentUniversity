@@ -16,7 +16,6 @@ import org.university.dao.impl.LessonDaoImpl;
 import org.university.entity.Classroom;
 import org.university.entity.Group;
 import org.university.entity.Lesson;
-import org.university.entity.Student;
 import org.university.entity.Teacher;
 import org.university.exceptions.ClassroomBusyException;
 import org.university.exceptions.EntityAlreadyExistException;

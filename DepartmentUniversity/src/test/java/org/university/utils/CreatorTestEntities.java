@@ -16,21 +16,21 @@ public class CreatorTestEntities {
     public static List<Course> createCourses() {
         List<Course> courses = new ArrayList<>();
         Course course = Course.builder()
-                .withId(1)
-                .withName("Law")
-                .withDescription("test-courses")
+                .id(1)
+                .name("Law")
+                .description("test-courses")
                 .build();
         courses.add(course);
         course = Course.builder()
-                .withId(2)
-                .withName("Math")
-                .withDescription("test-courses")
+                .id(2)
+                .name("Math")
+                .description("test-courses")
                 .build();
         courses.add(course);
         course = Course.builder()
-                .withId(3)
-                .withName("Art")
-                .withDescription("test-courses")
+                .id(3)
+                .name("Art")
+                .description("test-courses")
                 .build();
         courses.add(course);
         return courses;
@@ -39,13 +39,13 @@ public class CreatorTestEntities {
     public static List<Group> createGroups() {
         List<Group> groups = new ArrayList<>();
         Group group = Group.builder()
-                .withId(1)
-                .withName("AB-22")
+                .id(1)
+                .name("AB-22")
                 .build();
         groups.add(group);
         group = Group.builder()
-                .withId(2)
-                .withName("FR-33")
+                .id(2)
+                .name("FR-33")
                 .build();
         groups.add(group);
         return groups;

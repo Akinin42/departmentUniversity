@@ -33,9 +33,9 @@ public class GroupServiceImpl implements GroupService {
         }
         Group group = groupDao.findByName(name).get();
         return Group.builder()
-                .withId(group.getId())
-                .withName(group.getName())
-                .withStudents(studentDao.findAllByGroup(group.getName()))
+                .id(group.getId())
+                .name(group.getName())
+                .students(studentDao.findAllByGroup(group.getName()))
                 .build();
     }
 

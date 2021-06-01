@@ -34,9 +34,9 @@ class CourseDaoImplTest {
     @Test
     void saveShouldSaveCourseWhenInputValidCourse() {
         Course course = Course.builder()
-                .withId(4)
-                .withName("Test course")
-                .withDescription("Test description")
+                .id(4)
+                .name("Test course")
+                .description("Test description")
                 .build();
         courseDao.save(course);
         assertThat(courseDao.findAll()).contains(course);
@@ -45,7 +45,7 @@ class CourseDaoImplTest {
     @Test
     void saveShouldThrowDataIntegrityViolationExceptionWhenInputInvalidCourse() {
         Course invalidCourse = Course.builder()
-                .withName(null)
+                .name(null)
                 .build();
         assertThatThrownBy(() -> courseDao.save(invalidCourse)).isInstanceOf(DataIntegrityViolationException.class);
     }

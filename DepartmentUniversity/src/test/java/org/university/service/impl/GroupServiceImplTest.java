@@ -56,7 +56,10 @@ class GroupServiceImplTest {
 
     @Test
     void addGroupShouldThrowInvalidGroupNameExceptionWhenInputGroupWithInvalidName() {
-        Group group = Group.builder().withId(5).withName("invalid name").build();
+        Group group = Group.builder()
+                .id(5)
+                .name("invalid name")
+                .build();
         assertThatThrownBy(() -> groupService.addGroup(group)).isInstanceOf(InvalidGroupNameException.class);
     }
 
@@ -70,9 +73,9 @@ class GroupServiceImplTest {
     void addGroupShouldSaveGroupAndStudentsInDatabasesWhenInputValidGroup() {
         List<Student> students = CreatorTestEntities.createStudents();
         Group group = Group.builder()
-                .withId(3)
-                .withName("FF-55")
-                .withStudents(students)
+                .id(3)
+                .name("FF-55")
+                .students(students)
                 .build();
         groupService.addGroup(group);
         verify(groupDaoMock).save(group);
@@ -109,18 +112,18 @@ class GroupServiceImplTest {
         students.add(CreatorTestEntities.createStudents().get(2));
         students.add(CreatorTestEntities.createStudents().get(3));
         Group group = Group.builder()
-                .withId(1)
-                .withName("AB-22")
-                .withStudents(students)
+                .id(1)
+                .name("AB-22")
+                .students(students)
                 .build();
         groups.add(group);
         students = new ArrayList<>();
         students.add(CreatorTestEntities.createStudents().get(4));
         students.add(CreatorTestEntities.createStudents().get(5));
         group = Group.builder()
-                .withId(2)
-                .withName("FR-33")
-                .withStudents(students)
+                .id(2)
+                .name("FR-33")
+                .students(students)
                 .build();
         groups.add(group);
         return groups;

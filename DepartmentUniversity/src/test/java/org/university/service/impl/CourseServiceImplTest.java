@@ -96,9 +96,9 @@ class CourseServiceImplTest {
 
     private Course createTestCourse() {
         return Course.builder()
-                .withId(4)
-                .withName("test")
-                .withDescription("test")
+                .id(4)
+                .name("test")
+                .description("test")
                 .build();
     }
 }
