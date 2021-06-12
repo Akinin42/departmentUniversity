@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.university.dao.GroupDao;
 import org.university.dao.StudentDao;
 import org.university.entity.Group;
@@ -22,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 @AllArgsConstructor
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 @Slf4j
+@Service
 public class GroupServiceImpl implements GroupService {
 
     GroupDao groupDao;
