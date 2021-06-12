@@ -12,8 +12,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
-@ComponentScan("org.university")
-@PropertySource("application.properties")
+@ComponentScan("org.university.dao")
+@ComponentScan("org.university.io")
+@PropertySource("classpath:/application.properties")
 
 public class ApplicationContextInjector {
 
