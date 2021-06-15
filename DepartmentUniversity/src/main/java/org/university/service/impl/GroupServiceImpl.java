@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.university.dao.GroupDao;
 import org.university.dao.StudentDao;
+import org.university.dto.GroupDto;
 import org.university.entity.Group;
 import org.university.entity.Student;
 import org.university.exceptions.EntityAlreadyExistException;
@@ -44,14 +45,17 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
-    public void addGroup(@NonNull Group group) {
+    public void addGroup(@NonNull GroupDto groupDto) {
+        Group group = mapDtoToEntity(groupDto);
         validator.validate(group);
-        if (existGroup(group)) {
+        if (group.getId() != null && existGroup(group)) {
             throw new EntityAlreadyExistException();
         }
         groupDao.save(group);
-        for (Student student : group.getStudents()) {
-            studentDao.insertStudentToGroup(student, group);
+        if (group.getStudents() != null) {
+            for (Student student : group.getStudents()) {
+                studentDao.insertStudentToGroup(student, group);
+            }
         }
         log.info("Group with name {} added succesfull!", group.getName());
     }
@@ -66,11 +70,20 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
-    public void delete(@NonNull Group group) {
+    public void delete(@NonNull GroupDto groupDto) {
+        Group group = mapDtoToEntity(groupDto);
         groupDao.deleteById(group.getId());
     }
 
     private boolean existGroup(Group group) {
         return !groupDao.findById(group.getId()).equals(Optional.empty());
+    }
+
+    private Group mapDtoToEntity(GroupDto group) {
+        return Group.builder()
+                .withId(group.getId())
+                .withName(group.getName())
+                .withStudents(group.getStudents())
+                .build();
     }
 }

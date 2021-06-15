@@ -13,6 +13,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.university.dao.impl.GroupDaoImpl;
 import org.university.dao.impl.StudentDaoImpl;
+import org.university.dto.GroupDto;
 import org.university.entity.Group;
 import org.university.entity.Student;
 import org.university.exceptions.EntityAlreadyExistException;
@@ -56,29 +57,33 @@ class GroupServiceImplTest {
 
     @Test
     void addGroupShouldThrowInvalidGroupNameExceptionWhenInputGroupWithInvalidName() {
-        Group group = Group.builder()
-                .withId(5)
-                .withName("invalid name")
-                .build();
+        GroupDto group = new GroupDto();
+        group.setName("invalid name");
         assertThatThrownBy(() -> groupService.addGroup(group)).isInstanceOf(InvalidGroupNameException.class);
     }
 
     @Test
     void addGroupShouldThrowEntityAlreadyExistExceptionWhenInputGroupExistInDatabase() {
-        Group group = CreatorTestEntities.createGroups().get(0);
+        GroupDto group = new GroupDto();
+        group.setId(1);
+        group.setName("AB-22");
         assertThatThrownBy(() -> groupService.addGroup(group)).isInstanceOf(EntityAlreadyExistException.class);
     }
 
     @Test
     void addGroupShouldSaveGroupAndStudentsInDatabasesWhenInputValidGroup() {
         List<Student> students = CreatorTestEntities.createStudents();
-        Group group = Group.builder()
+        GroupDto group = new GroupDto();
+        group.setId(3);
+        group.setName("FF-55");
+        group.setStudents(students);
+        Group groupEntity = Group.builder()
                 .withId(3)
                 .withName("FF-55")
                 .withStudents(students)
                 .build();
         groupService.addGroup(group);
-        verify(groupDaoMock).save(group);
+        verify(groupDaoMock).save(groupEntity);
     }
 
     @Test
@@ -94,7 +99,8 @@ class GroupServiceImplTest {
 
     @Test
     void deleteShouldDeleteGroupFromDatabaseWhenGroupExist() {
-        Group group = CreatorTestEntities.createGroups().get(0);
+        GroupDto group = new GroupDto();
+        group.setId(1);
         groupService.delete(group);
         verify(groupDaoMock).deleteById(group.getId());
     }
