@@ -18,20 +18,21 @@ public class GroupController {
     private GroupService groupService;
 
     @GetMapping()
-    public String getAll(Model model) {       
+    public String getAll(Model model) {
+        model.addAttribute("group", new GroupDto());
         model.addAttribute("groups", groupService.findAllGroups());
         return "group/all_groups";
     }
     
-    @GetMapping("/new")
-    public String createGroup(Model model) {       
-        model.addAttribute("group", new GroupDto()); 
-        return "group/new_group";
-    }
-
     @PostMapping()
     public String add(@ModelAttribute("group") GroupDto group) {        
         groupService.addGroup(group);  
+        return "redirect:/groups";
+    }
+    
+    @PostMapping(params={"delete"})
+    public String delete(@ModelAttribute("group") GroupDto group) {        
+        groupService.delete(group);  
         return "redirect:/groups";
     }
 }

@@ -13,7 +13,7 @@
 <body>
 	<h1>Hello on my university page!</h1>
 	<div class="container">
-		<ul class="nav justify-content-end">
+		<ul class="nav nav-tabs justify-content-end">
 			<li class="nav-item"><a class="nav-link" href="#">Students</a></li>
 			<li class="nav-item"><a class="nav-link" href="#">Teachers</a></li>
 			<li class="nav-item"><a class="nav-link"
@@ -21,6 +21,9 @@
 			<li class="nav-item"><a class="nav-link" href="#">Courses</a></li>
 		</ul>
 	</div>
-	<script src="/static/js/bootstrap.bundle.js"></script>
+	<script
+		src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"
+		integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4"
+		crossorigin="anonymous"></script>
 </body>
 </html>
