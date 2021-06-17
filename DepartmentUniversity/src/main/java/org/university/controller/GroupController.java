@@ -30,7 +30,7 @@ public class GroupController {
         return "redirect:/groups";
     }
     
-    @PostMapping(params={"delete"})
+    @PostMapping("/delete")
     public String delete(@ModelAttribute("group") GroupDto group) {        
         groupService.delete(group);  
         return "redirect:/groups";
