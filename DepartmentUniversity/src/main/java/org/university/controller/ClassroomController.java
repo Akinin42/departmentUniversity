@@ -32,7 +32,7 @@ public class ClassroomController {
     
     @PostMapping("/delete")
     public String delete(@ModelAttribute("classroom") ClassroomDto classroom) {        
-//        classroomService.delete(classroom);
+        classroomService.delete(classroom);
         return "redirect:/classrooms";
     }
 

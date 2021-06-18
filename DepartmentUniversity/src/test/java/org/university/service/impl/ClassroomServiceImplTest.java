@@ -95,16 +95,18 @@ class ClassroomServiceImplTest {
 
     @Test
     void deleteShouldDeleteClassroomFromDatabaseWhenClassroomExist() {
-        Classroom classroom = CreatorTestEntities.createClassrooms().get(0);
-        classroomService.delete(classroom);
-        verify(classroomDaoMock).deleteById(classroom.getId());
+        ClassroomDto classroomDto = new ClassroomDto();
+        classroomDto.setId(1);
+        classroomService.delete(classroomDto);
+        verify(classroomDaoMock).deleteById(classroomDto.getId());
     }
 
     @Test
     void deleteShouldNotDeleteClassroomFromDatabaseWhenClassroomNotExist() {
-        Classroom classroom = createTestClassroomWithCapacity(10);
-        classroomService.delete(classroom);
-        verify(classroomDaoMock, never()).deleteById(classroom.getId());
+        ClassroomDto classroomDto = new ClassroomDto();
+        classroomDto.setId(10);
+        classroomService.delete(classroomDto);
+        verify(classroomDaoMock, never()).deleteById(classroomDto.getId());
     }
 
     @Test

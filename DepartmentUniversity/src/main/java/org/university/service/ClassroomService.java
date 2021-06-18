@@ -12,6 +12,6 @@ public interface ClassroomService {
     
     List<Classroom> findAllClassrooms();
     
-    void delete(Classroom classroom);
+    void delete(ClassroomDto classroomDto);
 
 }
