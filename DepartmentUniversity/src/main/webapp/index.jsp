@@ -16,9 +16,9 @@
 		<ul class="nav nav-tabs justify-content-end">
 			<li class="nav-item"><a class="nav-link" href="#">Students</a></li>
 			<li class="nav-item"><a class="nav-link" href="#">Teachers</a></li>
-			<li class="nav-item"><a class="nav-link"
-				href="/DepartmentUniversity/groups">Groups</a></li>
-			<li class="nav-item"><a class="nav-link" href="#">Courses</a></li>
+			<li class="nav-item"><a class="nav-link" href="/DepartmentUniversity/groups">Groups</a></li>
+            <li class="nav-item"><a class="nav-link" href="/DepartmentUniversity/courses">Courses</a></li>
+            <li class="nav-item"><a class="nav-link" href="/DepartmentUniversity/classrooms">Classrooms</a></li>
 		</ul>
 	</div>
 	<script

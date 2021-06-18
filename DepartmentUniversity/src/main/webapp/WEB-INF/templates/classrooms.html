@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+    integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x"
+    crossorigin="anonymous">
+<title>classrooms!</title>
+</head>
+<body>
+<div th:replace="header :: navbar"></div>
+<div class="container">
+        <form action="#" th:action="@{/classrooms}" th:object="${classroom}" method="post">
+            <div class="form-group">
+                <label for="number">Classroom number:</label> 
+                <input type="number" class="form-control" th:field="*{number}" id="number" style="width: 200px;">
+                <label for="address">Classroom address:</label> 
+                <input type="text" class="form-control" th:field="*{address}" id="address" style="width: 200px;">
+                <label for="capacity">Classroom capacity:</label> 
+                <input type="number" class="form-control" th:field="*{capacity}" id="capacity" style="width: 200px;">
+            </div>
+            <button type="submit" class="btn btn-primary" value="add">Add Classroom</button>
+        </form>
+    </div>
+
+<div class="container" style="width: 500px;">
+        <table class="table table-hover table-striped table-condensed">
+            <thead>
+                <tr class="table-primary">
+                    <th style="width: 70px;">Classroom ID</th>
+                    <th style="width: 70px;">Number</th>
+                    <th style="width: 360px;">Address</th>
+                    <th style="width: 70px;">Capacity</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="classroom : ${classrooms}" class="table-primary">
+                    <td th:text="${classroom.id}" />
+                    <td th:text="${classroom.number}" />
+                    <td th:text="${classroom.address}" />
+                    <td th:text="${classroom.capacity}" />
+                    <td>
+                        <form action="#" th:action="@{/classrooms/delete} " method="post">                      
+                        <button type="submit" class="btn btn-warning btn-sm w-100" th:value="classroom">
+                                Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4"
+        crossorigin="anonymous"></script>
+
+</body>
+</html>
