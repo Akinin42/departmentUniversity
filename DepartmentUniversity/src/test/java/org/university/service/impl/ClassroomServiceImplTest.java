@@ -12,6 +12,7 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.university.dao.impl.ClassroomDaoImpl;
+import org.university.dto.ClassroomDto;
 import org.university.entity.Classroom;
 import org.university.exceptions.EntityAlreadyExistException;
 import org.university.exceptions.EntityNotExistException;
@@ -42,29 +43,37 @@ class ClassroomServiceImplTest {
 
     @Test
     void addClassroomShouldThrowEntityAlreadyExistExceptionWhenInputClassroomExistInDatabase() {
-        Classroom classroom = CreatorTestEntities.createClassrooms().get(0);
+        ClassroomDto classroom = new ClassroomDto();
+        classroom.setId(1);        
         assertThatThrownBy(() -> classroomService.addClassroom(classroom))
                 .isInstanceOf(EntityAlreadyExistException.class);
     }
 
     @Test
     void addClassroomShouldSaveClassroomInDatabaseWhenInputValidClassroom() {
-        Classroom classroom = createTestClassroomWithCapacity(40);
-        classroomService.addClassroom(classroom);
+        ClassroomDto classroomDto = new ClassroomDto();
+        classroomDto.setId(3);
+        classroomDto.setNumber(3);
+        classroomDto.setAddress("test");
+        classroomDto.setCapacity(30);
+        classroomService.addClassroom(classroomDto);
+        Classroom classroom = createTestClassroomWithCapacity(30);
         verify(classroomDaoMock).save(classroom);
     }
 
     @Test
     void addClassroomShouldThrowInvalidClassroomCapacityExceptionWhenInputClassroomCapacityNegative() {
-        Classroom classroom = createTestClassroomWithCapacity(-5);
-        assertThatThrownBy(() -> classroomService.addClassroom(classroom))
+        ClassroomDto classroomDto = new ClassroomDto();
+        classroomDto.setCapacity(-5);
+        assertThatThrownBy(() -> classroomService.addClassroom(classroomDto))
                 .isInstanceOf(InvalidClassroomCapacityException.class);
     }
 
     @Test
     void addClassroomShouldThrowInvalidClassroomCapacityExceptionWhenInputClassroomCapacityZero() {
-        Classroom classroom = createTestClassroomWithCapacity(0);
-        assertThatThrownBy(() -> classroomService.addClassroom(classroom))
+        ClassroomDto classroomDto = new ClassroomDto();
+        classroomDto.setCapacity(0);
+        assertThatThrownBy(() -> classroomService.addClassroom(classroomDto))
                 .isInstanceOf(InvalidClassroomCapacityException.class);
     }
 

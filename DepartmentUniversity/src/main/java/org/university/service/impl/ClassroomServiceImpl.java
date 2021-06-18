@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Component;
 import org.university.dao.ClassroomDao;
+import org.university.dto.ClassroomDto;
 import org.university.entity.Classroom;
 import org.university.exceptions.EntityAlreadyExistException;
 import org.university.exceptions.EntityNotExistException;
@@ -32,8 +33,9 @@ public class ClassroomServiceImpl implements ClassroomService {
     }
 
     @Override
-    public void addClassroom(@NonNull Classroom classroom) {
-        if (existClassroom(classroom)) {
+    public void addClassroom(@NonNull ClassroomDto classroomDto) {
+        Classroom classroom = mapDtoToEntity(classroomDto);
+        if (classroom.getId() != null && existClassroom(classroom)) {
             throw new EntityAlreadyExistException();
         }
         if (classroom.getCapacity() <= 0) {
@@ -58,5 +60,14 @@ public class ClassroomServiceImpl implements ClassroomService {
 
     private boolean existClassroom(Classroom classroom) {
         return !classroomDao.findById(classroom.getId()).equals(Optional.empty());
+    }
+    
+    private Classroom mapDtoToEntity(ClassroomDto classroomDto) {
+        return Classroom.builder()
+                .withId(classroomDto.getId())
+                .withNumber(classroomDto.getNumber())
+                .withAddress(classroomDto.getAddress())
+                .withCapacity(classroomDto.getCapacity())
+                .build();
     }
 }

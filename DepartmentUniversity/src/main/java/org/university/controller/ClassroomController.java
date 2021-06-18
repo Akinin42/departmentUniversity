@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.university.dto.CourseDto;
+import org.university.dto.ClassroomDto;
 import org.university.service.ClassroomService;
 
 @Controller
@@ -26,7 +26,7 @@ public class ClassroomController {
     
     @PostMapping()
     public String add(@ModelAttribute("classroom") ClassroomDto classroom) {        
-        classroomService.addCourse(classroom);  
+        classroomService.addClassroom(classroom);  
         return "redirect:/classrooms";
     }
     
