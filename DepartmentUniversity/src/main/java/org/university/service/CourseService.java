@@ -13,6 +13,6 @@ public interface CourseService {
     
     List<Course> findAllCourses();
     
-    void delete(Course course);
+    void delete(CourseDto courseDto);
 
 }

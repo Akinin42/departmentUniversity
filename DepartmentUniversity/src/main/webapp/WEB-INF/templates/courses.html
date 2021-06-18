@@ -40,7 +40,8 @@
                     <td th:text="${course.name}" />
                     <td th:text="${course.description}" />
                     <td>
-                        <form action="#" th:action="@{/courses/delete} " method="post">                      
+                        <form action="#" th:action="@{/courses/delete}" th:object="${course}" method="post">
+                        <input class="form-control" type="hidden" th:value="${course.id}" id="id" name="id"/>                      
                         <button type="submit" class="btn btn-warning btn-sm w-100" th:value="course">
                                 Delete</button>
                         </form>

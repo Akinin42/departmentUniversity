@@ -32,7 +32,7 @@ public class CourseController {
     
     @PostMapping("/delete")
     public String delete(@ModelAttribute("course") CourseDto course) {        
-//        groupService.delete(group);
+        courseService.delete(course);
         return "redirect:/courses";
     }
 }

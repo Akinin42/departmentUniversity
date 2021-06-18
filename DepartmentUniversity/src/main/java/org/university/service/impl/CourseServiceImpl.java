@@ -47,7 +47,8 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public void delete(@NonNull Course course) {
+    public void delete(@NonNull CourseDto courseDto) {
+        Course course = mapDtoToEntity(courseDto);
         if (existCourse(course)) {
             courseDao.deleteById(course.getId());
             log.info("Course with name {} deleted!", course.getName());

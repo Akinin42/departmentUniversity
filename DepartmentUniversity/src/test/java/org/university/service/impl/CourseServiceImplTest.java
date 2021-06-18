@@ -77,16 +77,18 @@ class CourseServiceImplTest {
 
     @Test
     void deleteShouldDeleteCourseFromDatabaseWhenCourseExist() {
-        Course course = CreatorTestEntities.createCourses().get(0);
-        courseService.delete(course);
-        verify(courseDaoMock).deleteById(course.getId());
+        CourseDto courseDto = new CourseDto();
+        courseDto.setId(1);
+        courseService.delete(courseDto);
+        verify(courseDaoMock).deleteById(courseDto.getId());
     }
 
     @Test
     void deleteShouldNotDeleteCourseFromDatabaseWhenCourseNotExist() {
-        Course course = createTestCourse();
-        courseService.delete(course);
-        verify(courseDaoMock, never()).deleteById(course.getId());
+        CourseDto courseDto = new CourseDto();
+        courseDto.setId(4);
+        courseService.delete(courseDto);
+        verify(courseDaoMock, never()).deleteById(courseDto.getId());
     }
 
     @Test
