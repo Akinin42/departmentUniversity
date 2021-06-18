@@ -21,7 +21,7 @@ public class GroupController {
     public String getAll(Model model) {
         model.addAttribute("group", new GroupDto());
         model.addAttribute("groups", groupService.findAllGroups());
-        return "group/all_groups";
+        return "groups";
     }
     
     @PostMapping()

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Component;
 import org.university.dao.CourseDao;
+import org.university.dto.CourseDto;
 import org.university.entity.Course;
 import org.university.exceptions.EntityAlreadyExistException;
 import org.university.exceptions.EntityNotExistException;
@@ -31,8 +32,9 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public void addCourse(@NonNull Course course) {
-        if (existCourse(course)) {
+    public void addCourse(@NonNull CourseDto courseDto) {
+        Course course = mapDtoToEntity(courseDto);
+        if (course.getId() != null && existCourse(course)) {
             throw new EntityAlreadyExistException();
         }
         courseDao.save(course);
@@ -54,5 +56,13 @@ public class CourseServiceImpl implements CourseService {
 
     private boolean existCourse(Course course) {
         return !courseDao.findById(course.getId()).equals(Optional.empty());
+    }
+
+    private Course mapDtoToEntity(CourseDto course) {
+        return Course.builder()
+                .withId(course.getId())
+                .withName(course.getName())
+                .withDescription(course.getDescription())
+                .build();
     }
 }

@@ -12,6 +12,7 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.university.dao.impl.CourseDaoImpl;
+import org.university.dto.CourseDto;
 import org.university.entity.Course;
 import org.university.exceptions.EntityAlreadyExistException;
 import org.university.exceptions.EntityNotExistException;
@@ -42,7 +43,8 @@ class CourseServiceImplTest {
 
     @Test
     void addCourseShouldThrowEntityAlreadyExistExceptionWhenInputCourseExistInDatabase() {
-        Course course = CreatorTestEntities.createCourses().get(0);
+        CourseDto course = new CourseDto();
+        course.setId(1);
         assertThatThrownBy(() -> courseService.addCourse(course)).isInstanceOf(EntityAlreadyExistException.class);
     }
     
@@ -53,8 +55,12 @@ class CourseServiceImplTest {
 
     @Test
     void addCourseShouldSaveCourseInDatabaseWhenInputValidCourse() {
+        CourseDto courseDto = new CourseDto();
+        courseDto.setId(4);
+        courseDto.setName("test");
+        courseDto.setDescription("test");
+        courseService.addCourse(courseDto);
         Course course = createTestCourse();
-        courseService.addCourse(course);
         verify(courseDaoMock).save(course);
     }
 
