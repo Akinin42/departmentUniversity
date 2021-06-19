@@ -1,6 +1,7 @@
 package org.university.service.impl;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -95,6 +96,29 @@ public class StudentServiceImpl extends AbstractUserServiceImpl<Student> impleme
         existsStudentAndCourse(student, course);
         studentDao.deleteStudentFromCourse(student.getId(), course.getId());
         log.info("Student with id {} deleted from course {}!", student.getId(), course.getName());
+    }
+
+    @Override
+    public List<Student> findNumberOfUsers(int quantity, int number) {
+        List<Student> students = studentDao.findAll(quantity, number);
+        for (int i = 0; i < students.size(); i++) {
+            int studentId = students.get(i).getId();
+            List<Course> courses = courseDao.findAllByStudent(studentId);
+            students.set(i, addCoursesToStudent(students.get(i), courses));
+        }
+        return students;        
+    }
+
+    private Student addCoursesToStudent(Student student, List<Course> courses) {
+        return Student.builder()
+                .withId(student.getId())
+                .withSex(student.getSex())
+                .withName(student.getName())
+                .withEmail(student.getEmail())
+                .withPhone(student.getPhone())
+                .withPassword(student.getPassword())
+                .withCourses(new HashSet<Course>(courses))               
+                .build();
     }
 
     private void existsStudentAndCourse(Student student, Course course) {

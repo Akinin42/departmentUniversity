@@ -8,6 +8,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.never;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeAll;
@@ -90,10 +91,19 @@ class StudentServiceImplTest {
 
     @Test
     void findNumberOfUsersShouldReturnExpectedTStudentsWhenInputLimitAndOffset() {
-        List<Student> students = new ArrayList<>();
+        List<Student> students = new ArrayList<>();        
         students.add(CreatorTestEntities.createStudents().get(0));
-        when(studentDaoMock.findAll(1, 0)).thenReturn(students);
-        assertThat(studentService.findNumberOfUsers(1, 0)).containsExactly(CreatorTestEntities.createStudents().get(0));
+        when(studentDaoMock.findAll(1, 0)).thenReturn(students);        
+        Student student = Student.builder()
+                .withId(1)
+                .withSex("Female")
+                .withName("Jane Wood")
+                .withEmail("Wood@email.ru")
+                .withPhone("test-phone")
+                .withPassword("test-password")
+                .withCourses(new HashSet<Course>(CreatorTestEntities.createCourses()))               
+                .build();
+        assertThat(studentService.findNumberOfUsers(1, 0)).containsExactly(student);
     }
 
     @Test
@@ -288,6 +298,7 @@ class StudentServiceImplTest {
     private static CourseDaoImpl createCourseDaoMock() {
         CourseDaoImpl courseDaoMock = mock(CourseDaoImpl.class);
         when(courseDaoMock.findById(1)).thenReturn(Optional.ofNullable(CreatorTestEntities.createCourses().get(0)));
+        when(courseDaoMock.findAllByStudent(1)).thenReturn(CreatorTestEntities.createCourses());
         return courseDaoMock;
     }
 
