@@ -14,7 +14,7 @@
 	<h1>Hello on my university page!</h1>
 	<div class="container">
 		<ul class="nav nav-tabs justify-content-end">
-			<li class="nav-item"><a class="nav-link" href="#">Students</a></li>
+			<li class="nav-item"><a class="nav-link" href="/DepartmentUniversity/students">Students</a></li>
 			<li class="nav-item"><a class="nav-link" href="#">Teachers</a></li>
 			<li class="nav-item"><a class="nav-link" href="/DepartmentUniversity/groups">Groups</a></li>
             <li class="nav-item"><a class="nav-link" href="/DepartmentUniversity/courses">Courses</a></li>
