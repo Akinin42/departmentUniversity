@@ -34,12 +34,6 @@ public class StudentController {
         return "students";
     }
     
-    @GetMapping("/newStudent")
-    public String addStudent(Model model) {       
-        model.addAttribute("student", new StudentDto());        
-        return "studentform";
-    }
-
     @GetMapping("/other")
     public String getOtherStudents(@RequestParam("number") int inputNumber, Model model) {
         model.addAttribute("students", studentService.findNumberOfUsers(5, number));
@@ -55,6 +49,12 @@ public class StudentController {
         model.addAttribute("students", studentService.findNumberOfUsers(5, number));
         return "students";
     }
+    
+    @GetMapping("/newStudent")
+    public String addStudent(Model model) {       
+        model.addAttribute("student", new StudentDto());        
+        return "studentform";
+    }    
     
     @PostMapping("/addStudent")
     public String addStudent(@ModelAttribute("student") StudentDto student) {        
