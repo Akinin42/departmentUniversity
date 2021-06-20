@@ -9,7 +9,8 @@ public class StudentDto {
     String name;
     String email;
     String phone;
-    String password;    
+    String password;
+    String confirmPassword;
     String courseName;
     String groupName;
 }
