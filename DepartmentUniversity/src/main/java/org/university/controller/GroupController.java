@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.university.dto.GroupDto;
 import org.university.dto.StudentDto;
-import org.university.entity.Course;
 import org.university.entity.Group;
 import org.university.service.GroupService;
 import org.university.service.StudentService;

@@ -40,6 +40,13 @@ public class StudentServiceImpl extends AbstractUserServiceImpl<Student> impleme
         this.courseDao = courseDao;
         this.encoder = encoder;
     }
+    
+    public void registerStudent(@NonNull StudentDto studentDto) {
+        if(studentDto.getPassword().equals(studentDto.getConfirmPassword())) {
+            Student student = mapDtoToEntity(studentDto);
+            register(student);
+        }
+    }
 
     @Override
     public Student login(String email, String password) {

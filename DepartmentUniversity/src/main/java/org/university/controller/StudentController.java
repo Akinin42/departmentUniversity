@@ -18,6 +18,7 @@ import org.university.service.StudentService;
 public class StudentController {
 
     private int number;
+    private static final String REDIRECT = "redirect:/students";
     
     @Autowired
     private StudentService studentService;
@@ -57,22 +58,22 @@ public class StudentController {
     
     @PostMapping("/addStudent")
     public String addStudent(@ModelAttribute("student") StudentDto student) {        
-        System.out.println();        
-        return "redirect:/students";
+        studentService.registerStudent(student);        
+        return REDIRECT;
     }
     
     @PostMapping("/addCourse")
     public String addCourse(@ModelAttribute("student") StudentDto student) {
         Course course = courseService.createCourse(student.getCourseName());
         studentService.addStudentToCourse(student, course);         
-        return "redirect:/students";
+        return REDIRECT;
     }
     
     @PostMapping("/deleteCourse")
     public String deleteCourse(@ModelAttribute("student") StudentDto student) {
         Course course = courseService.createCourse(student.getCourseName());
         studentService.deleteStudentFromCourse(student, course);         
-        return "redirect:/students";
+        return REDIRECT;
     }
 
 }

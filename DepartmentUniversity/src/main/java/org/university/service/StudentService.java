@@ -1,13 +1,14 @@
 package org.university.service;
 
 import java.util.List;
-
 import org.university.dto.StudentDto;
 import org.university.entity.Course;
 import org.university.entity.Group;
 import org.university.entity.Student;
 
 public interface StudentService extends UserService<Student> {
+    
+    void registerStudent(StudentDto studentDto);
 
     Student login(String email, String password);
 
