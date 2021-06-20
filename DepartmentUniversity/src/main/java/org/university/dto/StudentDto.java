@@ -11,5 +11,5 @@ public class StudentDto {
     String phone;
     String password;    
     String courseName;
-    Integer groupId;
+    String groupName;
 }

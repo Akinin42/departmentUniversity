@@ -18,8 +18,10 @@ import org.university.service.StudentService;
 public class StudentController {
 
     private int number;
+    
     @Autowired
     private StudentService studentService;
+    
     @Autowired
     private CourseService courseService;
 

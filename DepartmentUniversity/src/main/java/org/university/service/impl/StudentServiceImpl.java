@@ -66,8 +66,10 @@ public class StudentServiceImpl extends AbstractUserServiceImpl<Student> impleme
     }
 
     @Override
-    public void addStudentToGroup(@NonNull Student student, @NonNull Group group) {
+    public void addStudentToGroup(@NonNull StudentDto studentDto, @NonNull Group group) {
+        Student student = mapDtoToEntity(studentDto);
         existsStudentAndGroup(student, group);
+        student = studentDao.findById(studentDto.getId()).get();
         if (!studentDao.findAllByGroup(group.getName()).contains(student)) {
             studentDao.insertStudentToGroup(student, group);
             log.info("Student with id {} added to group {}!", student.getId(), group.getName());
@@ -75,7 +77,8 @@ public class StudentServiceImpl extends AbstractUserServiceImpl<Student> impleme
     }
 
     @Override
-    public void deleteStudentFromGroup(@NonNull Student student, @NonNull Group group) {
+    public void deleteStudentFromGroup(@NonNull StudentDto studentDto, @NonNull Group group) {
+        Student student = mapDtoToEntity(studentDto);
         existsStudentAndGroup(student, group);
         studentDao.deleteStudentFromGroup(student.getId(), group.getId());
         log.info("Student with id {} deleted from group {}!", student.getId(), group.getName());
@@ -110,6 +113,11 @@ public class StudentServiceImpl extends AbstractUserServiceImpl<Student> impleme
             students.set(i, addCoursesToStudent(students.get(i), courses));
         }
         return students;        
+    }
+    
+    @Override
+    public List<Student> findAll() {        
+        return studentDao.findAll();
     }
 
     private Student addCoursesToStudent(Student student, List<Course> courses) {
