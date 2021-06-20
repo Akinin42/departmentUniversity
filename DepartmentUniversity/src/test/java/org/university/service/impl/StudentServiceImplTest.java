@@ -17,6 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.university.dao.impl.CourseDaoImpl;
 import org.university.dao.impl.GroupDaoImpl;
 import org.university.dao.impl.StudentDaoImpl;
+import org.university.dto.StudentDto;
 import org.university.entity.Course;
 import org.university.entity.Group;
 import org.university.entity.Student;
@@ -210,41 +211,50 @@ class StudentServiceImplTest {
 
     @Test
     void addStudentToCourseShouldAddStudentToCourseWhenInputCourseAndStudentExists() {
-        Student student = CreatorTestEntities.createStudents().get(5);
+        StudentDto studentDto = new StudentDto();
+        studentDto.setId(6);
         Course course = CreatorTestEntities.createCourses().get(0);
         List<Course> courses = new ArrayList<>();
         courses.add(course);
-        studentService.addStudentToCourse(student, course);
+        studentService.addStudentToCourse(studentDto, course);
+        Student student = Student
+                .builder()
+                .withId(6)
+                .build();
         verify(studentDaoMock).insertStudentToCourses(student, courses);
     }
 
     @Test
     void addStudentToCourseShouldNotAddStudentToCourseWhenStudentHasThisCourseYet() {
-        Student student = CreatorTestEntities.createStudents().get(0);
+        StudentDto studentDto = new StudentDto();
+        studentDto.setId(1);        
         Course course = CreatorTestEntities.createCourses().get(0);
         List<Course> courses = new ArrayList<>();
         courses.add(course);
-        studentService.addStudentToCourse(student, course);
+        studentService.addStudentToCourse(studentDto, course);
+        Student student = CreatorTestEntities.createStudents().get(0);
         verify(studentDaoMock, never()).insertStudentToCourses(student, courses);
     }
 
     @Test
     void addStudentToCourseShouldThrowEntityNotExistExceptionWhenInputStudentNotExists() {
-        Student student = getTestStudent();
+        StudentDto studentDto = new StudentDto();
+        studentDto.setId(10);
         Course course = CreatorTestEntities.createCourses().get(0);
-        assertThatThrownBy(() -> studentService.addStudentToCourse(student, course))
+        assertThatThrownBy(() -> studentService.addStudentToCourse(studentDto, course))
                 .isInstanceOf(EntityNotExistException.class);
     }
 
     @Test
     void addStudentToCourseShouldThrowEntityNotExistExceptionWhenInputCourseNotExists() {
-        Student student = CreatorTestEntities.createStudents().get(0);
+        StudentDto studentDto = new StudentDto();
+        studentDto.setId(1);
         Course course = Course.builder()
                 .withId(5)
                 .withName("notExist")
                 .withDescription("test")
                 .build();
-        assertThatThrownBy(() -> studentService.addStudentToCourse(student, course))
+        assertThatThrownBy(() -> studentService.addStudentToCourse(studentDto, course))
                 .isInstanceOf(EntityNotExistException.class);
     }
 
@@ -257,8 +267,9 @@ class StudentServiceImplTest {
 
     @Test
     void addStudentToCourseShouldThrowIllegalArgumentExceptionWhenInputCourseNull() {
-        Student student = CreatorTestEntities.createStudents().get(0);
-        assertThatThrownBy(() -> studentService.addStudentToCourse(student, null))
+        StudentDto studentDto = new StudentDto();
+        studentDto.setId(1);
+        assertThatThrownBy(() -> studentService.addStudentToCourse(studentDto, null))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 

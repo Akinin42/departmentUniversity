@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import org.university.dao.CourseDao;
 import org.university.dao.GroupDao;
 import org.university.dao.StudentDao;
+import org.university.dto.StudentDto;
 import org.university.entity.Course;
 import org.university.entity.Group;
 import org.university.entity.Student;
@@ -81,7 +82,8 @@ public class StudentServiceImpl extends AbstractUserServiceImpl<Student> impleme
     }
 
     @Override
-    public void addStudentToCourse(@NonNull Student student, @NonNull Course course) {
+    public void addStudentToCourse(@NonNull StudentDto studentDto, @NonNull Course course) {
+        Student student = mapDtoToEntity(studentDto);
         existsStudentAndCourse(student, course);
         if (!studentDao.findAllByCourse(course.getName()).contains(student)) {
             List<Course> courses = new ArrayList<>();
@@ -131,5 +133,16 @@ public class StudentServiceImpl extends AbstractUserServiceImpl<Student> impleme
         if (!existsUser(student) || groupDao.findById(group.getId()).equals(Optional.empty())) {
             throw new EntityNotExistException();
         }
+    }
+    
+    private Student mapDtoToEntity(StudentDto student) {
+        return Student.builder()
+                .withId(student.getId())
+                .withSex(student.getSex())
+                .withName(student.getName())
+                .withEmail(student.getEmail())
+                .withPhone(student.getPhone())
+                .withPassword(student.getPassword())
+                .build();
     }
 }
