@@ -94,7 +94,8 @@ public class StudentServiceImpl extends AbstractUserServiceImpl<Student> impleme
     }
 
     @Override
-    public void deleteStudentFromCourse(@NonNull Student student, @NonNull Course course) {
+    public void deleteStudentFromCourse(@NonNull StudentDto studentDto, @NonNull Course course) {
+        Student student = mapDtoToEntity(studentDto);
         existsStudentAndCourse(student, course);
         studentDao.deleteStudentFromCourse(student.getId(), course.getId());
         log.info("Student with id {} deleted from course {}!", student.getId(), course.getName());

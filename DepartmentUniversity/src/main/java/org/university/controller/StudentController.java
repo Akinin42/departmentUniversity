@@ -50,5 +50,12 @@ public class StudentController {
         studentService.addStudentToCourse(student, course);         
         return "redirect:/students";
     }
+    
+    @PostMapping("/deleteCourse")
+    public String deleteCourse(@ModelAttribute("student") StudentDto student) {
+        Course course = courseService.createCourse(student.getCourseName());
+        studentService.deleteStudentFromCourse(student, course);         
+        return "redirect:/students";
+    }
 
 }

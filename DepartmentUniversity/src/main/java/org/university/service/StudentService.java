@@ -15,5 +15,5 @@ public interface StudentService extends UserService<Student> {
     
     void addStudentToCourse(StudentDto studentDto, Course course);
     
-    void deleteStudentFromCourse(Student student, Course course);
+    void deleteStudentFromCourse(StudentDto studentDto, Course course);
 }

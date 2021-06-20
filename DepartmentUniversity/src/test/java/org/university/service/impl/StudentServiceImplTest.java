@@ -275,9 +275,10 @@ class StudentServiceImplTest {
 
     @Test
     void deleteStudentFromCourseShouldDeleteStudentFromCourseWhenInputGroupAndStudentExists() {
-        Student student = CreatorTestEntities.createStudents().get(0);
+        StudentDto studentDto = new StudentDto();
+        studentDto.setId(1);
         Course course = CreatorTestEntities.createCourses().get(0);
-        studentService.deleteStudentFromCourse(student, course);
+        studentService.deleteStudentFromCourse(studentDto, course);
         verify(studentDaoMock).deleteStudentFromCourse(1, 1);
     }
 
@@ -290,8 +291,9 @@ class StudentServiceImplTest {
 
     @Test
     void deleteStudentFromCourseShouldThrowIllegalArgumentExceptionWhenInputCourseNull() {
-        Student student = CreatorTestEntities.createStudents().get(0);
-        assertThatThrownBy(() -> studentService.deleteStudentFromCourse(student, null))
+        StudentDto studentDto = new StudentDto();
+        studentDto.setId(1);
+        assertThatThrownBy(() -> studentService.deleteStudentFromCourse(studentDto, null))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 

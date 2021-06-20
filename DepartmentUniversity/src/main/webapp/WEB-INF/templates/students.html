@@ -16,13 +16,14 @@
 		<table class="table table-hover table-striped">
 			<thead>
 				<tr class="table-primary">
-					<th style="width: 70px;">Student ID</th>
-					<th style="width: 70px;">Gender</th>
-					<th style="width: 120px;">Name</th>
-					<th style="width: 120px;">Email</th>
-					<th style="width: 120px;">Phone</th>
-					<th style="width: 120px;">Courses</th>
-					<th style="width: 120px;">Add course</th>
+					<th>Student ID</th>
+					<th>Gender</th>
+					<th>Name</th>
+					<th>Email</th>
+					<th>Phone</th>
+					<th>Courses</th>
+					<th>Add course</th>
+					<th>Delete course</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -51,6 +52,15 @@
 							<button type="submit" class="btn btn-warning btn-sm w-100" th:value="student">Add course</button>
 						</form>
 					</td>
+					<td>
+                        <form action="#" th:action="@{/students/deleteCourse}" th:object="${student}" method="post">
+                            <input class="form-control" type="hidden" th:value="${student.id}" id="id" name="id" /> 
+                            <select id="courseName" th:field="*{courseName}" class="form-select" aria-label="Default select example">
+                                <option  th:each="course : ${courses}" th:value="${course.name}" th:text="${course.name}" ></option>
+                            </select>
+                            <button type="submit" class="btn btn-warning btn-sm w-100" th:value="student">Delete course</button>
+                        </form>
+                    </td>
 				</tr>
 			</tbody>
 		</table>
