@@ -47,6 +47,11 @@ public class StudentServiceImpl extends AbstractUserServiceImpl<Student> impleme
             register(student);
         }
     }
+    
+    public void deleteStudent(@NonNull StudentDto studentDto) {
+        Student student = mapDtoToEntity(studentDto);
+        delete(student);
+    }
 
     @Override
     public Student login(String email, String password) {

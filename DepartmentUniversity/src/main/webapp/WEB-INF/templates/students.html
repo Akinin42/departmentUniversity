@@ -64,6 +64,14 @@
                             <button type="submit" class="btn btn-warning btn-sm w-100" th:value="student">Delete course</button>
                         </form>
                     </td>
+                    
+                    <td>
+                        <form action="#" th:action="@{/students/delete}" th:object="${student}" method="post">
+                        <input class="form-control" type="hidden" th:value="${student.id}" id="id" name="id"/>                        
+                        <button type="submit" class="btn btn-warning btn-sm w-100" th:value="student">
+                                Delete</button>
+                        </form>
+                    </td>
 				</tr>
 			</tbody>
 		</table>
