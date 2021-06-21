@@ -8,6 +8,7 @@
 	rel="stylesheet"
 	integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x"
 	crossorigin="anonymous">
+	<link rel="stylesheet" href="/static/css/font-awesome.min.css" />
 <title>university!</title>
 </head>
 <body>
@@ -15,10 +16,10 @@
 	<div class="container">
 		<ul class="nav nav-tabs justify-content-end">
 			<li class="nav-item"><a class="nav-link" href="/DepartmentUniversity/students">Students</a></li>
-			<li class="nav-item"><a class="nav-link" href="/DepartmentUniversity/teachers">Teachers</a></li>
-			<li class="nav-item"><a class="nav-link" href="/DepartmentUniversity/groups">Groups</a></li>
-            <li class="nav-item"><a class="nav-link" href="/DepartmentUniversity/courses">Courses</a></li>
-            <li class="nav-item"><a class="nav-link" href="/DepartmentUniversity/classrooms">Classrooms</a></li>
+                <li class="nav-item"><a class="nav-link" href="/DepartmentUniversity/teachers">Teachers</a></li>
+                <li class="nav-item"><a class="nav-link" href="/DepartmentUniversity/groups">Groups</a></li>
+                <li class="nav-item"><a class="nav-link" href="/DepartmentUniversity/courses">Courses</a></li>
+                <li class="nav-item"><a class="nav-link" href="/DepartmentUniversity/classrooms">Classrooms</a></li>
 		</ul>
 	</div>
 	<script

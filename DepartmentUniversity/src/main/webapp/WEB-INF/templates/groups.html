@@ -31,7 +31,8 @@
 					<th>Name</th>
 					<th>Students</th>
 					<th>Add student</th>
-					<th>Delete student</th>
+					<th>Get timetable</th>
+					<th>Delete student</th>					
 				</tr>
 			</thead>
 			<tbody>
@@ -66,11 +67,19 @@
                             <button type="submit" class="btn btn-warning btn-sm w-100" th:value="student">Delete student</button>
                         </form>
                     </td>
+                    
+                    <td>
+                        <form action="#" th:action="@{/groups/groupTimetable}" th:object="${group}" method="post">
+                        <input class="form-control" type="hidden" th:value="${group.id}" id="id" name="id"/>
+                        <input class="form-control" type="date" th:value="${timetableDate}" id="timetableDate" name="timetableDate"/>                            
+                        <button class="btn btn-primary" type="submit" th:value="group">Get timetable</button>
+                        </form>
+                    </td>
+                    
 					<td>
 						<form action="#" th:action="@{/groups/delete}" th:object="${group}" method="post">
 						<input class="form-control" type="hidden" th:value="${group.id}" id="id" name="id"/>						
-						<button type="submit" class="btn btn-warning btn-sm w-100" th:value="group">
-								Delete</button>
+						<button type="submit" class="btn btn-warning btn-sm w-100" th:value="group">Delete</button>
 						</form>
 					</td>
 

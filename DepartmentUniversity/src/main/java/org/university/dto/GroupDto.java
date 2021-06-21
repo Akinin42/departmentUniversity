@@ -1,6 +1,7 @@
 package org.university.dto;
 
 import java.util.List;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.university.entity.Student;
 import lombok.Data;
 
@@ -8,5 +9,7 @@ import lombok.Data;
 public class GroupDto {    
     Integer id;
     String name;
-    List<Student> students;
+    List<Student> students;    
+    @DateTimeFormat(pattern = "dd/MM/yyyy")
+    String timetableDate;
 }

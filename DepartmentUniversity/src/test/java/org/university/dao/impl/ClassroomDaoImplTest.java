@@ -13,9 +13,9 @@ import org.university.dao.ScriptExecutor;
 import org.university.entity.Classroom;
 import org.university.utils.CreatorTestEntities;
 
-class ClassroomDaoImplTest {
-
-    private static ClassroomDaoImpl classroomDao;
+class ClassroomDaoImplTest {    
+   
+    private static ClassroomDaoImpl classroomDao;   
     private static ScriptExecutor executor;
 
     @BeforeAll

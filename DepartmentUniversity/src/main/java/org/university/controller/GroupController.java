@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.university.dto.GroupDto;
 import org.university.dto.StudentDto;
 import org.university.entity.Group;
+import org.university.service.DayTimetableService;
 import org.university.service.GroupService;
 import org.university.service.StudentService;
 
@@ -22,6 +23,9 @@ public class GroupController {
     
     @Autowired
     private StudentService studentService;
+    
+    @Autowired
+    private DayTimetableService timetableService;
 
     @GetMapping()
     public String getAll(Model model) {
@@ -56,5 +60,11 @@ public class GroupController {
     public String delete(@ModelAttribute("group") GroupDto group) {        
         groupService.delete(group);  
         return "redirect:/groups";
+    }
+    
+    @PostMapping("/groupTimetable")
+    public String createGroupTimetable(@ModelAttribute("group")GroupDto group, Model model) {
+        model.addAttribute("lessons", timetableService.createGroupTimetable("", group.getName()));
+        return "lessons";
     }
 }
