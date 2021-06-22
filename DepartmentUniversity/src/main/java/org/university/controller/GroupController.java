@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.university.dto.GroupDto;
 import org.university.dto.StudentDto;
 import org.university.entity.Group;
-import org.university.service.DayTimetableService;
 import org.university.service.GroupService;
 import org.university.service.StudentService;
 
@@ -20,12 +19,9 @@ public class GroupController {
 
     @Autowired
     private GroupService groupService;
-    
+
     @Autowired
     private StudentService studentService;
-    
-    @Autowired
-    private DayTimetableService timetableService;
 
     @GetMapping()
     public String getAll(Model model) {
@@ -35,36 +31,30 @@ public class GroupController {
         model.addAttribute("students", studentService.findAll());
         return "groups";
     }
-    
+
     @PostMapping()
-    public String add(@ModelAttribute("group") GroupDto group) {        
-        groupService.addGroup(group);  
+    public String add(@ModelAttribute("group") GroupDto group) {
+        groupService.addGroup(group);
         return "redirect:/groups";
     }
-    
+
     @PostMapping("/addStudent")
     public String addStudent(@ModelAttribute("student") StudentDto student) {
-        Group group = groupService.createGroup(student.getGroupName()); 
-        studentService.addStudentToGroup(student, group);        
+        Group group = groupService.createGroup(student.getGroupName());
+        studentService.addStudentToGroup(student, group);
         return "redirect:/groups";
     }
-    
+
     @PostMapping("/deleteStudent")
     public String deleteStudent(@ModelAttribute("student") StudentDto student) {
-        Group group = groupService.createGroup(student.getGroupName()); 
-        studentService.deleteStudentFromGroup(student, group);        
+        Group group = groupService.createGroup(student.getGroupName());
+        studentService.deleteStudentFromGroup(student, group);
         return "redirect:/groups";
     }
-    
+
     @PostMapping("/delete")
-    public String delete(@ModelAttribute("group") GroupDto group) {        
-        groupService.delete(group);  
+    public String delete(@ModelAttribute("group") GroupDto group) {
+        groupService.delete(group);
         return "redirect:/groups";
-    }
-    
-    @PostMapping("/groupTimetable")
-    public String createGroupTimetable(@ModelAttribute("group")GroupDto group, Model model) {
-        model.addAttribute("lessons", timetableService.createGroupTimetable("", group.getName()));
-        return "lessons";
-    }
+    }    
 }

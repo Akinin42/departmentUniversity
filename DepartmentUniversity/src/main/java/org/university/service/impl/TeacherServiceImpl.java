@@ -1,5 +1,7 @@
 package org.university.service.impl;
 
+import java.util.List;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.university.dao.TeacherDao;
@@ -64,6 +66,11 @@ public class TeacherServiceImpl extends AbstractUserServiceImpl<Teacher> impleme
             Teacher teacher = mapDtoToEntity(teacherDto);
             register(teacher);
         }
+    }
+    
+    @Override
+    public List<Teacher> findAll() {        
+        return teacherDao.findAll();
     }
     
     private Teacher mapDtoToEntity(TeacherDto teacher) {

@@ -1,5 +1,6 @@
 package org.university.dao.impl;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -15,7 +16,7 @@ public class LessonDaoImpl extends AbstractCrudImpl<Lesson> implements LessonDao
 
     private static final String SAVE_QUERY = "INSERT INTO lessons (lesson_start, lesson_end, lesson_online, "
             + "lesson_link, lesson_classroom, lesson_course, lesson_teacher, lesson_group) VALUES(?,?,?,?,?,?,?,?)";
-    private static final String SELECT_INNER_JOIN_OTHERS_TABLES = "SELECT  * FROM lessons "
+    private static final String SELECT_INNER_JOIN_OTHERS_TABLES = "SELECT * FROM lessons "
             + "INNER JOIN classrooms ON lessons.lesson_classroom = classrooms.classroom_id "
             + "INNER JOIN courses ON lessons.lesson_course = courses.course_id "
             + "INNER JOIN teachers ON lessons.lesson_teacher = teachers.teacher_id "
@@ -64,12 +65,12 @@ public class LessonDaoImpl extends AbstractCrudImpl<Lesson> implements LessonDao
 
     @Override
     public List<Lesson> findAllByDateAndTeacher(String date, int teacherId) {
-        return jdbcTemplate.query(FIND_ALL_BY_DATE_AND_TEACHER_QUERY, getMapper(), date, teacherId);
+        return jdbcTemplate.query(FIND_ALL_BY_DATE_AND_TEACHER_QUERY, getMapper(), LocalDate.parse(date), teacherId);
     }
 
     @Override
     public List<Lesson> findAllByDateAndGroup(String date, int groupId) {
-        return jdbcTemplate.query(FIND_ALL_BY_DATE_AND_GROUP_QUERY, getMapper(), date, groupId);
+        return jdbcTemplate.query(FIND_ALL_BY_DATE_AND_GROUP_QUERY, getMapper(), LocalDate.parse(date), groupId);
     }
 
     @Override
@@ -94,6 +95,6 @@ public class LessonDaoImpl extends AbstractCrudImpl<Lesson> implements LessonDao
 
     @Override
     public List<Lesson> findAllByDate(String date) {
-        return jdbcTemplate.query(FIND_ALL_BY_DATE_QUERY, getMapper(), date);
+        return jdbcTemplate.query(FIND_ALL_BY_DATE_QUERY, getMapper(), LocalDate.parse(date));
     }
 }
