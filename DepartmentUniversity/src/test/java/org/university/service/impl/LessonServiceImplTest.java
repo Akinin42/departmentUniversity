@@ -13,6 +13,7 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.university.dao.impl.LessonDaoImpl;
+import org.university.dto.LessonDto;
 import org.university.entity.Classroom;
 import org.university.entity.Group;
 import org.university.entity.Lesson;
@@ -22,6 +23,7 @@ import org.university.exceptions.EntityAlreadyExistException;
 import org.university.exceptions.EntityNotExistException;
 import org.university.exceptions.InvalidClassroomCapacityException;
 import org.university.exceptions.InvalidLessonTimeException;
+import org.university.service.mapper.LessonMapper;
 import org.university.service.validator.LessonValidator;
 import org.university.utils.CreatorTestEntities;
 
@@ -30,11 +32,13 @@ class LessonServiceImplTest {
     private static LessonServiceImpl lessonService;
     private static LessonDaoImpl lessonDaoMock;
     private static Lesson lessonMock;
+    private static LessonMapper mapperMock;
 
     @BeforeAll
     static void init() {
         lessonDaoMock = createLessonDaoMock();
-        lessonService = new LessonServiceImpl(lessonDaoMock, new LessonValidator());
+        mapperMock = mock(LessonMapper.class);
+        lessonService = new LessonServiceImpl(lessonDaoMock, new LessonValidator(), mapperMock);
         lessonMock = createLessonMock();
     }
 
@@ -66,54 +70,70 @@ class LessonServiceImplTest {
         when(students.size()).thenReturn(10);
         when(lessonMock.getClassroom()).thenReturn(classroomMock);
         when(classroomMock.getCapacity()).thenReturn(5);
-        assertThatThrownBy(() -> lessonService.addLesson(lessonMock))
+        LessonDto lessonDto = new LessonDto();
+        when(mapperMock.mapDtoToEntity(lessonDto)).thenReturn(lessonMock);
+        assertThatThrownBy(() -> lessonService.addLesson(lessonDto))
                 .isInstanceOf(InvalidClassroomCapacityException.class);
     }
 
     @Test
     void addLessonShouldThrowInvalidLessonTimeExceptionWhenInputLessonStartTimeIsSunday() {
         when(lessonMock.getStartLesson()).thenReturn(LocalDateTime.of(2021, Month.MAY, 30, 10, 00, 00));
-        assertThatThrownBy(() -> lessonService.addLesson(lessonMock)).isInstanceOf(InvalidLessonTimeException.class);
+        LessonDto lessonDto = new LessonDto();
+        when(mapperMock.mapDtoToEntity(lessonDto)).thenReturn(lessonMock);
+        assertThatThrownBy(() -> lessonService.addLesson(lessonDto)).isInstanceOf(InvalidLessonTimeException.class);
     }
 
     @Test
     void addLessonShouldThrowInvalidLessonTimeExceptionWhenInputLessonStartTimeBeforeNineAM() {
         when(lessonMock.getStartLesson()).thenReturn(LocalDateTime.of(2021, Month.MAY, 28, 8, 00, 00));
-        assertThatThrownBy(() -> lessonService.addLesson(lessonMock)).isInstanceOf(InvalidLessonTimeException.class);
+        LessonDto lessonDto = new LessonDto();
+        when(mapperMock.mapDtoToEntity(lessonDto)).thenReturn(lessonMock);
+        assertThatThrownBy(() -> lessonService.addLesson(lessonDto)).isInstanceOf(InvalidLessonTimeException.class);
     }
 
     @Test
     void addLessonShouldThrowInvalidLessonTimeExceptionWhenInputLessonStartTimeAfterSixPM() {
         when(lessonMock.getStartLesson()).thenReturn(LocalDateTime.of(2021, Month.MAY, 28, 20, 00, 00));
-        assertThatThrownBy(() -> lessonService.addLesson(lessonMock)).isInstanceOf(InvalidLessonTimeException.class);
+        LessonDto lessonDto = new LessonDto();
+        when(mapperMock.mapDtoToEntity(lessonDto)).thenReturn(lessonMock);
+        assertThatThrownBy(() -> lessonService.addLesson(lessonDto)).isInstanceOf(InvalidLessonTimeException.class);
     }
 
     @Test
     void addLessonShouldThrowInvalidLessonTimeExceptionWhenInputLessonStartLaterLessonEnd() {
         when(lessonMock.getStartLesson()).thenReturn(LocalDateTime.of(2021, Month.MAY, 28, 15, 00, 00));
         when(lessonMock.getEndLesson()).thenReturn(LocalDateTime.of(2021, Month.MAY, 28, 13, 00, 00));
-        assertThatThrownBy(() -> lessonService.addLesson(lessonMock)).isInstanceOf(InvalidLessonTimeException.class);
+        LessonDto lessonDto = new LessonDto();
+        when(mapperMock.mapDtoToEntity(lessonDto)).thenReturn(lessonMock);
+        assertThatThrownBy(() -> lessonService.addLesson(lessonDto)).isInstanceOf(InvalidLessonTimeException.class);
     }
 
     @Test
     void addLessonShouldThrowInvalidLessonTimeExceptionWhenInputLessonStartEqualLessonEnd() {
         when(lessonMock.getStartLesson()).thenReturn(LocalDateTime.of(2021, Month.MAY, 28, 15, 00, 00));
         when(lessonMock.getEndLesson()).thenReturn(LocalDateTime.of(2021, Month.MAY, 28, 15, 00, 00));
-        assertThatThrownBy(() -> lessonService.addLesson(lessonMock)).isInstanceOf(InvalidLessonTimeException.class);
+        LessonDto lessonDto = new LessonDto();
+        when(mapperMock.mapDtoToEntity(lessonDto)).thenReturn(lessonMock);
+        assertThatThrownBy(() -> lessonService.addLesson(lessonDto)).isInstanceOf(InvalidLessonTimeException.class);
     }
 
     @Test
     void addLessonShouldThrowEntityAlreadyExistExceptionWhenInputLessonExist() {
         Lesson lessonMock = createLessonMock();
         when(lessonMock.getId()).thenReturn(1);
-        assertThatThrownBy(() -> lessonService.addLesson(lessonMock)).isInstanceOf(EntityAlreadyExistException.class);
+        LessonDto lessonDto = new LessonDto();
+        when(mapperMock.mapDtoToEntity(lessonDto)).thenReturn(lessonMock);
+        assertThatThrownBy(() -> lessonService.addLesson(lessonDto)).isInstanceOf(EntityAlreadyExistException.class);
     }
 
     @Test
     void addLessonShouldThrowInvalidLessonTimeExceptionWhenTeacherBusyThisTime() {
         when(lessonMock.getStartLesson()).thenReturn(LocalDateTime.of(2021, Month.OCTOBER, 19, 15, 00, 00));
         when(lessonMock.getEndLesson()).thenReturn(LocalDateTime.of(2021, Month.OCTOBER, 19, 16, 00, 00));
-        assertThatThrownBy(() -> lessonService.addLesson(lessonMock)).isInstanceOf(InvalidLessonTimeException.class);
+        LessonDto lessonDto = new LessonDto();
+        when(mapperMock.mapDtoToEntity(lessonDto)).thenReturn(lessonMock);
+        assertThatThrownBy(() -> lessonService.addLesson(lessonDto)).isInstanceOf(InvalidLessonTimeException.class);
     }
 
     @Test
@@ -124,14 +144,18 @@ class LessonServiceImplTest {
         lessons.remove(2);
         lessons.remove(1);
         when(lessonDaoMock.findAllByDateAndGroup("2021-10-19", 2)).thenReturn(lessons);
-        assertThatThrownBy(() -> lessonService.addLesson(lessonMock)).isInstanceOf(InvalidLessonTimeException.class);
+        LessonDto lessonDto = new LessonDto();
+        when(mapperMock.mapDtoToEntity(lessonDto)).thenReturn(lessonMock);
+        assertThatThrownBy(() -> lessonService.addLesson(lessonDto)).isInstanceOf(InvalidLessonTimeException.class);
     }
 
     @Test
     void addLessonShouldSaveLessonWhenLessonValidOrTeqcherAndGroupFree() {
         when(lessonMock.getStartLesson()).thenReturn(LocalDateTime.of(2021, Month.OCTOBER, 19, 18, 00, 00));
         when(lessonMock.getEndLesson()).thenReturn(LocalDateTime.of(2021, Month.OCTOBER, 19, 19, 00, 00));
-        lessonService.addLesson(lessonMock);
+        LessonDto lessonDto = new LessonDto();
+        when(mapperMock.mapDtoToEntity(lessonDto)).thenReturn(lessonMock);
+        lessonService.addLesson(lessonDto);
         verify(lessonDaoMock).save(lessonMock);
     }
 
@@ -139,7 +163,9 @@ class LessonServiceImplTest {
     void addLessonShouldThrowInvalidLessonTimeExceptionWhenLessonAfterLastButNotBeforeNext() {
         when(lessonMock.getStartLesson()).thenReturn(LocalDateTime.of(2021, Month.OCTOBER, 19, 18, 00, 00));
         when(lessonMock.getEndLesson()).thenReturn(LocalDateTime.of(2021, Month.OCTOBER, 19, 21, 00, 00));
-        assertThatThrownBy(() -> lessonService.addLesson(lessonMock)).isInstanceOf(InvalidLessonTimeException.class);
+        LessonDto lessonDto = new LessonDto();
+        when(mapperMock.mapDtoToEntity(lessonDto)).thenReturn(lessonMock);
+        assertThatThrownBy(() -> lessonService.addLesson(lessonDto)).isInstanceOf(InvalidLessonTimeException.class);
     }
 
     @Test
@@ -147,7 +173,9 @@ class LessonServiceImplTest {
         Lesson lessonMock = createLessonMock();
         when(lessonMock.getStartLesson()).thenReturn(LocalDateTime.of(2021, Month.OCTOBER, 19, 10, 00, 00));
         when(lessonMock.getEndLesson()).thenReturn(LocalDateTime.of(2021, Month.OCTOBER, 19, 12, 00, 00));
-        lessonService.addLesson(lessonMock);
+        LessonDto lessonDto = new LessonDto();
+        when(mapperMock.mapDtoToEntity(lessonDto)).thenReturn(lessonMock);
+        lessonService.addLesson(lessonDto);
         verify(lessonDaoMock).save(lessonMock);
     }
 
@@ -160,7 +188,9 @@ class LessonServiceImplTest {
         when(lessonDaoMock.findAllByDateAndTeacher("2021-10-19", 2)).thenReturn(lessons);
         when(lessonDaoMock.findAllByDateAndGroup("2021-10-19", 2)).thenReturn(lessons);
         when(lessonMock.getClassroom()).thenReturn(CreatorTestEntities.createClassrooms().get(0));
-        lessonService.addLesson(lessonMock);
+        LessonDto lessonDto = new LessonDto();
+        when(mapperMock.mapDtoToEntity(lessonDto)).thenReturn(lessonMock);
+        lessonService.addLesson(lessonDto);
         verify(lessonDaoMock).save(lessonMock);
     }
 
@@ -173,7 +203,9 @@ class LessonServiceImplTest {
         lessons.remove(0);
         when(lessonDaoMock.findAllByDateAndTeacher("2021-10-19", 2)).thenReturn(lessons);
         when(lessonDaoMock.findAllByDateAndGroup("2021-10-19", 2)).thenReturn(lessons);
-        assertThatThrownBy(() -> lessonService.addLesson(lessonMock)).isInstanceOf(ClassroomBusyException.class);
+        LessonDto lessonDto = new LessonDto();
+        when(mapperMock.mapDtoToEntity(lessonDto)).thenReturn(lessonMock);
+        assertThatThrownBy(() -> lessonService.addLesson(lessonDto)).isInstanceOf(ClassroomBusyException.class);
     }
 
     @Test

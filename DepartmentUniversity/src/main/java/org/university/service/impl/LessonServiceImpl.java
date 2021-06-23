@@ -6,12 +6,14 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Component;
 import org.university.dao.LessonDao;
+import org.university.dto.LessonDto;
 import org.university.entity.Lesson;
 import org.university.exceptions.ClassroomBusyException;
 import org.university.exceptions.EntityAlreadyExistException;
 import org.university.exceptions.EntityNotExistException;
 import org.university.exceptions.InvalidLessonTimeException;
 import org.university.service.LessonService;
+import org.university.service.mapper.LessonMapper;
 import org.university.service.validator.LessonValidator;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -27,6 +29,7 @@ public class LessonServiceImpl implements LessonService {
 
     LessonDao lessonDao;
     LessonValidator validator;
+    LessonMapper mapper;
 
     @Override
     public Lesson createLesson(String startLesson, String teacherEmail, String groupName) {
@@ -37,7 +40,8 @@ public class LessonServiceImpl implements LessonService {
     }
 
     @Override
-    public void addLesson(@NonNull Lesson lesson) {
+    public void addLesson(@NonNull LessonDto lessonDto) {
+        Lesson lesson = mapper.mapDtoToEntity(lessonDto);
         validator.validate(lesson);
         if (existLesson(lesson)) {
             throw new EntityAlreadyExistException();
@@ -53,7 +57,6 @@ public class LessonServiceImpl implements LessonService {
         }
         lessonDao.save(lesson);
         log.info("Lesson added succesfull!");
-
     }
 
     @Override

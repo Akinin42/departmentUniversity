@@ -8,8 +8,12 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.university.dto.DayTimetableDto;
+import org.university.dto.LessonDto;
+import org.university.service.ClassroomService;
+import org.university.service.CourseService;
 import org.university.service.DayTimetableService;
 import org.university.service.GroupService;
+import org.university.service.LessonService;
 import org.university.service.TeacherService;
 
 @Controller
@@ -24,12 +28,21 @@ public class TimetableController {
 
     @Autowired
     private TeacherService teacherService;
+    
+    @Autowired
+    private CourseService courseService;
+    
+    @Autowired
+    private ClassroomService classroomService;
+    
+    @Autowired
+    private LessonService lessonService; 
 
     @GetMapping()
     public String getTimetable(Model model) {
         model.addAttribute("timetable", new DayTimetableDto());
         model.addAttribute("groups", groupService.findAllGroups());
-        model.addAttribute("teachers", teacherService.findAll());
+        model.addAttribute("teachers", teacherService.findAll());        
         return "timetables";
     }
 
@@ -42,10 +55,25 @@ public class TimetableController {
     
     @PostMapping("/getForTeacher")
     public String createTeacherTimetable(@ModelAttribute("timetable") DayTimetableDto timetable, Model model) {
-        System.out.println();
         model.addAttribute("lessons",
                 timetableService.createTeacherTimetable(timetable.getDay(), timetable.getTeacherEmail()).getLessons());
         return "lessons";
     }
-
+    
+    @GetMapping("/newLesson")
+    public String newLesson(Model model) {
+        model.addAttribute("groups", groupService.findAllGroups());
+        model.addAttribute("teachers", teacherService.findAll());
+        model.addAttribute("lesson", new LessonDto());
+        model.addAttribute("courses", courseService.findAllCourses());
+        model.addAttribute("classrooms", classroomService.findAllClassrooms());
+        return "lessonform";
+    }
+    
+    @PostMapping("/addLesson")
+    public String addLesson(@ModelAttribute("lesson")LessonDto lesson) {
+        System.out.println();
+        lessonService.addLesson(lesson);
+        return "lessons";
+    }
 }
