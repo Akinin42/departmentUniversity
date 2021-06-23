@@ -34,10 +34,17 @@ public class TimetableController {
     }
 
     @PostMapping("/getForGroup")
-    public String createGroupTimetable(@ModelAttribute("timetable") DayTimetableDto timetable, Model model) {
-        System.out.println();
+    public String createGroupTimetable(@ModelAttribute("timetable") DayTimetableDto timetable, Model model) {        
         model.addAttribute("lessons",
                 timetableService.createGroupTimetable(timetable.getDay(), timetable.getGroupName()).getLessons());
+        return "lessons";
+    }
+    
+    @PostMapping("/getForTeacher")
+    public String createTeacherTimetable(@ModelAttribute("timetable") DayTimetableDto timetable, Model model) {
+        System.out.println();
+        model.addAttribute("lessons",
+                timetableService.createTeacherTimetable(timetable.getDay(), timetable.getTeacherEmail()).getLessons());
         return "lessons";
     }
 

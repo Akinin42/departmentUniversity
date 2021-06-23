@@ -13,5 +13,5 @@ public class DayTimetableDto {
     String day;
     List<Lesson> lessons;
     String groupName;
-    String teacherName;
+    String teacherEmail;
 }
