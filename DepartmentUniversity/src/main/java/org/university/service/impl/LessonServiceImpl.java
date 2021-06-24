@@ -70,6 +70,9 @@ public class LessonServiceImpl implements LessonService {
     }
 
     private boolean checkFreeTime(Lesson lesson, List<Lesson> lessons) {
+        if(lessons.isEmpty()) {
+            return true;
+        }
         LocalDateTime inputLessonStart = lesson.getStartLesson();
         LocalDateTime inputLessonEnd = lesson.getEndLesson();
         for (int i = 0; i < lessons.size(); i++) {

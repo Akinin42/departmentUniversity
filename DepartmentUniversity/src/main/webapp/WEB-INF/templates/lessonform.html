@@ -41,10 +41,13 @@
                             </select>
                 </div>                
                     <label for="startLesson" class="cols-sm-2 control-label">Start lesson</label>
-                            <input  class="form-control" type="datetime-local" th:value="${testStart}" name="testStart"  id="testStart" />
+                            <input  class="form-control" type="datetime-local" th:value="${startLesson}" name="startLesson"  id="startLesson" />
                
                     <label for="Endlesson" class="cols-sm-2 control-label">End lesson</label>
-                            <input class="form-control" type="datetime-local"  th:value="${testEnd}" name="testEnd"  id="testEnd" />       
+                            <input class="form-control" type="datetime-local"  th:value="${endLesson}" name="endLesson"  id="endLesson" />
+                    <label for="onlineLesson" class="cols-sm-2 control-label">Online lesson</label>    
+                            <input type="radio" name="onlineLesson" th:value="true">                                   
+                            <input type="hidden" name="onlineLesson" th:value="false">                                   
 
                 <div class="form-group">
                     <button type="submit" id="button" class="btn btn-primary btn-lg btn-block login-button" th:value="lesson">Add lesson</button>

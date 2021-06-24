@@ -1,5 +1,7 @@
 package org.university.controller;
 
+import java.time.LocalDateTime;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -28,38 +30,38 @@ public class TimetableController {
 
     @Autowired
     private TeacherService teacherService;
-    
+
     @Autowired
     private CourseService courseService;
-    
+
     @Autowired
     private ClassroomService classroomService;
-    
+
     @Autowired
-    private LessonService lessonService; 
+    private LessonService lessonService;
 
     @GetMapping()
     public String getTimetable(Model model) {
         model.addAttribute("timetable", new DayTimetableDto());
         model.addAttribute("groups", groupService.findAllGroups());
-        model.addAttribute("teachers", teacherService.findAll());        
+        model.addAttribute("teachers", teacherService.findAll());
         return "timetables";
     }
 
     @PostMapping("/getForGroup")
-    public String createGroupTimetable(@ModelAttribute("timetable") DayTimetableDto timetable, Model model) {        
+    public String createGroupTimetable(@ModelAttribute("timetable") DayTimetableDto timetable, Model model) {
         model.addAttribute("lessons",
                 timetableService.createGroupTimetable(timetable.getDay(), timetable.getGroupName()).getLessons());
         return "lessons";
     }
-    
+
     @PostMapping("/getForTeacher")
     public String createTeacherTimetable(@ModelAttribute("timetable") DayTimetableDto timetable, Model model) {
         model.addAttribute("lessons",
                 timetableService.createTeacherTimetable(timetable.getDay(), timetable.getTeacherEmail()).getLessons());
         return "lessons";
     }
-    
+
     @GetMapping("/newLesson")
     public String newLesson(Model model) {
         model.addAttribute("groups", groupService.findAllGroups());
@@ -69,11 +71,12 @@ public class TimetableController {
         model.addAttribute("classrooms", classroomService.findAllClassrooms());
         return "lessonform";
     }
-    
+
     @PostMapping("/addLesson")
-    public String addLesson(@ModelAttribute("lesson")LessonDto lesson) {
-        System.out.println();
+    public String addLesson(@ModelAttribute("lesson") LessonDto lesson, Model model) {
         lessonService.addLesson(lesson);
+        String date = LocalDateTime.parse(lesson.getStartLesson()).toLocalDate().toString();
+        model.addAttribute("lessons", timetableService.createGroupTimetable(date, lesson.getGroupName()).getLessons());
         return "lessons";
     }
 }

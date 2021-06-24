@@ -1,13 +1,14 @@
 package org.university.service.mapper;
 
+import java.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.university.dao.ClassroomDao;
 import org.university.dao.CourseDao;
-import org.university.dao.GroupDao;
 import org.university.dao.TeacherDao;
 import org.university.dto.LessonDto;
 import org.university.entity.Lesson;
+import org.university.service.GroupService;
 
 @Component
 public class LessonMapper {    
@@ -16,7 +17,7 @@ public class LessonMapper {
     private CourseDao courseDao;
     
     @Autowired
-    private GroupDao groupDao;
+    private GroupService groupService;
     
     @Autowired
     private TeacherDao teacherDao;
@@ -27,11 +28,11 @@ public class LessonMapper {
     public Lesson mapDtoToEntity(LessonDto lesson) {
         return Lesson.builder()
                 .withCourse(courseDao.findByName(lesson.getCourseName()).get())
-                .withGroup(groupDao.findByName(lesson.getGroupName()).get())
+                .withGroup(groupService.createGroup(lesson.getGroupName()))
                 .withTeacher(teacherDao.findByEmail(lesson.getTeacherEmail()).get())
                 .withClassroom(classroomDao.findByNumber(lesson.getClassroomNumber()).get())
-                .withStartLesson(lesson.getStartLesson())
-                .withEndLesson(lesson.getEndLesson())
+                .withStartLesson(LocalDateTime.parse(lesson.getStartLesson()))
+                .withEndLesson(LocalDateTime.parse(lesson.getEndLesson()))
                 .withOnlineLesson(lesson.getOnlineLesson())
                 .withLessonLink(lesson.getLessonLink())
                 .build();

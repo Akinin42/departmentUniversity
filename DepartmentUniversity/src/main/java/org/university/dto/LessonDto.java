@@ -1,9 +1,6 @@
 package org.university.dto;
 
-import java.time.LocalDateTime;
-
 import org.springframework.format.annotation.DateTimeFormat;
-
 import lombok.Data;
 
 @Data
@@ -13,11 +10,9 @@ public class LessonDto {
     String teacherEmail;
     String groupName;
     @DateTimeFormat(pattern = "yyyy-MM-dd hh:mm")
-    String testStart;
+    String startLesson;
     @DateTimeFormat(pattern = "yyyy-MM-dd hh:mm")
-    String testEnd;
-    LocalDateTime startLesson;
-    LocalDateTime endLesson;
+    String endLesson;
     Integer classroomNumber;
     Boolean onlineLesson;
     String lessonLink;
