@@ -12,6 +12,7 @@
 </head>
 <body>
 	<div th:replace="header :: navbar"></div>
+	<a href="/DepartmentUniversity/timetables/newLesson">Add new lesson</a>
 	<div class="container">
         <table class="table table-hover table-striped">
             <thead>
@@ -23,6 +24,8 @@
                     <th>Start lesson</th>
                     <th>End lesson</th>
                     <th>Classroom number</th>                    
+                    <th>Online lesson</th>                    
+                    <th>Lesson link</th>                    
                 </tr>
             </thead>
             <tbody>
@@ -34,10 +37,18 @@
                     <td th:text="${lesson.startLesson}" />
                     <td th:text="${lesson.endLesson}" />
                     <td th:text="${lesson.classroom.number}" />                    
+                    <td th:text="${lesson.onlineLesson}" />                    
+                    <td th:text="${lesson.lessonLink}" />                    
                 </tr>
             </tbody>
         </table>
     </div>
-    <a href="/DepartmentUniversity/timetables/newLesson">Add new lesson</a>
+    
+    <div class="container">
+        <form action="#" th:action="@{/timetables/getOnDay}" th:object="${timetable}" method="post">            
+            <input class="form-control" type="date" th:value="${day}" id="day" name="day" />
+            <button class="btn btn-primary" type="submit" th:value="timetable">Get timetable</button>
+        </form>
+    </div>
 </body>
 </html>

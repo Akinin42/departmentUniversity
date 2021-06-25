@@ -1,7 +1,7 @@
 package org.university.controller;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -42,10 +42,14 @@ public class TimetableController {
 
     @GetMapping()
     public String getTimetable(Model model) {
-        model.addAttribute("timetable", new DayTimetableDto());
-        model.addAttribute("groups", groupService.findAllGroups());
-        model.addAttribute("teachers", teacherService.findAll());
-        return "timetables";
+        model.addAttribute("lessons", timetableService.createDayTimetable(LocalDate.now().toString()).getLessons());
+        return "lessons";
+    }
+
+    @PostMapping("/getOnDay")
+    public String getTimetableOnDay(@ModelAttribute("timetable") DayTimetableDto timetable, Model model) {
+        model.addAttribute("lessons", timetableService.createDayTimetable(timetable.getDay()).getLessons());
+        return "lessons";
     }
 
     @PostMapping("/getForGroup")
@@ -76,7 +80,7 @@ public class TimetableController {
     public String addLesson(@ModelAttribute("lesson") LessonDto lesson, Model model) {
         lessonService.addLesson(lesson);
         String date = LocalDateTime.parse(lesson.getStartLesson()).toLocalDate().toString();
-        model.addAttribute("lessons", timetableService.createGroupTimetable(date, lesson.getGroupName()).getLessons());
+        model.addAttribute("lessons", timetableService.createDayTimetable(date).getLessons());
         return "lessons";
     }
 }

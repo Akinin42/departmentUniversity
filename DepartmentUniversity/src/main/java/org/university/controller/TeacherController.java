@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.university.dto.DayTimetableDto;
 import org.university.dto.TeacherDto;
 import org.university.service.TeacherService;
 
@@ -24,7 +25,8 @@ public class TeacherController {
     @GetMapping()
     public String getTeachers(Model model) {        
         model.addAttribute("teachers", teacherService.findNumberOfUsers(5, number));      
-        model.addAttribute("teacher", new TeacherDto());      
+        model.addAttribute("teacher", new TeacherDto());
+        model.addAttribute("timetable", new DayTimetableDto());
         return "teachers";
     }
     

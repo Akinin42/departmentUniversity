@@ -84,6 +84,11 @@ public class DayTimetableServiceImpl implements DayTimetableService {
         }
         return monthTimetable;
     }
+    
+    @Override
+    public DayTimetable createDayTimetable(String date) {
+        return new DayTimetable(LocalDate.parse(date), lessonDao.findAllByDate(date));
+    }
 
     private int checkAndGetTeacherId(String teacherEmail) {
         if (!teacherDao.findByEmail(teacherEmail).isPresent()) {
@@ -99,5 +104,5 @@ public class DayTimetableServiceImpl implements DayTimetableService {
         }
         Group group = groupDao.findByName(groupName).get();
         return group.getId();
-    }
+    }    
 }

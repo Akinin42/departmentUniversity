@@ -13,5 +13,7 @@ public interface DayTimetableService {
     List<DayTimetable> createMonthTeacherTimetable(String date, String teacherEmail);
     
     List<DayTimetable> createMonthGroupTimetable(String date, String groupName);
+    
+    DayTimetable createDayTimetable(String date);
 
 }

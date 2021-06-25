@@ -62,8 +62,7 @@
                             <input class="form-control" type="hidden" th:value="${group.name}" id="groupName" name="groupName" /> 
                             <select id="id" th:field="*{id}" class="form-select" aria-label="Default select example">
                                 <option  th:each="student : ${students}" th:value="${student.id}" th:text="${student.name}" ></option>
-                            </select>
-                            <button type="submit" class="btn btn-warning btn-sm w-100" th:value="student">Delete student</button>
+                            </select> <button type="submit" class="btn btn-warning btn-sm w-100" th:value="student">Delete student</button>                            
                         </form>
                     </td>
                     <td>
@@ -77,6 +76,15 @@
 			</tbody>
 		</table>
 	</div>
+	<div class="container">
+        <form action="#" th:action="@{/timetables/getForGroup}" th:object="${timetable}" method="post">
+            <select id="name" th:field="*{groupName}" class="form-select" aria-label="Default select example">
+                 <option  th:each="group : ${groups}" th:value="${group.name}" th:text="${group.name}" ></option>
+            </select>
+            <input class="form-control" type="date" th:value="${day}" id="day" name="day" />
+            <button class="btn btn-primary" type="submit" th:value="timetable">Get group timetable</button>
+        </form>
+    </div>
 	<script
 		src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"
 		integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4"

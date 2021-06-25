@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.university.dto.DayTimetableDto;
 import org.university.dto.GroupDto;
 import org.university.dto.StudentDto;
 import org.university.entity.Group;
@@ -29,6 +30,7 @@ public class GroupController {
         model.addAttribute("student", new StudentDto());
         model.addAttribute("groups", groupService.findAllGroups());
         model.addAttribute("students", studentService.findAll());
+        model.addAttribute("timetable", new DayTimetableDto());
         return "groups";
     }
 
