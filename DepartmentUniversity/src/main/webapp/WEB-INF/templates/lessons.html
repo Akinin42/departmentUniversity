@@ -25,7 +25,7 @@
                     <th>End lesson</th>
                     <th>Classroom number</th>                    
                     <th>Online lesson</th>                    
-                    <th>Lesson link</th>                    
+                    <th>Lesson link</th>
                 </tr>
             </thead>
             <tbody>
@@ -38,7 +38,15 @@
                     <td th:text="${lesson.endLesson}" />
                     <td th:text="${lesson.classroom.number}" />                    
                     <td th:text="${lesson.onlineLesson}" />                    
-                    <td th:text="${lesson.lessonLink}" />                    
+                    <td th:text="${lesson.lessonLink}" />
+                    <td>
+                        <form action="#" th:action="@{/timetables/deleteLesson}" th:object="${lesson}" method="post">
+                        <input class="form-control" type="hidden" th:value="${lesson.teacher.email}" id="teacherEmail" name="teacherEmail"/>                        
+                        <input class="form-control" type="hidden" th:value="${lesson.group.name}" id="groupName" name="groupName"/>                        
+                        <input class="form-control" type="hidden" th:value="${lesson.startLesson}" id="startLesson" name="startLesson"/>                        
+                        <button type="submit" class="btn btn-warning btn-sm w-100" th:value="lesson">Delete</button>
+                        </form>
+                    </td>                   
                 </tr>
             </tbody>
         </table>
@@ -50,5 +58,6 @@
             <button class="btn btn-primary" type="submit" th:value="timetable">Get timetable</button>
         </form>
     </div>
+
 </body>
 </html>

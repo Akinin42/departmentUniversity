@@ -210,9 +210,11 @@ class LessonServiceImplTest {
 
     @Test
     void deleteShouldDeleteLessonWhenLessonExists() {
-        Lesson lessonMock = createLessonMock();
-        when(lessonMock.getId()).thenReturn(1);
-        lessonService.delete(lessonMock);
+        LessonDto lessonDtoMock = mock(LessonDto.class);
+        when(lessonDtoMock.getStartLesson()).thenReturn("2021-10-19 10:00:00");
+        when(lessonDtoMock.getTeacherEmail()).thenReturn("Bob@mail.ru");
+        when(lessonDtoMock.getGroupName()).thenReturn("AB-22");        
+        lessonService.delete(lessonDtoMock);
         verify(lessonDaoMock).deleteById(1);
     }
     

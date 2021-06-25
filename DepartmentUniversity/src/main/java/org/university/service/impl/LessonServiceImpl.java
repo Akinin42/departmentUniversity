@@ -60,7 +60,9 @@ public class LessonServiceImpl implements LessonService {
     }
 
     @Override
-    public void delete(@NonNull Lesson lesson) {
+    public void delete(@NonNull LessonDto lessonDto) {
+        String lessonDate = LocalDateTime.parse(lessonDto.getStartLesson()).toLocalDate().toString();        
+        Lesson lesson = createLesson(lessonDate, lessonDto.getTeacherEmail(), lessonDto.getGroupName());
         lessonDao.deleteById(lesson.getId());
         log.info("Lesson deleted succesfull!");
     }

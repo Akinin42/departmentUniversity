@@ -9,5 +9,5 @@ public interface LessonService {
 
     void addLesson(LessonDto lessonDto);
 
-    void delete(Lesson lesson);
+    void delete(LessonDto lessonDto);
 }

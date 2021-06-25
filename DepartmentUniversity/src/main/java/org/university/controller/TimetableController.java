@@ -83,4 +83,12 @@ public class TimetableController {
         model.addAttribute("lessons", timetableService.createDayTimetable(date).getLessons());
         return "lessons";
     }
+    
+    @PostMapping("/deleteLesson")
+    public String deleteLesson(@ModelAttribute("lesson") LessonDto lesson, Model model) {
+        lessonService.delete(lesson);
+        String date = LocalDateTime.parse(lesson.getStartLesson()).toLocalDate().toString();
+        model.addAttribute("lessons", timetableService.createDayTimetable(date).getLessons());
+        return "lessons";
+    }
 }
