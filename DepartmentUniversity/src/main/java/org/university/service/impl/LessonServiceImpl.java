@@ -32,7 +32,7 @@ public class LessonServiceImpl implements LessonService {
     LessonMapper mapper;
 
     @Override
-    public Lesson createLesson(String startLesson, String teacherEmail, String groupName) {
+    public Lesson createLesson(String startLesson, String teacherEmail, String groupName) {        
         if (!lessonDao.findByDateAndTeacherAndGroup(startLesson, teacherEmail, groupName).isPresent()) {
             throw new EntityNotExistException();
         }
@@ -60,10 +60,8 @@ public class LessonServiceImpl implements LessonService {
     }
 
     @Override
-    public void delete(@NonNull LessonDto lessonDto) {
-        String lessonDate = LocalDateTime.parse(lessonDto.getStartLesson()).toLocalDate().toString();        
-        Lesson lesson = createLesson(lessonDate, lessonDto.getTeacherEmail(), lessonDto.getGroupName());
-        lessonDao.deleteById(lesson.getId());
+    public void delete(@NonNull LessonDto lessonDto) {       
+        lessonDao.deleteById(lessonDto.getId());
         log.info("Lesson deleted succesfull!");
     }
 

@@ -40,10 +40,9 @@
                     <td th:text="${lesson.onlineLesson}" />                    
                     <td th:text="${lesson.lessonLink}" />
                     <td>
-                        <form action="#" th:action="@{/timetables/deleteLesson}" th:object="${lesson}" method="post">
-                        <input class="form-control" type="hidden" th:value="${lesson.teacher.email}" id="teacherEmail" name="teacherEmail"/>                        
-                        <input class="form-control" type="hidden" th:value="${lesson.group.name}" id="groupName" name="groupName"/>                        
+                        <form action="#" th:action="@{/timetables/deleteLesson}" th:object="${lesson}" method="post">                                               
                         <input class="form-control" type="hidden" th:value="${lesson.startLesson}" id="startLesson" name="startLesson"/>                        
+                        <input class="form-control" type="hidden" th:value="${lesson.id}" id="id" name="id"/>                        
                         <button type="submit" class="btn btn-warning btn-sm w-100" th:value="lesson">Delete</button>
                         </form>
                     </td>                   
