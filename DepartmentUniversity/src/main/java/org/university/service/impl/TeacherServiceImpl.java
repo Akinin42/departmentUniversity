@@ -5,13 +5,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.university.dao.TeacherDao;
 import org.university.dto.TeacherDto;
+import org.university.dto.UserDto;
 import org.university.entity.Teacher;
 import org.university.exceptions.AuthorisationFailException;
 import org.university.exceptions.EntityNotExistException;
 import org.university.service.TeacherService;
 import org.university.service.validator.Validator;
 import lombok.AccessLevel;
-import lombok.NonNull;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 
@@ -52,27 +52,15 @@ public class TeacherServiceImpl extends AbstractUserServiceImpl<Teacher> impleme
         }
         log.info("Authorisation for teacher with id {} succesfull!", teacher.getId());
         return teacher;
-    }
-
-    @Override
-    public void deleteTeacher(@NonNull TeacherDto teacherDto) {
-        Teacher teacher = mapDtoToEntity(teacherDto);
-        delete(teacher);        
-    }
-    
-    public void registerTeacher(@NonNull TeacherDto teacherDto) {
-        if(teacherDto.getPassword().equals(teacherDto.getConfirmPassword())) {
-            Teacher teacher = mapDtoToEntity(teacherDto);
-            register(teacher);
-        }
-    }
+    }    
     
     @Override
     public List<Teacher> findAll() {        
         return teacherDao.findAll();
     }
     
-    private Teacher mapDtoToEntity(TeacherDto teacher) {
+    protected Teacher mapDtoToEntity(UserDto user) {
+        TeacherDto teacher = (TeacherDto) user;
         return Teacher.builder()
                 .withId(teacher.getId())
                 .withSex(teacher.getSex())

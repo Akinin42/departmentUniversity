@@ -53,13 +53,13 @@ public class TeacherController {
     
     @PostMapping("/addTeacher")
     public String addTeacher(@ModelAttribute("teacher") TeacherDto teacher) {        
-        teacherService.registerTeacher(teacher);        
+        teacherService.register(teacher);        
         return REDIRECT;
     }
     
     @PostMapping("/delete")
     public String delete(@ModelAttribute("teacher") TeacherDto teacher) {        
-        teacherService.deleteTeacher(teacher);  
+        teacherService.delete(teacher);  
         return REDIRECT;
     }
 

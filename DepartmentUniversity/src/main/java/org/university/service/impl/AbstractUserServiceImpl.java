@@ -3,6 +3,7 @@ package org.university.service.impl;
 import java.util.List;
 import java.util.Optional;
 import org.university.dao.CrudDao;
+import org.university.dto.UserDto;
 import org.university.entity.User;
 import org.university.exceptions.EntityAlreadyExistException;
 import org.university.service.UserService;
@@ -22,7 +23,8 @@ public abstract class AbstractUserServiceImpl<E> implements UserService<E> {
     Validator<E> validator;
 
     @Override
-    public void register(@NonNull E user) {
+    public void register(@NonNull UserDto userDto) {
+        E user = mapDtoToEntity(userDto);
         validator.validate(user);
         if (existsUser(user)) {
             throw new EntityAlreadyExistException();
@@ -32,8 +34,9 @@ public abstract class AbstractUserServiceImpl<E> implements UserService<E> {
     }
 
     @Override
-    public void delete(@NonNull E user) {
-        userDao.deleteById(((User) user).getId());
+    public void delete(@NonNull UserDto userDto) {
+        User user = (User) mapDtoToEntity(userDto);
+        userDao.deleteById(user.getId());
         log.info("User deleted from database!");
     }
 
@@ -47,4 +50,6 @@ public abstract class AbstractUserServiceImpl<E> implements UserService<E> {
     }
 
     protected abstract E mapUserWithPassword(E user);
+    
+    protected abstract E mapDtoToEntity(UserDto user);
 }

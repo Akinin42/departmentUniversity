@@ -58,13 +58,13 @@ public class StudentController {
     
     @PostMapping("/addStudent")
     public String addStudent(@ModelAttribute("student") StudentDto student) {        
-        studentService.registerStudent(student);        
+        studentService.register(student);        
         return REDIRECT;
     }
     
     @PostMapping("/delete")
     public String delete(@ModelAttribute("student") StudentDto student) {        
-        studentService.deleteStudent(student);  
+        studentService.delete(student);  
         return REDIRECT;
     }
     

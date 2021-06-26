@@ -13,6 +13,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.university.dao.impl.TeacherDaoImpl;
+import org.university.dto.TeacherDto;
 import org.university.entity.Teacher;
 import org.university.exceptions.AuthorisationFailException;
 import org.university.exceptions.EntityAlreadyExistException;
@@ -34,7 +35,7 @@ class TeacherServiceImplTest {
 
     @Test
     void registerShouldSaveTeacherToDatabaseWhenInputTeacherNotExistThere() {
-        Teacher teacher = getTestTeacher();
+        TeacherDto teacher = getTestTeacherDto();
         teacherService.register(teacher);
         Teacher teacherWithEncodePassword = Teacher.builder()
                 .withSex("Test")
@@ -49,21 +50,21 @@ class TeacherServiceImplTest {
 
     @Test
     void registerShouldThrowEntityAlreadyExistExceptionWhenInputTeacherExistsInDatabase() {
-        Teacher teacher = CreatorTestEntities.createTeachers().get(0);
+        TeacherDto teacher = new TeacherDto();
+        teacher.setId(1);
+        teacher.setSex("Male");
+        teacher.setName("Bob Moren");
+        teacher.setEmail("Bob@mail.ru");
+        teacher.setPhone("89758657788");
+        teacher.setPassword("test-password");
+        teacher.setScientificDegree("professor");
         assertThatThrownBy(() -> teacherService.register(teacher)).isInstanceOf(EntityAlreadyExistException.class);
     }
 
     @Test
     void registerShouldThrowInvalidEmailExceptionWhenInputTeacherHasInvalidEmail() {
-        Teacher teacher = Teacher.builder()
-                .withId(3)
-                .withSex("Test")
-                .withName("Test")
-                .withEmail("invalidemail")
-                .withPhone("Test")
-                .withPassword("Test")
-                .withScientificDegree("Test")
-                .build();
+        TeacherDto teacher = getTestTeacherDto();
+        teacher.setEmail("invalidemail");
         assertThatThrownBy(() -> teacherService.register(teacher)).isInstanceOf(InvalidEmailException.class);
     }
 
@@ -74,7 +75,8 @@ class TeacherServiceImplTest {
 
     @Test
     void deleteShouldDeleteTeacherFromDatabase() {
-        Teacher teacher = CreatorTestEntities.createTeachers().get(0);
+        TeacherDto teacher = new TeacherDto();
+        teacher.setId(1);
         teacherService.delete(teacher);
         verify(teacherDaoMock).deleteById(1);
     }
@@ -124,17 +126,30 @@ class TeacherServiceImplTest {
         assertThatThrownBy(() -> teacherService.login("notExistenEmail", "test@test.ru"))
                 .isInstanceOf(EntityNotExistException.class);
     }
+    
+    @Test
+    void findAllShouldReturnExpectedTeachersWhenTheyExist() {
+        List<Teacher> teachers = CreatorTestEntities.createTeachers();
+        when(teacherDaoMock.findAll()).thenReturn(teachers);
+        assertThat(teacherService.findAll()).isEqualTo(teachers);
+    }
+    
+    @Test
+    void findAllShouldReturnEmptyListWhenTheyNotExist() {        
+        when(teacherDaoMock.findAll()).thenReturn(new ArrayList<Teacher>());
+        assertThat(teacherService.findAll()).isEmpty();
+    }
 
-    private Teacher getTestTeacher() {
-        return Teacher.builder()
-                .withId(3)
-                .withSex("Test")
-                .withName("Test")
-                .withEmail("test@test.ru")
-                .withPhone("Test")
-                .withPassword("Test")
-                .withScientificDegree("Test")
-                .build();
+    private TeacherDto getTestTeacherDto() {
+        TeacherDto teacher = new TeacherDto();
+        teacher.setId(3);
+        teacher.setSex("Test");
+        teacher.setName("Test");
+        teacher.setEmail("test@test.ru");
+        teacher.setPhone("Test");
+        teacher.setPassword("Test");
+        teacher.setScientificDegree("Test");
+        return teacher;
     }
 
     private static TeacherDaoImpl createTeacherDaoMock() {

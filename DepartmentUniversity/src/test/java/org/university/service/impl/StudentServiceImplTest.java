@@ -42,7 +42,7 @@ class StudentServiceImplTest {
 
     @Test
     void registerShouldSaveStudentToDatabaseWhenInputStudentNotExistThere() {
-        Student student = getTestStudent();
+        StudentDto student = getTestStudentDto();
         studentService.register(student);
         Student studentWithEncodePassword = Student.builder()
                 .withSex("Test")
@@ -56,20 +56,20 @@ class StudentServiceImplTest {
 
     @Test
     void registerShouldThrowEntityAlreadyExistExceptionWhenInputStudentExistsInDatabase() {
-        Student student = CreatorTestEntities.createStudents().get(0);
+        StudentDto student = new StudentDto();
+        student.setId(1);
+        student.setSex("Female");
+        student.setName("Jane Wood");
+        student.setEmail("Wood@email.ru");
+        student.setPhone("test-phone");
+        student.setPassword("test-password");
         assertThatThrownBy(() -> studentService.register(student)).isInstanceOf(EntityAlreadyExistException.class);
     }
 
     @Test
     void registerShouldThrowInvalidEmailExceptionWhenInputStudentHasInvalidEmail() {
-        Student student = Student.builder()
-                .withId(7)
-                .withSex("Test")
-                .withName("Test")
-                .withEmail("invalidemail")
-                .withPhone("Test")
-                .withPassword("Test")
-                .build();
+        StudentDto student = getTestStudentDto();
+        student.setEmail("invalidemail");
         assertThatThrownBy(() -> studentService.register(student)).isInstanceOf(InvalidEmailException.class);
     }
 
@@ -80,8 +80,9 @@ class StudentServiceImplTest {
 
     @Test
     void deleteShouldDeleteStudentFromDatabase() {
-        Student student = CreatorTestEntities.createStudents().get(0);
-        studentService.delete(student);
+        StudentDto studentDto = new StudentDto();
+        studentDto.setId(1);
+        studentService.delete(studentDto);
         verify(studentDaoMock).deleteById(1);
     }
 
@@ -91,7 +92,7 @@ class StudentServiceImplTest {
     }
 
     @Test
-    void findNumberOfUsersShouldReturnExpectedTStudentsWhenInputLimitAndOffset() {
+    void findNumberOfUsersShouldReturnExpectedStudentsWhenInputLimitAndOffset() {
         List<Student> students = new ArrayList<>();        
         students.add(CreatorTestEntities.createStudents().get(0));
         when(studentDaoMock.findAll(1, 0)).thenReturn(students);        
@@ -111,6 +112,19 @@ class StudentServiceImplTest {
     void findNumberOfUsersShouldReturnEmptyListWhenInputOffsetMoreTableSize() {
         when(studentDaoMock.findAll(2, 10)).thenReturn(new ArrayList<>());
         assertThat(studentService.findNumberOfUsers(2, 10)).isEmpty();
+    }
+    
+    @Test
+    void findAllShouldReturnExpectedStudentsWhenTheyExist() {
+        List<Student> students = CreatorTestEntities.createStudents();
+        when(studentDaoMock.findAll()).thenReturn(students);
+        assertThat(studentService.findAll()).isEqualTo(students);
+    }
+    
+    @Test
+    void findAllShouldReturnEmptyListWhenTheyNotExist() {        
+        when(studentDaoMock.findAll()).thenReturn(new ArrayList<Student>());
+        assertThat(studentService.findAll()).isEmpty();
     }
 
     @Test
@@ -306,15 +320,15 @@ class StudentServiceImplTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    private Student getTestStudent() {
-        return Student.builder()
-                .withId(7)
-                .withSex("Test")
-                .withName("Test")
-                .withEmail("test@test.ru")
-                .withPhone("Test")
-                .withPassword("Test")
-                .build();
+    private StudentDto getTestStudentDto() {
+        StudentDto student = new StudentDto();
+        student.setId(7);
+        student.setSex("Test");
+        student.setName("Test");
+        student.setEmail("test@test.ru");
+        student.setPhone("Test");
+        student.setPassword("Test");
+        return student;
     }
 
     private static CourseDaoImpl createCourseDaoMock() {

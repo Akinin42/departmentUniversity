@@ -10,6 +10,7 @@ import org.university.dao.CourseDao;
 import org.university.dao.GroupDao;
 import org.university.dao.StudentDao;
 import org.university.dto.StudentDto;
+import org.university.dto.UserDto;
 import org.university.entity.Course;
 import org.university.entity.Group;
 import org.university.entity.Student;
@@ -41,18 +42,6 @@ public class StudentServiceImpl extends AbstractUserServiceImpl<Student> impleme
         this.encoder = encoder;
     }
     
-    public void registerStudent(@NonNull StudentDto studentDto) {
-        if(studentDto.getPassword().equals(studentDto.getConfirmPassword())) {
-            Student student = mapDtoToEntity(studentDto);
-            register(student);
-        }
-    }
-    
-    public void deleteStudent(@NonNull StudentDto studentDto) {
-        Student student = mapDtoToEntity(studentDto);
-        delete(student);
-    }
-
     @Override
     public Student login(String email, String password) {
         if (!studentDao.findByEmail(email).isPresent()) {
@@ -156,14 +145,14 @@ public class StudentServiceImpl extends AbstractUserServiceImpl<Student> impleme
         }
     }
     
-    private Student mapDtoToEntity(StudentDto student) {
+    protected Student mapDtoToEntity(UserDto user) {
         return Student.builder()
-                .withId(student.getId())
-                .withSex(student.getSex())
-                .withName(student.getName())
-                .withEmail(student.getEmail())
-                .withPhone(student.getPhone())
-                .withPassword(student.getPassword())
+                .withId(user.getId())
+                .withSex(user.getSex())
+                .withName(user.getName())
+                .withEmail(user.getEmail())
+                .withPhone(user.getPhone())
+                .withPassword(user.getPassword())
                 .build();
     }
 }

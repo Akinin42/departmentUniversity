@@ -1,16 +1,11 @@
 package org.university.dto;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Data
-public class StudentDto {
-    Integer id;
-    String sex;
-    String name;
-    String email;
-    String phone;
-    String password;
-    String confirmPassword;
+@EqualsAndHashCode(callSuper=true)
+public class StudentDto extends UserDto {
     String courseName;
     String groupName;
 }

@@ -1,15 +1,10 @@
 package org.university.dto;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Data
-public class TeacherDto {    
-    Integer id;
-    String sex;
-    String name;
-    String email;
-    String phone;
-    String password;
-    String confirmPassword;
+@EqualsAndHashCode(callSuper=true)
+public class TeacherDto extends UserDto {    
     String scientificDegree;
 }
