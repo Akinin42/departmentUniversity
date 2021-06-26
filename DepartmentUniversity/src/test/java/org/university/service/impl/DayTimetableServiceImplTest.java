@@ -92,6 +92,20 @@ class DayTimetableServiceImplTest {
     void createMonthGroupTimetableShouldReturnEmptyListWhenGroupLessonsNotExist() {
         assertThat(dayTimetableService.createMonthGroupTimetable("2021-12-19", "AB-22")).isEmpty();
     }
+    
+    @Test
+    void createDayTimetableShouldReturnExpectedDayTimetableWhenLessonsExistInInputDate() {
+        List<Lesson> lessons = CreatorTestEntities.createLessons();        
+        assertThat(dayTimetableService.createDayTimetable("2021-10-19"))
+        .isEqualTo(new DayTimetable(LocalDate.of(2021, 10, 19), lessons));
+    }
+    
+    @Test
+    void createDayTimetableShouldReturnExpectedDayTimetableWhenLessonsNotExistInInputDate() {
+        List<Lesson> lessons = new ArrayList<>();        
+        assertThat(dayTimetableService.createDayTimetable("2021-10-21"))
+        .isEqualTo(new DayTimetable(LocalDate.of(2021, 10, 21), lessons));
+    }
 
     private List<DayTimetable> createTestMonthTimetable() {
         List<DayTimetable> monthTimetable = new ArrayList<>();
@@ -113,7 +127,7 @@ class DayTimetableServiceImplTest {
 
     private static LessonDaoImpl createLessonDaoMock() {
         LessonDaoImpl lessonDaoMock = mock(LessonDaoImpl.class);
-        List<Lesson> lessons = CreatorTestEntities.createLessons();
+        List<Lesson> lessons = CreatorTestEntities.createLessons();        
         lessons.remove(0);
         when(lessonDaoMock.findAllByDateAndTeacher("2021-10-19", 2)).thenReturn(lessons);
         lessons = new ArrayList<>();
@@ -126,6 +140,9 @@ class DayTimetableServiceImplTest {
         lessons.remove(2);
         lessons.remove(1);
         when(lessonDaoMock.findAllByDateAndGroup("2021-10-19", 1)).thenReturn(lessons);
+        lessons = CreatorTestEntities.createLessons();
+        when(lessonDaoMock.findAllByDate("2021-10-19")).thenReturn(lessons);
+        when(lessonDaoMock.findAllByDate("2021-10-21")).thenReturn(new ArrayList<Lesson>());
         return lessonDaoMock;
     }
 

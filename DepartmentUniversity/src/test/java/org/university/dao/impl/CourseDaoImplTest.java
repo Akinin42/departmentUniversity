@@ -106,4 +106,14 @@ class CourseDaoImplTest {
     void findByNameShouldReturnExpectedCourseWhenInputExistentName() {
         assertThat(courseDao.findByName("Law").get()).isEqualTo(CreatorTestEntities.createCourses().get(0));
     }
+    
+    @Test
+    void findAllByStudentShouldReturnExpectedCoursesWhenStudentHasIt() {
+        assertThat(courseDao.findAllByStudent(2)).containsExactly(CreatorTestEntities.createCourses().get(0));
+    }
+    
+    @Test
+    void findAllByStudentShouldReturnEmptyListWhenStudentHasNotIt() {
+        assertThat(courseDao.findAllByStudent(5)).isEmpty();
+    }
 }

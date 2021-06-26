@@ -182,12 +182,13 @@
                                     <element>CLASS</element>
                                     <excludes>
                                         <exclude>org.university.entity*</exclude>
+                                        <exclude>org.university.dto*</exclude>
                                     </excludes>
                                     <limits>
                                         <limit>
                                             <counter>INSTRUCTION</counter>
                                             <value>COVEREDRATIO</value>
-                                            <minimum>0.00</minimum>
+                                            <minimum>0.90</minimum>
                                         </limit>
                                     </limits>
                                 </rule>

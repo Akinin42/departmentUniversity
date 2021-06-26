@@ -85,6 +85,17 @@ class GroupServiceImplTest {
         groupService.addGroup(group);
         verify(groupDaoMock).save(groupEntity);
     }
+    
+    @Test
+    void addGroupShouldSaveGroupWithoutIdAndStudentsInDatabasesWhenInputValidGroup() {        
+        GroupDto group = new GroupDto();        
+        group.setName("FF-55");        
+        Group groupEntity = Group.builder()                
+                .withName("FF-55")                
+                .build();
+        groupService.addGroup(group);
+        verify(groupDaoMock).save(groupEntity);
+    }
 
     @Test
     void findAllGroupsShouldReturnGroupsWithStudentsWhenTheyExist() {

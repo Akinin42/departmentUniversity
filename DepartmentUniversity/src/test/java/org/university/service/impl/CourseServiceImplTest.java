@@ -63,6 +63,19 @@ class CourseServiceImplTest {
         Course course = createTestCourse();
         verify(courseDaoMock).save(course);
     }
+    
+    @Test
+    void addCourseShouldSaveCourseWithoutIdInDatabaseWhenInputValidCourse() {
+        CourseDto courseDto = new CourseDto();        
+        courseDto.setName("test");
+        courseDto.setDescription("test");
+        courseService.addCourse(courseDto);
+        Course course = Course.builder()                
+                .withName("test")
+                .withDescription("test")
+                .build();
+        verify(courseDaoMock).save(course);
+    }
 
     @Test
     void findAllCoursesShouldReturnExpectedCoursesWhenTheyExist() {
