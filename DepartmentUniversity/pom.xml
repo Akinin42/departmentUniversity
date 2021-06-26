@@ -16,6 +16,7 @@
         <postgres.version>42.2.18</postgres.version>
         <spring.framework>5.3.3</spring.framework>
         <thymeleaf.version>3.0.12.RELEASE</thymeleaf.version>
+        <thymeleaf.time.version>3.0.4.RELEASE</thymeleaf.time.version>
         <spring.security>5.3.3.RELEASE</spring.security>
         <javax.servlet.version>4.0.1</javax.servlet.version>
         <junit.jupiter.api.version>5.6.2</junit.jupiter.api.version>
@@ -98,6 +99,11 @@
             <groupId>org.thymeleaf</groupId>
             <artifactId>thymeleaf-spring5</artifactId>
             <version>${thymeleaf.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.thymeleaf.extras</groupId>
+            <artifactId>thymeleaf-extras-java8time</artifactId>
+            <version>${thymeleaf.time.version}</version>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>

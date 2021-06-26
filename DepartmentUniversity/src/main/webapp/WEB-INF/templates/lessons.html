@@ -21,6 +21,7 @@
                     <th>Group</th>
                     <th>Teacher</th>
                     <th>Course</th>
+                    <th>Date</th>
                     <th>Start lesson</th>
                     <th>End lesson</th>
                     <th>Classroom number</th>                    
@@ -34,8 +35,9 @@
                     <td th:text="${lesson.group.name}" />
                     <td th:text="${lesson.teacher.name}" />
                     <td th:text="${lesson.course.name}" />
-                    <td th:text="${lesson.startLesson}" />
-                    <td th:text="${lesson.endLesson}" />
+                    <td th:text="${#temporals.format(lesson.startLesson, 'dd/MM/yyyy')}" />
+                    <td th:text="${#temporals.format(lesson.startLesson, 'HH:mm')}" />
+                    <td th:text="${#temporals.format(lesson.endLesson, 'HH:mm')}" />
                     <td th:text="${lesson.classroom.number}" />                    
                     <td th:text="${lesson.onlineLesson}" />                    
                     <td th:text="${lesson.lessonLink}" />
