@@ -189,6 +189,8 @@
                                     <excludes>
                                         <exclude>org.university.entity*</exclude>
                                         <exclude>org.university.dto*</exclude>
+                                        <exclude>org.university.config*</exclude>
+                                        <exclude>org.university.service.mapper*</exclude>
                                     </excludes>
                                     <limits>
                                         <limit>
