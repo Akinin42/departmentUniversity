@@ -28,7 +28,7 @@ public class StudentController {
 
     @GetMapping()
     public String getStudents(Model model) {        
-        model.addAttribute("students", studentService.findNumberOfUsers(5, number));
+        model.addAttribute("students", studentService.findNumberOfUsers(5, 0));
         model.addAttribute("courses", courseService.findAllCourses());
         model.addAttribute("student", new StudentDto());        
         return "students";
@@ -36,7 +36,7 @@ public class StudentController {
     
     @GetMapping("/other")
     public String getOtherStudents(@RequestParam("number") int inputNumber, Model model) {
-        model.addAttribute("students", studentService.findNumberOfUsers(5, number));
+        model.addAttribute("students", null);
         model.addAttribute("courses", courseService.findAllCourses());
         model.addAttribute("student", new StudentDto());
         number += inputNumber;

@@ -24,7 +24,7 @@ public class TeacherController {
     
     @GetMapping()
     public String getTeachers(Model model) {        
-        model.addAttribute("teachers", teacherService.findNumberOfUsers(5, number));      
+        model.addAttribute("teachers", teacherService.findNumberOfUsers(5, 0));      
         model.addAttribute("teacher", new TeacherDto());
         model.addAttribute("timetable", new DayTimetableDto());
         return "teachers";
@@ -32,7 +32,7 @@ public class TeacherController {
     
     @GetMapping("/other")
     public String getOtherTeachers(@RequestParam("number") int inputNumber, Model model) {
-        model.addAttribute("teachers", teacherService.findNumberOfUsers(5, number));
+        model.addAttribute("teachers", null);
         model.addAttribute("teacher", new TeacherDto());
         number += inputNumber;
         if (number < 0) {
