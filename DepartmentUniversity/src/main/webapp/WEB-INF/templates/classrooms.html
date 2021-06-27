@@ -13,7 +13,7 @@
 <body>
 <div th:replace="header :: navbar"></div>
 <div class="container">
-        <form action="#" th:action="@{/classrooms}" th:object="${classroom}" method="post">
+        <form action="#" th:action="@{/classrooms/add}" th:object="${classroom}" method="post">
             <div class="form-group">
                 <label for="number">Classroom number:</label> 
                 <input type="number" class="form-control" th:field="*{number}" id="number" style="width: 200px;">

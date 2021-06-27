@@ -15,6 +15,8 @@ import org.university.service.CourseService;
 @RequestMapping("/courses")
 public class CourseController {
     
+    private static final String REDIRECT = "redirect:/courses";
+    
     @Autowired
     private CourseService courseService;
     
@@ -28,12 +30,12 @@ public class CourseController {
     @PostMapping("/add")
     public String add(@ModelAttribute("course") CourseDto course) {        
         courseService.addCourse(course);  
-        return "redirect:/courses";
+        return REDIRECT;
     }
     
     @PostMapping("/delete")
     public String delete(@ModelAttribute("course") CourseDto course) {        
         courseService.delete(course);
-        return "redirect:/courses";
+        return REDIRECT;
     }
 }

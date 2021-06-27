@@ -27,8 +27,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 @TestInstance(Lifecycle.PER_CLASS)
 class CourseControllerTest {
 
-    private MockMvc mockMvc; 
-    
+    private MockMvc mockMvc;
+
     @Mock
     private CourseService courseServiceMock;
 
@@ -50,20 +50,22 @@ class CourseControllerTest {
                 .andExpect(MockMvcResultMatchers.model().attributeExists("courses"))
                 .andExpect(MockMvcResultMatchers.model().attribute("courses", courses));
     }
-    
+
     @Test
     void testAdd() throws Exception {
         CourseDto course = new CourseDto();
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/courses/add/").flashAttr("course", course);
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/courses/add/").flashAttr("course",
+                course);
         ResultActions result = mockMvc.perform(request);
         result.andExpect(MockMvcResultMatchers.view().name("redirect:/courses"));
-        verify(courseServiceMock).addCourse(course);     
+        verify(courseServiceMock).addCourse(course);
     }
-    
+
     @Test
     void testDelete() throws Exception {
         CourseDto course = new CourseDto();
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/courses/delete/").flashAttr("course", course);
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/courses/delete/").flashAttr("course",
+                course);
         ResultActions result = mockMvc.perform(request);
         result.andExpect(MockMvcResultMatchers.view().name("redirect:/courses"));
         verify(courseServiceMock).delete(course);

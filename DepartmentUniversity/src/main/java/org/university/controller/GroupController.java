@@ -18,6 +18,8 @@ import org.university.service.StudentService;
 @RequestMapping("/groups")
 public class GroupController {
 
+    private static final String REDIRECT = "redirect:/groups";
+    
     @Autowired
     private GroupService groupService;
 
@@ -34,29 +36,29 @@ public class GroupController {
         return "groups";
     }
 
-    @PostMapping()
+    @PostMapping("/add")
     public String add(@ModelAttribute("group") GroupDto group) {
         groupService.addGroup(group);
-        return "redirect:/groups";
+        return REDIRECT;
     }
 
     @PostMapping("/addStudent")
     public String addStudent(@ModelAttribute("student") StudentDto student) {
         Group group = groupService.createGroup(student.getGroupName());
         studentService.addStudentToGroup(student, group);
-        return "redirect:/groups";
+        return REDIRECT;
     }
 
     @PostMapping("/deleteStudent")
     public String deleteStudent(@ModelAttribute("student") StudentDto student) {
         Group group = groupService.createGroup(student.getGroupName());
         studentService.deleteStudentFromGroup(student, group);
-        return "redirect:/groups";
+        return REDIRECT;
     }
 
     @PostMapping("/delete")
     public String delete(@ModelAttribute("group") GroupDto group) {
         groupService.delete(group);
-        return "redirect:/groups";
+        return REDIRECT;
     }    
 }
