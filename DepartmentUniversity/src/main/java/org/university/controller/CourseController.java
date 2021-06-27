@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.university.dto.CourseDto;
 import org.university.service.CourseService;
 
+
 @Controller
 @RequestMapping("/courses")
 public class CourseController {
@@ -24,7 +25,7 @@ public class CourseController {
         return "courses";
     }
     
-    @PostMapping()
+    @PostMapping("/add")
     public String add(@ModelAttribute("course") CourseDto course) {        
         courseService.addCourse(course);  
         return "redirect:/courses";
