@@ -34,6 +34,7 @@ public class TeacherController {
     public String getOtherTeachers(@RequestParam("number") int inputNumber, Model model) {
         model.addAttribute("teachers", null);
         model.addAttribute("teacher", new TeacherDto());
+        model.addAttribute("timetable", new DayTimetableDto());
         number += inputNumber;
         if (number < 0) {
             number = 0;

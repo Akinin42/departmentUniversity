@@ -1,0 +1,98 @@
+@charset "UTF-8";
+
+.panel{
+    font-family: 'Raleway', sans-serif;
+    padding: 0;
+    border: none;
+}
+.panel .panel-heading{
+    background: #fff;
+    padding: 15px;
+    margin: 0;
+}
+.panel .panel-heading .title{
+    color: #ff4e5a;
+    font-size: 23px;
+    font-weight: 500;
+    line-height: 28px;
+    text-transform: capitalize;
+    margin: 0 10px 0 0;
+}
+.panel .panel-heading .btn{
+    background-color: #333;
+    vertical-align: top;
+    border: none;
+    transition: all 0.3s ease 0s;
+}
+.panel .panel-heading .btn:hover{ box-shadow: 3px -3px rgba(0,0,0,0.3); }
+.panel .panel-body{ padding: 0; }
+.panel .panel-body .table thead tr th{
+    color: #333;
+    background-color: #f5f5f5;
+    font-size: 17px;
+    font-weight: 500;
+    padding: 12px;
+    border-bottom: none;
+}
+.panel .panel-body .table tbody tr td{
+    color: #555;
+    font-size: 15px;
+    padding: 10px 12px;
+    vertical-align: middle;
+    border-color: #f1f1f1;
+}
+.panel .panel-body .table tbody tr td .progress{
+    margin: 0;
+    background-color: #ccc;
+}
+.panel .panel-body .table tbody .action-list{
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+.panel .panel-body .table tbody .action-list li{ display: inline-block; }
+.panel .panel-body .table tbody .action-list li button{
+    color: #fff;
+    font-size: 13px;
+    line-height: 28px;
+    height: 28px;
+    width: 28px;
+    padding: 0;
+    border-radius: 50%;
+    transition: all 0.3s ease 0s;
+}
+.panel .panel-body .table tbody .action-list li button:hover{ box-shadow: 0 0 0 3px #ccc; }
+.panel .panel-footer{
+    background-color: #f5f5f5;
+    padding: 15px;
+    border: none;
+}
+.pagination{ margin: 0; }
+.pagination li a{
+    color: #fff;
+    background-color: #999;
+    font-size: 15px;
+    font-weight: 600;
+    margin: 0 2px;
+    border: none;
+    border-radius: 50%;
+    transition: all 0.3s ease 0s;
+}
+.pagination li:first-child a,
+.pagination li:last-child a{
+    border-radius: 50%;
+}
+.pagination li a:hover,
+.pagination li a:focus,
+.pagination li.active a{
+    color: #fff;
+    background-color: #ff4e5a;
+}
+@media only screen and (max-width:479px){
+    .panel .panel-heading{ text-align: center; }
+    .panel .panel-heading .title{
+        float: none !important;
+        margin: 0 0 10px;
+    }
+    .panel .panel-heading .btn{ float: none !important; }
+}
