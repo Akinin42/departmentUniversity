@@ -8,57 +8,83 @@
 	rel="stylesheet"
 	integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x"
 	crossorigin="anonymous">
+<link rel="stylesheet" th:href="@{/static/table.css}" />
+<script src="https://use.fontawesome.com/fec1def459.js"></script>
 <title>lessons!</title>
 </head>
 <body>
 	<div th:replace="header :: navbar"></div>
-	<a href="/DepartmentUniversity/timetables/newLesson">Add new lesson</a>
 	<div class="container">
-        <table class="table table-hover table-striped">
-            <thead>
-                <tr class="table-primary">
-                    <th>№</th>
-                    <th>Group</th>
-                    <th>Teacher</th>
-                    <th>Course</th>
-                    <th>Date</th>
-                    <th>Start lesson</th>
-                    <th>End lesson</th>
-                    <th>Classroom number</th>                    
-                    <th>Online lesson</th>                    
-                    <th>Lesson link</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="lesson,rowStat : ${lessons}" class="table-primary">
-                    <td th:text="${rowStat.count}" />
-                    <td th:text="${lesson.group.name}" />
-                    <td th:text="${lesson.teacher.name}" />
-                    <td th:text="${lesson.course.name}" />
-                    <td th:text="${#temporals.format(lesson.startLesson, 'dd/MM/yyyy')}" />
-                    <td th:text="${#temporals.format(lesson.startLesson, 'HH:mm')}" />
-                    <td th:text="${#temporals.format(lesson.endLesson, 'HH:mm')}" />
-                    <td th:text="${lesson.classroom.number}" />                    
-                    <td th:text="${lesson.onlineLesson}" />                    
-                    <td th:text="${lesson.lessonLink}" />
-                    <td>
-                        <form action="#" th:action="@{/timetables/deleteLesson}" th:object="${lesson}" method="post">                                               
-                        <input class="form-control" type="hidden" th:value="${lesson.startLesson}" id="startLesson" name="startLesson"/>                        
-                        <input class="form-control" type="hidden" th:value="${lesson.id}" id="id" name="id"/>                        
-                        <button type="submit" class="btn btn-warning btn-sm w-100" th:value="lesson">Delete</button>
-                        </form>
-                    </td>                   
-                </tr>
-            </tbody>
-        </table>
-    </div>
-    
-    <div class="container">
-        <form action="#" th:action="@{/timetables/getOnDay}" th:object="${timetable}" method="post">            
-            <input class="form-control" type="date" th:value="${day}" id="day" name="day" />
-            <button class="btn btn-primary" type="submit" th:value="timetable">Get timetable</button>
-        </form>
-    </div>
-
+		<div class="row">
+			<div class="col-md-offset-1 col-md-10">
+				<div class="panel">
+					<div class="panel-heading">
+						<div class="row">
+							<div class="col-sm-12 col-xs-12">
+								<h4 class="title pull-left">Lesson List</h4>
+								<a href="/DepartmentUniversity/timetables/newLesson" class="btn btn-sm btn-primary pull-right">Create New</a>
+							</div>
+						</div>
+					</div>
+					<div class="panel-body table-responsive">
+						<table class="table">
+							<thead>
+								<tr>
+									<th>No</th>
+									<th>Group</th>
+									<th>Teacher</th>
+									<th>Course</th>
+									<th>Date</th>
+									<th>Start lesson</th>
+									<th>End lesson</th>
+									<th>Classroom number</th>
+									<th>Online lesson</th>
+									<th>Lesson link</th>
+									<th>Action</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr th:each="lesson,rowStat : ${lessons}">
+									<td th:text="${rowStat.count}" />
+									<td th:text="${lesson.group.name}" />
+									<td th:text="${lesson.teacher.name}" />
+									<td th:text="${lesson.course.name}" />
+									<td	th:text="${#temporals.format(lesson.startLesson, 'dd/MM/yyyy')}" />
+									<td th:text="${#temporals.format(lesson.startLesson, 'HH:mm')}" />
+									<td th:text="${#temporals.format(lesson.endLesson, 'HH:mm')}" />
+									<td th:text="${lesson.classroom.number}" />
+									<td th:text="${lesson.onlineLesson}" />
+									<td th:text="${lesson.lessonLink}" />
+									<td>
+										<ul class="action-list">
+											<li>
+												<form action="#" th:action="@{/timetables/deleteLesson}" th:object="${lesson}" method="post">
+													<input class="form-control" type="hidden" th:value="${lesson.startLesson}" id="startLesson"	name="startLesson" /> 
+													<input class="form-control"	type="hidden" th:value="${lesson.id}" id="id" name="id" />
+													<button type="submit" class="btn btn-danger" th:value="lesson">
+														<i class="fa fa-trash"></i>
+													</button>
+												</form>
+											</li>
+										</ul>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<div class="panel-heading">
+						<div class="row pull-right">
+							<div class="input-group mb-3">
+								<form action="#" th:action="@{/timetables/getOnDay}" th:object="${timetable}" method="post">
+									<input class="form-group" type="date" th:value="${day}"	id="day" name="day" />
+									<button class="btn btn-sm btn-primary pull-right" type="submit"	th:value="timetable">Get timetable</button>
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 </body>
 </html>
