@@ -13,9 +13,7 @@
 <title>students!</title>
 </head>
 <body>
-
 	<div th:replace="header :: navbar"></div>
-
 	<div class="container">
 		<div class="row">
 			<div class="col-md-offset-1 col-md-10">
@@ -52,13 +50,13 @@
 									<td>
 										<ul class="action-list">
 											<li>
-											<form action="#" th:action="@{/teachers/delete}" th:object="${teacher}" method="post">
+												<form action="#" th:action="@{/teachers/delete}" th:object="${teacher}" method="post">
 													<input class="form-control" type="hidden" th:value="${teacher.id}" id="id" name="id" />
 													<button type="submit" class="btn btn-danger" th:value="teacher">
 														<i class="fa fa-trash"></i>
 													</button>
-											</form>		
-											</li>											
+												</form>
+											</li>
 										</ul>
 									</td>
 								</tr>
@@ -69,11 +67,22 @@
 						<div class="row">
 							<div class="col-sm-6 col-xs-6">
 								<ul class="pagination hidden-xs pull-right">
-									<li><a
-										href="/DepartmentUniversity/teachers/other?number=-5">«</a></li>
-									<li><a
-										href="/DepartmentUniversity/teachers/other?number=5">»</a></li>
+									<li><a href="/DepartmentUniversity/teachers/other?number=-5">«</a></li>
+									<li><a href="/DepartmentUniversity/teachers/other?number=5">»</a></li>
 								</ul>
+							</div>
+						</div>
+					</div>
+					<div class="panel-heading">
+						<div class="row pull-right">
+							<div class="input-group mb-3">
+								<form action="#" th:action="@{/timetables/getForTeacher}" th:object="${timetable}" method="post">
+									<select id="name" th:field="*{teacherEmail}" class="form-group"	aria-label="Default select example">
+										<option th:each="teacher : ${teachers}"	th:value="${teacher.email}" th:text="${teacher.name}"></option>
+									</select> 
+									<input class="form-group" type="date" th:value="${day}" id="day" name="day" />
+									<button class="btn btn-sm btn-primary pull-right" type="submit"	th:value="timetable">Get teacher timetable</button>
+								</form>
 							</div>
 						</div>
 					</div>
@@ -81,18 +90,5 @@
 			</div>
 		</div>
 	</div>
-	
-	<div class="container">
-        <form action="#" th:action="@{/timetables/getForTeacher}"
-            th:object="${timetable}" method="post">
-            <select id="name" th:field="*{teacherEmail}" class="form-select"
-                aria-label="Default select example">
-                <option th:each="teacher : ${teachers}" th:value="${teacher.email}"
-                    th:text="${teacher.name}"></option>
-            </select> <input class="form-control" type="date" th:value="${day}" id="day"
-                name="day" />
-            <button class="btn btn-sm btn-primary pull-right" type="submit" th:value="timetable">Get teacher timetable</button>
-        </form>
-    </div>
 </body>
 </html>

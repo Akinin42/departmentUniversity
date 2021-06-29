@@ -67,6 +67,12 @@
     padding: 15px;
     border: none;
 }
+.panel .panel-footer.btn{
+	background-color: #333;
+    vertical-align: top;
+    border: none;
+    transition: all 0.3s ease 0s;
+	}
 .pagination{ margin: 0; }
 .pagination li a{
     color: #fff;
@@ -94,5 +100,5 @@
         float: none !important;
         margin: 0 0 10px;
     }
-    .panel .panel-heading .btn{ float: none !important; }
+    .panel .panel-heading .btn{float: none !important;}
 }
