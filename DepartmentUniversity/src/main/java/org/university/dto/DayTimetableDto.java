@@ -11,6 +11,7 @@ public class DayTimetableDto {
     
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     String day;
+    
     List<Lesson> lessons;
     String groupName;
     String teacherEmail;

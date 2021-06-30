@@ -11,7 +11,6 @@ import lombok.experimental.SuperBuilder;
 @Getter
 @EqualsAndHashCode(callSuper = true)
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
-public class Student extends User {
-
+public class Student extends User {    
     Set<Course> courses;
 }

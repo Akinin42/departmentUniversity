@@ -10,8 +10,7 @@ import lombok.experimental.FieldDefaults;
 @EqualsAndHashCode
 @Builder(setterPrefix = "with")
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
-public class Classroom {
-
+public class Classroom {    
     Integer id;
     Integer number;
     String address;

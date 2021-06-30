@@ -9,10 +9,13 @@ public class LessonDto {
     String courseName;
     String teacherEmail;
     String groupName;
+    
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
     String startLesson;
+    
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
     String endLesson;
+    
     Integer classroomNumber;
     Boolean onlineLesson;
     String lessonLink;

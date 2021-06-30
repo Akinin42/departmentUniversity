@@ -13,17 +13,15 @@ import org.thymeleaf.spring5.SpringTemplateEngine;
 import org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.spring5.view.ThymeleafViewResolver;
 import org.thymeleaf.templatemode.TemplateMode;
+import lombok.AllArgsConstructor;
 
 @Configuration
 @ComponentScan("org.university")
 @EnableWebMvc
+@AllArgsConstructor
 public class WebConfig implements WebMvcConfigurer {
 
     private final ApplicationContext applicationContext;
-
-    public WebConfig(ApplicationContext applicationContext) {
-        this.applicationContext = applicationContext;
-    }
 
     @Bean
     public SpringResourceTemplateResolver templateResolver() {

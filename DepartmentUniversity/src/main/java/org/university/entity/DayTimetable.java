@@ -13,7 +13,6 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class DayTimetable {
-
     LocalDate day;
     List<Lesson> lessons;
 }

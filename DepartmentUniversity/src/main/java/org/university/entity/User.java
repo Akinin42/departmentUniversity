@@ -11,7 +11,6 @@ import lombok.experimental.SuperBuilder;
 @EqualsAndHashCode
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 public class User {
-
     Integer id;
     String sex;
     String name;

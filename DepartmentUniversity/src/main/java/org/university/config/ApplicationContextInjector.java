@@ -15,7 +15,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @ComponentScan("org.university.dao")
 @ComponentScan("org.university.io")
 @PropertySource("classpath:/application.properties")
-
 public class ApplicationContextInjector {
 
     @Value("${url}")

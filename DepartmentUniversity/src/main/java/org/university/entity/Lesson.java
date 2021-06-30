@@ -11,8 +11,7 @@ import lombok.experimental.FieldDefaults;
 @EqualsAndHashCode
 @Builder(setterPrefix = "with")
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
-public class Lesson {
-
+public class Lesson {    
     Integer id;
     Course course;
     Teacher teacher;

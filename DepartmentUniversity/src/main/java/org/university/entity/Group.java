@@ -12,7 +12,6 @@ import lombok.experimental.FieldDefaults;
 @Builder(setterPrefix = "with")
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 public class Group {
-
     Integer id;
     String name;
     List<Student> students;
