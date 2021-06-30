@@ -14,14 +14,13 @@ import org.university.entity.Classroom;
 import org.university.utils.CreatorTestEntities;
 
 class ClassroomDaoImplTest {    
-   
     private static ClassroomDaoImpl classroomDao;   
     private static ScriptExecutor executor;
 
     @BeforeAll
     static void init() {
-        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(
-                ApplicationContextInjector.class);
+        AnnotationConfigApplicationContext context = 
+                new AnnotationConfigApplicationContext(ApplicationContextInjector.class);
         classroomDao = context.getBean(ClassroomDaoImpl.class);
         executor = context.getBean(ScriptExecutor.class);
     }

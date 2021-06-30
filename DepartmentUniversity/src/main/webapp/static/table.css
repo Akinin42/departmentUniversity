@@ -94,6 +94,7 @@
     color: #fff;
     background-color: #ff4e5a;
 }
+
 @media only screen and (max-width:479px){
     .panel .panel-heading{ text-align: center; }
     .panel .panel-heading .title{
