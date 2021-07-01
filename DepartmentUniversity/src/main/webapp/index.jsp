@@ -9,23 +9,23 @@
 	integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x"
 	crossorigin="anonymous">
 	<link rel="stylesheet" href="/static/css/font-awesome.min.css" />
+	<link rel="stylesheet" th:href="@{/static/table.css}" />
+    <script src="https://use.fontawesome.com/fec1def459.js"></script>
 <title>university!</title>
 </head>
 <body>
-	<h1>Hello on my university page!</h1>
 	<div class="container">
-		<ul class="nav nav-tabs justify-content-end">
-			<li class="nav-item"><a class="nav-link" href="/DepartmentUniversity/students">Students</a></li>
-                <li class="nav-item"><a class="nav-link" href="/DepartmentUniversity/teachers">Teachers</a></li>
-                <li class="nav-item"><a class="nav-link" href="/DepartmentUniversity/groups">Groups</a></li>
-                <li class="nav-item"><a class="nav-link" href="/DepartmentUniversity/courses">Courses</a></li>
-                <li class="nav-item"><a class="nav-link" href="/DepartmentUniversity/classrooms">Classrooms</a></li>
-                <li class="nav-item"><a class="nav-link" href="/DepartmentUniversity/timetables">Timetables</a></li>
-		</ul>
-	</div>
-	<script
-		src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"
-		integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4"
-		crossorigin="anonymous"></script>
+          <div class="navigation">          
+            <ul class="nav justify-content-end" style="background-color: #f5f5f5;">         
+                <li class="nav-item" ><a class="nav-link" style="color: #333;" href="/DepartmentUniversity/students"><i class="fa fa-users"></i>Students</a></li>
+                <li class="nav-item"><a class="nav-link" style="color: #333;" href="/DepartmentUniversity/teachers"><i class="fa fa-users"></i>Teachers</a></li>
+                <li class="nav-item"><a class="nav-link" style="color: #333;" href="/DepartmentUniversity/groups"><i class="fa fa-graduation-cap"></i>Groups</a></li>
+                <li class="nav-item"><a class="nav-link" style="color: #333;" href="/DepartmentUniversity/courses"><i class="fa fa-book"></i>Courses</a></li>
+                <li class="nav-item"><a class="nav-link" style="color: #333;" href="/DepartmentUniversity/classrooms"><i class="fa fa-university"></i>Classrooms</a></li>
+                <li class="nav-item"><a class="nav-link" style="color: #333;" href="/DepartmentUniversity/timetables"><i class="fa fa-calendar"></i>Timetables</a></li>
+                <li class="nav-item"><a class="btn btn-sm btn-dark" href="/DepartmentUniversity/" >Login</a></li>           
+            </ul>
+          </div>                
+   </div>
 </body>
 </html>
