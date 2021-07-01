@@ -22,8 +22,7 @@
                 <li class="nav-item"><a class="nav-link" style="color: #333;" href="/DepartmentUniversity/groups"><i class="fa fa-graduation-cap"></i>Groups</a></li>
                 <li class="nav-item"><a class="nav-link" style="color: #333;" href="/DepartmentUniversity/courses"><i class="fa fa-book"></i>Courses</a></li>
                 <li class="nav-item"><a class="nav-link" style="color: #333;" href="/DepartmentUniversity/classrooms"><i class="fa fa-university"></i>Classrooms</a></li>
-                <li class="nav-item"><a class="nav-link" style="color: #333;" href="/DepartmentUniversity/timetables"><i class="fa fa-calendar"></i>Timetables</a></li>
-                <li class="nav-item"><a class="btn btn-sm btn-dark" href="/DepartmentUniversity/" >Login</a></li>           
+                <li class="nav-item"><a class="nav-link" style="color: #333;" href="/DepartmentUniversity/timetables"><i class="fa fa-calendar"></i>Timetables</a></li>                          
             </ul>
           </div>                
    </div>
