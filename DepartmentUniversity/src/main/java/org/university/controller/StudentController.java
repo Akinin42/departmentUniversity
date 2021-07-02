@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.university.dto.StudentDto;
 import org.university.entity.Course;
+import org.university.exceptions.AuthorisationFailException;
+import org.university.exceptions.EntityNotExistException;
 import org.university.service.CourseService;
 import org.university.service.StudentService;
 
@@ -30,7 +32,7 @@ public class StudentController {
     public String getStudents(Model model) {        
         model.addAttribute("students", studentService.findNumberOfUsers(5, 0));
         model.addAttribute("courses", courseService.findAllCourses());
-        model.addAttribute("student", new StudentDto());        
+        model.addAttribute("student", new StudentDto());                
         return "students";
     }
     
@@ -81,5 +83,16 @@ public class StudentController {
         studentService.deleteStudentFromCourse(student, course);         
         return REDIRECT;
     }
-
+    
+    @PostMapping("/login")
+    public String login(@ModelAttribute("student") StudentDto studentDto, Model model) {
+        try {            
+            model.addAttribute("student", studentService.login(studentDto.getEmail(), studentDto.getPassword()));
+            return "studentprofile";
+        } catch (EntityNotExistException e) {
+            return "studentform";
+        } catch (AuthorisationFailException e) {
+            return "passwordFailMessage";
+        }
+    }
 }

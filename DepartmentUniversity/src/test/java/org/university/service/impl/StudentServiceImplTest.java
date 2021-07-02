@@ -136,6 +136,7 @@ class StudentServiceImplTest {
                 .withEmail("test@test.ru")
                 .withPhone("Test")
                 .withPassword("encodePassword")
+                .withCourses(new HashSet<Course>())
                 .build();
         assertThat(studentService.login("test@test.ru", "Test")).isEqualTo(student);
     }
@@ -361,6 +362,7 @@ class StudentServiceImplTest {
                 .withEmail("test@test.ru")
                 .withPhone("Test")
                 .withPassword("encodePassword")
+                .withCourses(new HashSet<Course>())
                 .build();
         when(studentDaoMock.findByEmail("test@test.ru")).thenReturn(Optional.ofNullable(student));
         when(studentDaoMock.findById(7)).thenReturn(Optional.empty());

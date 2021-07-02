@@ -10,26 +10,28 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.university.dto.DayTimetableDto;
 import org.university.dto.TeacherDto;
+import org.university.exceptions.AuthorisationFailException;
+import org.university.exceptions.EntityNotExistException;
 import org.university.service.TeacherService;
 
 @Controller
 @RequestMapping("/teachers")
 public class TeacherController {
-    
+
     private int number;
     private static final String REDIRECT = "redirect:/teachers";
-    
+
     @Autowired
     private TeacherService teacherService;
-    
+
     @GetMapping()
-    public String getTeachers(Model model) {        
-        model.addAttribute("teachers", teacherService.findNumberOfUsers(5, 0));      
+    public String getTeachers(Model model) {
+        model.addAttribute("teachers", teacherService.findNumberOfUsers(5, 0));
         model.addAttribute("teacher", new TeacherDto());
         model.addAttribute("timetable", new DayTimetableDto());
         return "teachers";
     }
-    
+
     @GetMapping("/other")
     public String getOtherTeachers(@RequestParam("number") int inputNumber, Model model) {
         model.addAttribute("teachers", null);
@@ -38,30 +40,41 @@ public class TeacherController {
         number += inputNumber;
         if (number < 0) {
             number = 0;
-        }        
+        }
         if (teacherService.findNumberOfUsers(5, number).isEmpty()) {
             number -= inputNumber;
         }
         model.addAttribute("teachers", teacherService.findNumberOfUsers(5, number));
         return "teachers";
     }
-    
+
     @GetMapping("/newTeacher")
-    public String newTeacher(Model model) {       
-        model.addAttribute("teacher", new TeacherDto());        
+    public String newTeacher(Model model) {
+        model.addAttribute("teacher", new TeacherDto());
         return "teacherform";
-    }    
-    
-    @PostMapping("/addTeacher")
-    public String addTeacher(@ModelAttribute("teacher") TeacherDto teacher) {        
-        teacherService.register(teacher);        
-        return REDIRECT;
     }
-    
-    @PostMapping("/delete")
-    public String delete(@ModelAttribute("teacher") TeacherDto teacher) {        
-        teacherService.delete(teacher);  
+
+    @PostMapping("/addTeacher")
+    public String addTeacher(@ModelAttribute("teacher") TeacherDto teacher) {
+        teacherService.register(teacher);
         return REDIRECT;
     }
 
+    @PostMapping("/delete")
+    public String delete(@ModelAttribute("teacher") TeacherDto teacher) {
+        teacherService.delete(teacher);
+        return REDIRECT;
+    }
+
+    @PostMapping("/login")
+    public String login(@ModelAttribute("teacher") TeacherDto teacherDto, Model model) {
+        try {            
+            model.addAttribute("teacher", teacherService.login(teacherDto.getEmail(), teacherDto.getPassword()));
+            return "teacherprofile";
+        } catch (EntityNotExistException e) {
+            return "teacherform";
+        } catch (AuthorisationFailException e) {
+            return "passwordFailMessage";
+        }
+    }
 }

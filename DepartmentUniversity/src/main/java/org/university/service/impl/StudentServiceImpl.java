@@ -48,6 +48,8 @@ public class StudentServiceImpl extends AbstractUserServiceImpl<Student> impleme
             throw new EntityNotExistException();
         }
         Student student = studentDao.findByEmail(email).get();
+        List<Course> courses = courseDao.findAllByStudent(student.getId());
+        student = addCoursesToStudent(student, courses);
         if (!encoder.matches(password, student.getPassword())) {
             throw new AuthorisationFailException();
         }
