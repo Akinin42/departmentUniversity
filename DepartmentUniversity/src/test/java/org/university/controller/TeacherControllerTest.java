@@ -85,8 +85,8 @@ class TeacherControllerTest {
     @Test
     void testOtherTeachersWhenInputNumberNegativeAndShowFirstTeachersYet() throws Exception {        
         List<Teacher> teachers = CreatorTestEntities.createTeachers();
-        when(teacherServiceMock.findNumberOfUsers(5, 0)).thenReturn(teachers);
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/teachers/other/").param("number", "-5");
+        when(teacherServiceMock.findNumberOfUsers(5, 0)).thenReturn(teachers);        
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/teachers/other/").param("number", "-5").sessionAttr("numberUsers", 0);
         ResultActions result = mockMvc.perform(request);
         result.andExpect(MockMvcResultMatchers.view().name("teachers"))
                 .andExpect(MockMvcResultMatchers.model().attributeExists("teachers"))
@@ -98,7 +98,7 @@ class TeacherControllerTest {
         List<Teacher> nextTeachers = CreatorTestEntities.createTeachers();
         nextTeachers.remove(1);
         when(teacherServiceMock.findNumberOfUsers(5, 1)).thenReturn(nextTeachers);
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/teachers/other/").param("number", "1");
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/teachers/other/").param("number", "1").sessionAttr("numberUsers", 0);
         ResultActions result = mockMvc.perform(request);
         result.andExpect(MockMvcResultMatchers.view().name("teachers"))
                 .andExpect(MockMvcResultMatchers.model().attributeExists("teachers"))
@@ -110,7 +110,7 @@ class TeacherControllerTest {
         List<Teacher> teachers = CreatorTestEntities.createTeachers();
         when(teacherServiceMock.findNumberOfUsers(5, 0)).thenReturn(teachers);
         when(teacherServiceMock.findNumberOfUsers(5, 5)).thenReturn(new ArrayList<Teacher>());
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/teachers/other/").param("number", "5");
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/teachers/other/").param("number", "5").sessionAttr("numberUsers", 0);
         ResultActions result = mockMvc.perform(request);
         result.andExpect(MockMvcResultMatchers.view().name("teachers"))
                 .andExpect(MockMvcResultMatchers.model().attributeExists("teachers"))

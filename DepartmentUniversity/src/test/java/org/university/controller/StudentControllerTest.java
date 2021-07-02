@@ -95,7 +95,7 @@ class StudentControllerTest {
     void testOtherStudentsWhenInputNumberNegativeAndShowFirstStudentsYet() throws Exception {
         List<Student> students = CreatorTestEntities.createStudents();
         when(studentServiceMock.findNumberOfUsers(5, 0)).thenReturn(students);
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/students/other/").param("number", "-5");
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/students/other/").param("number", "-5").sessionAttr("numberUsers", 0);
         ResultActions result = mockMvc.perform(request);
         result.andExpect(MockMvcResultMatchers.view().name("students"))
                 .andExpect(MockMvcResultMatchers.model().attributeExists("students"))
@@ -107,7 +107,7 @@ class StudentControllerTest {
         List<Student> nextStudents = CreatorTestEntities.createStudents();
         nextStudents.remove(1);
         when(studentServiceMock.findNumberOfUsers(5, 1)).thenReturn(nextStudents);
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/students/other/").param("number", "1");
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/students/other/").param("number", "1").sessionAttr("numberUsers", 0);
         ResultActions result = mockMvc.perform(request);
         result.andExpect(MockMvcResultMatchers.view().name("students"))
                 .andExpect(MockMvcResultMatchers.model().attributeExists("students"))
@@ -119,7 +119,7 @@ class StudentControllerTest {
         List<Student> students = CreatorTestEntities.createStudents();
         when(studentServiceMock.findNumberOfUsers(5, 1)).thenReturn(students);
         when(studentServiceMock.findNumberOfUsers(5, 6)).thenReturn(new ArrayList<Student>());
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/students/other/").param("number", "5");
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/students/other/").param("number", "5").sessionAttr("numberUsers", 1);
         ResultActions result = mockMvc.perform(request);
         result.andExpect(MockMvcResultMatchers.view().name("students"))
                 .andExpect(MockMvcResultMatchers.model().attributeExists("students"))
