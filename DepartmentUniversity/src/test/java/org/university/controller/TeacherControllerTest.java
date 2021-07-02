@@ -21,6 +21,8 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.university.dto.TeacherDto;
 import org.university.entity.Teacher;
+import org.university.exceptions.AuthorisationFailException;
+import org.university.exceptions.EntityNotExistException;
 import org.university.service.TeacherService;
 import org.university.utils.CreatorTestEntities;
 
@@ -115,5 +117,44 @@ class TeacherControllerTest {
         result.andExpect(MockMvcResultMatchers.view().name("teachers"))
                 .andExpect(MockMvcResultMatchers.model().attributeExists("teachers"))
                 .andExpect(MockMvcResultMatchers.model().attribute("teachers", teachers));
-    }    
+    }
+    
+    @Test
+    void testLoginWhenTeacherWithInputEmailAndPasswordExists() throws Exception {
+        TeacherDto teacher = new TeacherDto();
+        teacher.setEmail("test");
+        teacher.setPassword("test");
+        Teacher expectedTeacher = Teacher.builder().withEmail("test").build();
+        when(teacherServiceMock.login(teacher.getEmail(), teacher.getPassword())).thenReturn(expectedTeacher);
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/teachers/login/")
+                .flashAttr("teacher", teacher);
+        ResultActions result = mockMvc.perform(request);
+        result.andExpect(MockMvcResultMatchers.view().name("teacherprofile"))
+                .andExpect(MockMvcResultMatchers.model().attributeExists("teacher"))
+                .andExpect(MockMvcResultMatchers.model().attribute("teacher", expectedTeacher));        
+    }
+    
+    @Test
+    void testLoginWhenTeacherWithInputEmailNotExists() throws Exception {
+        TeacherDto teacher = new TeacherDto();
+        teacher.setEmail("notexistemail");
+        teacher.setPassword("test");        
+        when(teacherServiceMock.login(teacher.getEmail(), teacher.getPassword())).thenThrow(EntityNotExistException.class);
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/teachers/login/")
+                .flashAttr("teacher", teacher);
+        ResultActions result = mockMvc.perform(request);
+        result.andExpect(MockMvcResultMatchers.view().name("teacherform"));
+    }
+    
+    @Test
+    void testLoginWhenTeacherWithInputEmailExistsButPasswordNotCorrect() throws Exception {
+        TeacherDto teacher = new TeacherDto();
+        teacher.setEmail("test");
+        teacher.setPassword("incorrect password");        
+        when(teacherServiceMock.login(teacher.getEmail(), teacher.getPassword())).thenThrow(AuthorisationFailException.class);
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/teachers/login/")
+                .flashAttr("teacher", teacher);
+        ResultActions result = mockMvc.perform(request);
+        result.andExpect(MockMvcResultMatchers.view().name("passwordFailMessage"));
+    }
 }
