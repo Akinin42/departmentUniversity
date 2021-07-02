@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.SessionAttributes;
 import org.university.dto.StudentDto;
 import org.university.entity.Course;
 import org.university.exceptions.AuthorisationFailException;
@@ -17,9 +18,9 @@ import org.university.service.StudentService;
 
 @Controller
 @RequestMapping("/students")
+@SessionAttributes("numberUsers")
 public class StudentController {
 
-    private int number;
     private static final String REDIRECT = "redirect:/students";
     
     @Autowired
@@ -32,7 +33,8 @@ public class StudentController {
     public String getStudents(Model model) {        
         model.addAttribute("students", studentService.findNumberOfUsers(5, 0));
         model.addAttribute("courses", courseService.findAllCourses());
-        model.addAttribute("student", new StudentDto());                
+        model.addAttribute("student", new StudentDto());
+        model.addAttribute("numberUsers", Integer.valueOf(0));
         return "students";
     }
     
@@ -40,8 +42,8 @@ public class StudentController {
     public String getOtherStudents(@RequestParam("number") int inputNumber, Model model) {
         model.addAttribute("students", null);
         model.addAttribute("courses", courseService.findAllCourses());
-        model.addAttribute("student", new StudentDto());
-        number += inputNumber;
+        model.addAttribute("student", new StudentDto());        
+        int number = (int) model.getAttribute("numberUsers") + inputNumber;
         if (number < 0) {
             number = 0;
         }        

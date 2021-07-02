@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.SessionAttributes;
 import org.university.dto.DayTimetableDto;
 import org.university.dto.TeacherDto;
 import org.university.exceptions.AuthorisationFailException;
@@ -16,9 +17,9 @@ import org.university.service.TeacherService;
 
 @Controller
 @RequestMapping("/teachers")
+@SessionAttributes("numberUsers")
 public class TeacherController {
-
-    private int number;
+    
     private static final String REDIRECT = "redirect:/teachers";
 
     @Autowired
@@ -29,6 +30,7 @@ public class TeacherController {
         model.addAttribute("teachers", teacherService.findNumberOfUsers(5, 0));
         model.addAttribute("teacher", new TeacherDto());
         model.addAttribute("timetable", new DayTimetableDto());
+        model.addAttribute("numberUsers", Integer.valueOf(0));
         return "teachers";
     }
 
@@ -37,7 +39,7 @@ public class TeacherController {
         model.addAttribute("teachers", null);
         model.addAttribute("teacher", new TeacherDto());
         model.addAttribute("timetable", new DayTimetableDto());
-        number += inputNumber;
+        int number = (int) model.getAttribute("numberUsers") + inputNumber;
         if (number < 0) {
             number = 0;
         }
