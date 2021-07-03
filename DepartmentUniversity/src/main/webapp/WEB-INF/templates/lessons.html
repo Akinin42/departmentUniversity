@@ -22,7 +22,7 @@
 						<div class="row">
 							<div class="col-sm-12 col-xs-12">
 								<h4 class="title pull-left">Lesson List</h4>
-								<a href="/DepartmentUniversity/timetables/newLesson" class="btn btn-sm btn-primary pull-right">Create New</a>
+								<a href="/DepartmentUniversity/timetables/new" class="btn btn-sm btn-primary pull-right">Create New</a>
 							</div>
 						</div>
 					</div>
@@ -58,7 +58,7 @@
 									<td>
 										<ul class="action-list">
 											<li>
-												<form action="#" th:action="@{/timetables/deleteLesson}" th:object="${lesson}" method="post">
+												<form action="#" th:action="@{/timetables}" th:object="${lesson}" th:method="delete">
 													<input class="form-control" type="hidden" th:value="${lesson.startLesson}" id="startLesson"	name="startLesson" /> 
 													<input class="form-control"	type="hidden" th:value="${lesson.id}" id="id" name="id" />
 													<button type="submit" class="btn btn-danger" th:value="lesson">
@@ -75,7 +75,7 @@
 					<div class="panel-heading">
 						<div class="row pull-right">
 							<div class="input-group mb-3">
-								<form action="#" th:action="@{/timetables/getOnDay}" th:object="${timetable}" method="post">
+								<form action="#" th:action="@{/timetables/date}" th:object="${timetable}" method="post">
 									<input class="form-group" type="date" th:value="${day}"	id="day" name="day" />
 									<button class="btn btn-sm btn-primary pull-right" type="submit"	th:value="timetable">Get timetable</button>
 								</form>

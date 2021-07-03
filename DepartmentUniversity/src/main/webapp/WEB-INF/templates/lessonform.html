@@ -15,7 +15,7 @@
 <body>
     <div class="container">
 
-            <form class="" th:action="@{/timetables/addLesson}" th:object="${lesson}" method="post">
+            <form class="" th:action="@{/timetables}" th:object="${lesson}" method="post">
                 <div class="form-group">
                     <label for="groupName" class="cols-sm-2 control-label">Group Name</label>
                     <select id="groupname" th:field="*{groupName}" class="form-select" aria-label="Default select example">

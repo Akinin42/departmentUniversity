@@ -87,7 +87,7 @@
 					<div class="panel-heading">
 						<div class="row pull-right">
 							<div class="input-group mb-3">
-								<form action="#" th:action="@{/timetables/getForTeacher}" th:object="${timetable}" method="post">
+								<form action="#" th:action="@{/timetables/teacher}" th:object="${timetable}" method="post">
 									<select id="name" th:field="*{teacherEmail}" class="form-group"	aria-label="Default select example">
 										<option th:each="teacher : ${teachers}"	th:value="${teacher.email}" th:text="${teacher.name}"></option>
 									</select> 

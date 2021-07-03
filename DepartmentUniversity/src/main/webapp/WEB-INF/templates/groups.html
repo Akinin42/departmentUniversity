@@ -24,7 +24,7 @@
 								<h4 class="title pull-left">Group List</h4>
 								<div class="row pull-right">
 									<div class="input-group mb-3">
-										<form action="#" th:action="@{/groups/add}"	th:object="${group}" method="post">
+										<form action="#" th:action="@{/groups}"	th:object="${group}" method="post">
 											<label for="name">Group name:</label> 
 											<input type="text" class="form-group" th:field="*{name}" id="name">
 											<button class="btn btn-sm btn-primary pull-right" type="submit" th:value="timetable">Create group</button>
@@ -63,7 +63,7 @@
 									<td>
 										<ul class="action-list">
 											<li>
-												<form action="#" th:action="@{/groups/addStudent}" th:object="${student}" method="post">
+												<form action="#" th:action="@{/groups/student}" th:object="${student}" method="post">
 													<input class="form-control" type="hidden" th:value="${group.name}" id="groupName" name="groupName" />
 													<select id="id" th:field="*{id}" class="form-group"	aria-label="Default select example">
 														<option th:each="student : ${students}"	th:value="${student.id}" th:text="${student.name}"></option>
@@ -78,7 +78,7 @@
 									<td>
 										<ul class="action-list">
 											<li>
-												<form action="#" th:action="@{/groups/deleteStudent}" th:object="${student}" method="post">
+												<form action="#" th:action="@{/groups/student}" th:object="${student}" th:method="delete">
 													<input class="form-control" type="hidden" th:value="${group.name}" id="groupName" name="groupName" />
 													<select id="id" th:field="*{id}" class="form-group"	aria-label="Default select example">
 														<option th:each="student : ${students}"	th:value="${student.id}" th:text="${student.name}"></option>
@@ -93,7 +93,7 @@
 									<td>
 										<ul class="action-list">
 											<li>
-												<form action="#" th:action="@{/groups/delete}" th:object="${group}" method="post">
+												<form action="#" th:action="@{/groups/}" th:object="${group}" th:method="delete">
 													<input class="form-control" type="hidden" th:value="${group.id}" id="id" name="id" />
 													<button type="submit" class="btn btn-danger" th:value="teacher">
 														<i class="fa fa-trash"></i>
@@ -109,7 +109,7 @@
 					<div class="panel-heading">
 						<div class="row pull-right">
 							<div class="input-group mb-3">
-								<form action="#" th:action="@{/timetables/getForGroup}"	th:object="${timetable}" method="post">
+								<form action="#" th:action="@{/timetables/group}"	th:object="${timetable}" method="post">
 									<select id="name" th:field="*{groupName}" class="form-group" aria-label="Default select example">
 										<option th:each="group : ${groups}" th:value="${group.name}" th:text="${group.name}"></option>
 									</select> <input class="form-group" type="date" th:value="${day}" id="day" name="day" />

@@ -2,9 +2,9 @@ package org.university.controller;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,28 +17,22 @@ import org.university.service.DayTimetableService;
 import org.university.service.GroupService;
 import org.university.service.LessonService;
 import org.university.service.TeacherService;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.experimental.FieldDefaults;
 
 @Controller
 @RequestMapping("/timetables")
+@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
+@AllArgsConstructor
 public class TimetableController {
-
-    @Autowired
-    private DayTimetableService timetableService;
-
-    @Autowired
-    private GroupService groupService;
-
-    @Autowired
-    private TeacherService teacherService;
-
-    @Autowired
-    private CourseService courseService;
-
-    @Autowired
-    private ClassroomService classroomService;
-
-    @Autowired
-    private LessonService lessonService;
+    
+    DayTimetableService timetableService;
+    GroupService groupService;
+    TeacherService teacherService;
+    CourseService courseService;
+    ClassroomService classroomService;
+    LessonService lessonService;
 
     @GetMapping()
     public String getTimetable(Model model) {
@@ -46,27 +40,27 @@ public class TimetableController {
         return "lessons";
     }
 
-    @PostMapping("/getOnDay")
+    @PostMapping("/date")
     public String getTimetableOnDay(@ModelAttribute("timetable") DayTimetableDto timetable, Model model) {
         model.addAttribute("lessons", timetableService.createDayTimetable(timetable.getDay()).getLessons());
         return "lessons";
     }
 
-    @PostMapping("/getForGroup")
+    @PostMapping("/group")
     public String createGroupTimetable(@ModelAttribute("timetable") DayTimetableDto timetable, Model model) {
         model.addAttribute("lessons",
                 timetableService.createGroupTimetable(timetable.getDay(), timetable.getGroupName()).getLessons());
         return "lessons";
     }
 
-    @PostMapping("/getForTeacher")
+    @PostMapping("/teacher")
     public String createTeacherTimetable(@ModelAttribute("timetable") DayTimetableDto timetable, Model model) {
         model.addAttribute("lessons",
                 timetableService.createTeacherTimetable(timetable.getDay(), timetable.getTeacherEmail()).getLessons());
         return "lessons";
     }
 
-    @GetMapping("/newLesson")
+    @GetMapping("/new")
     public String newLesson(Model model) {
         model.addAttribute("groups", groupService.findAllGroups());
         model.addAttribute("teachers", teacherService.findAll());
@@ -76,7 +70,7 @@ public class TimetableController {
         return "lessonform";
     }
 
-    @PostMapping("/addLesson")
+    @PostMapping()
     public String addLesson(@ModelAttribute("lesson") LessonDto lesson, Model model) {
         lessonService.addLesson(lesson);
         String date = LocalDateTime.parse(lesson.getStartLesson()).toLocalDate().toString();
@@ -84,7 +78,7 @@ public class TimetableController {
         return "lessons";
     }
     
-    @PostMapping("/deleteLesson")
+    @DeleteMapping()
     public String deleteLesson(@ModelAttribute("lesson") LessonDto lesson, Model model) {
         lessonService.delete(lesson);
         String date = LocalDateTime.parse(lesson.getStartLesson()).toLocalDate().toString();

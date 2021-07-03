@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.MockMvc;
@@ -38,11 +37,11 @@ class GroupControllerTest {
     @Mock
     private StudentService studentServiceMock;
 
-    @InjectMocks
     private GroupController groupController;
 
     @BeforeEach
     public void setUpBeforeClass() throws Exception {
+        groupController = new GroupController(groupServiceMock, studentServiceMock);
         mockMvc = MockMvcBuilders.standaloneSetup(groupController).build();
     }
 
@@ -64,7 +63,7 @@ class GroupControllerTest {
     @Test
     void testAdd() throws Exception {
         GroupDto group = new GroupDto();
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/groups/add/").flashAttr("group", group);
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/groups/").flashAttr("group", group);
         ResultActions result = mockMvc.perform(request);
         result.andExpect(MockMvcResultMatchers.view().name("redirect:/groups"));
         verify(groupServiceMock).addGroup(group);
@@ -73,7 +72,7 @@ class GroupControllerTest {
     @Test
     void testDelete() throws Exception {
         GroupDto group = new GroupDto();
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/groups/delete/").flashAttr("group",
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.delete("/groups/").flashAttr("group",
                 group);
         ResultActions result = mockMvc.perform(request);
         result.andExpect(MockMvcResultMatchers.view().name("redirect:/groups"));
@@ -88,7 +87,7 @@ class GroupControllerTest {
                 .withName("test")
                 .build();
         when(groupServiceMock.createGroup("test")).thenReturn(group);
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/groups/addStudent/")
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/groups/student/")
                 .flashAttr("student", student);
         ResultActions result = mockMvc.perform(request);
         result.andExpect(MockMvcResultMatchers.view().name("redirect:/groups"));
@@ -101,7 +100,7 @@ class GroupControllerTest {
         student.setGroupName("test");
         Group group = Group.builder().withName("test").build();
         when(groupServiceMock.createGroup("test")).thenReturn(group);
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/groups/deleteStudent/")
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.delete("/groups/student/")
                 .flashAttr("student", student);
         ResultActions result = mockMvc.perform(request);
         result.andExpect(MockMvcResultMatchers.view().name("redirect:/groups"));

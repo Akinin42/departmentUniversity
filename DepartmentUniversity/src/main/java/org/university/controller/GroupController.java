@@ -1,8 +1,8 @@
 package org.university.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,18 +13,19 @@ import org.university.dto.StudentDto;
 import org.university.entity.Group;
 import org.university.service.GroupService;
 import org.university.service.StudentService;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.experimental.FieldDefaults;
 
 @Controller
 @RequestMapping("/groups")
+@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
+@AllArgsConstructor
 public class GroupController {
 
-    private static final String REDIRECT = "redirect:/groups";
-    
-    @Autowired
-    private GroupService groupService;
-
-    @Autowired
-    private StudentService studentService;
+    private static final String REDIRECT = "redirect:/groups";    
+    GroupService groupService;
+    StudentService studentService;
 
     @GetMapping()
     public String getAll(Model model) {
@@ -36,27 +37,27 @@ public class GroupController {
         return "groups";
     }
 
-    @PostMapping("/add")
+    @PostMapping()
     public String add(@ModelAttribute("group") GroupDto group) {
         groupService.addGroup(group);
         return REDIRECT;
     }
 
-    @PostMapping("/addStudent")
+    @PostMapping("/student")
     public String addStudent(@ModelAttribute("student") StudentDto student) {
         Group group = groupService.createGroup(student.getGroupName());
         studentService.addStudentToGroup(student, group);
         return REDIRECT;
     }
 
-    @PostMapping("/deleteStudent")
+    @DeleteMapping("/student")
     public String deleteStudent(@ModelAttribute("student") StudentDto student) {
         Group group = groupService.createGroup(student.getGroupName());
         studentService.deleteStudentFromGroup(student, group);
         return REDIRECT;
     }
 
-    @PostMapping("/delete")
+    @DeleteMapping()
     public String delete(@ModelAttribute("group") GroupDto group) {
         groupService.delete(group);
         return REDIRECT;

@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.MockMvc;
@@ -59,11 +58,12 @@ class TimetableControllerTest {
     @Mock
     private DayTimetableService timetableServiceMock;
 
-    @InjectMocks
     private TimetableController timetableController;
 
     @BeforeEach
     public void setUpBeforeClass() throws Exception {
+        timetableController = new TimetableController(timetableServiceMock, groupServiceMock, teacherServiceMock,
+                courseServiceMock, classroomServiceMock, lessonServiceMock);
         mockMvc = MockMvcBuilders.standaloneSetup(timetableController).build();
     }
 
@@ -86,7 +86,7 @@ class TimetableControllerTest {
         List<Lesson> lessons = CreatorTestEntities.createLessons();
         DayTimetable timetable = new DayTimetable(LocalDate.parse("2020-10-20"), lessons);
         when(timetableServiceMock.createDayTimetable("2020-10-20")).thenReturn(timetable);
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/timetables/getOnDay/")
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/timetables/date/")
                 .flashAttr("timetable", timetableDto);
         ResultActions result = mockMvc.perform(request);
         result.andExpect(MockMvcResultMatchers.view().name("lessons"))
@@ -102,7 +102,7 @@ class TimetableControllerTest {
         List<Lesson> lessons = CreatorTestEntities.createLessons();
         DayTimetable timetable = new DayTimetable(LocalDate.parse("2020-10-20"), lessons);
         when(timetableServiceMock.createGroupTimetable("2020-10-20", "Test")).thenReturn(timetable);
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/timetables/getForGroup/")
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/timetables/group/")
                 .flashAttr("timetable", timetableDto);
         ResultActions result = mockMvc.perform(request);
         result.andExpect(MockMvcResultMatchers.view().name("lessons"))
@@ -118,7 +118,7 @@ class TimetableControllerTest {
         List<Lesson> lessons = CreatorTestEntities.createLessons();
         DayTimetable timetable = new DayTimetable(LocalDate.parse("2020-10-20"), lessons);
         when(timetableServiceMock.createTeacherTimetable("2020-10-20", "Test")).thenReturn(timetable);
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/timetables/getForTeacher/")
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/timetables/teacher/")
                 .flashAttr("timetable", timetableDto);
         ResultActions result = mockMvc.perform(request);
         result.andExpect(MockMvcResultMatchers.view().name("lessons"))
@@ -133,7 +133,7 @@ class TimetableControllerTest {
         List<Lesson> lessons = CreatorTestEntities.createLessons();
         DayTimetable timetable = new DayTimetable(LocalDate.parse("2010-10-10"), lessons);
         when(timetableServiceMock.createDayTimetable("2010-10-10")).thenReturn(timetable);
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/timetables/addLesson/")
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/timetables/")
                 .flashAttr("lesson", lesson);
         ResultActions result = mockMvc.perform(request);
         result.andExpect(MockMvcResultMatchers.view().name("lessons"))
@@ -149,7 +149,7 @@ class TimetableControllerTest {
         List<Lesson> lessons = CreatorTestEntities.createLessons();
         DayTimetable timetable = new DayTimetable(LocalDate.parse("2010-10-10"), lessons);
         when(timetableServiceMock.createDayTimetable("2010-10-10")).thenReturn(timetable);
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/timetables/deleteLesson/")
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.delete("/timetables/")
                 .flashAttr("lesson", lesson);
         ResultActions result = mockMvc.perform(request);
         result.andExpect(MockMvcResultMatchers.view().name("lessons"))
@@ -169,7 +169,7 @@ class TimetableControllerTest {
         when(teacherServiceMock.findAll()).thenReturn(teachers);
         when(courseServiceMock.findAllCourses()).thenReturn(courses);
         when(classroomServiceMock.findAllClassrooms()).thenReturn(classrooms);
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/timetables/newLesson/");
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/timetables/new/");
         ResultActions result = mockMvc.perform(request);
         result.andExpect(MockMvcResultMatchers.view().name("lessonform"))
                 .andExpect(MockMvcResultMatchers.model().attributeExists("groups"))
