@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.MockMvc;
@@ -40,11 +39,11 @@ class StudentControllerTest {
     @Mock
     private CourseService courseServiceMock;
 
-    @InjectMocks
     private StudentController studentController;
 
     @BeforeEach
     public void setUpBeforeClass() throws Exception {
+        studentController = new StudentController(studentServiceMock, courseServiceMock);
         mockMvc = MockMvcBuilders.standaloneSetup(studentController).build();
     }
 

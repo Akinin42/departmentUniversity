@@ -24,7 +24,7 @@
 								<h4 class="title pull-left">Course List</h4>
 								<div class="row pull-right">
 									<div class="input-group mb-3">
-										<form action="#" th:action="@{/courses/add}" th:object="${course}" method="post">
+										<form action="#" th:action="@{/courses}" th:object="${course}" method="post">
 											<label for="name">Course name:</label> 
 											<input type="text" class="form-group" th:field="*{name}" id="name" style="width: 200px;"> 
 											<label for="description">Course	description:</label> 
@@ -54,7 +54,7 @@
 									<td>
 										<ul class="action-list">
 											<li>
-												<form action="#" th:action="@{/courses/delete}"	th:object="${course}" method="post">
+												<form action="#" th:action="@{/courses}"	th:object="${course}" th:method="delete">
 													<input class="form-control" type="hidden" th:value="${course.id}" id="id" name="id" />
 													<button type="submit" class="btn btn-danger" th:value="course">
 														<i class="fa fa-trash"></i>

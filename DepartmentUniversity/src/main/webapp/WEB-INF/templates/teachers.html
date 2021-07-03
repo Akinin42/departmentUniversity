@@ -22,7 +22,7 @@
 						<div class="row">
 							<div class="col-sm-12 col-xs-12">
 								<h4 class="title pull-left">Teacher List</h4>
-								<a href="/DepartmentUniversity/teachers/newTeacher"	class="btn btn-sm btn-primary pull-right">Create New</a>
+								<a href="/DepartmentUniversity/teachers/new"	class="btn btn-sm btn-primary pull-right">Create New</a>
 							</div>
 						</div>
 					</div>
@@ -61,7 +61,7 @@
 									<td>
 										<ul class="action-list">
 											<li>
-												<form action="#" th:action="@{/teachers/delete}" th:object="${teacher}" method="post">
+												<form action="#" th:action="@{/teachers}" th:object="${teacher}" th:method="delete">
 													<input class="form-control" type="hidden" th:value="${teacher.id}" id="id" name="id" />
 													<button type="submit" class="btn btn-danger" th:value="teacher">
 														<i class="fa fa-trash"></i>
@@ -78,8 +78,8 @@
 						<div class="row">
 							<div class="col-sm-6 col-xs-6">
 								<ul class="pagination hidden-xs pull-right">
-									<li><a href="/DepartmentUniversity/teachers/other?number=-5">«</a></li>
-									<li><a href="/DepartmentUniversity/teachers/other?number=5">»</a></li>
+									<li><a href="/DepartmentUniversity/teachers/-1">«</a></li>
+									<li><a href="/DepartmentUniversity/teachers/1">»</a></li>
 								</ul>
 							</div>
 						</div>

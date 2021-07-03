@@ -7,7 +7,6 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.MockMvc;
@@ -31,12 +30,12 @@ class CourseControllerTest {
 
     @Mock
     private CourseService courseServiceMock;
-
-    @InjectMocks
+    
     private CourseController courseController;
 
     @BeforeEach
     public void setUpBeforeClass() throws Exception {
+        courseController = new CourseController(courseServiceMock);
         mockMvc = MockMvcBuilders.standaloneSetup(courseController).build();
     }
 
@@ -54,7 +53,7 @@ class CourseControllerTest {
     @Test
     void testAdd() throws Exception {
         CourseDto course = new CourseDto();
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/courses/add/").flashAttr("course",
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/courses/").flashAttr("course",
                 course);
         ResultActions result = mockMvc.perform(request);
         result.andExpect(MockMvcResultMatchers.view().name("redirect:/courses"));
@@ -64,7 +63,7 @@ class CourseControllerTest {
     @Test
     void testDelete() throws Exception {
         CourseDto course = new CourseDto();
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/courses/delete/").flashAttr("course",
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.delete("/courses/").flashAttr("course",
                 course);
         ResultActions result = mockMvc.perform(request);
         result.andExpect(MockMvcResultMatchers.view().name("redirect:/courses"));

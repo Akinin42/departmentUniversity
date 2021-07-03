@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.MockMvc;
@@ -34,12 +33,12 @@ class TeacherControllerTest {
 
     @Mock
     private TeacherService teacherServiceMock;
-
-    @InjectMocks
+    
     private TeacherController teacherController;
 
     @BeforeEach
     public void setUpBeforeClass() throws Exception {
+        teacherController = new TeacherController(teacherServiceMock);
         mockMvc = MockMvcBuilders.standaloneSetup(teacherController).build();
     }
 
@@ -57,7 +56,7 @@ class TeacherControllerTest {
     @Test
     void testAddTeacher() throws Exception {
         TeacherDto teacher = new TeacherDto();
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/teachers/addTeacher/")
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/teachers/")
                 .flashAttr("teacher", teacher);
         ResultActions result = mockMvc.perform(request);
         result.andExpect(MockMvcResultMatchers.view().name("redirect:/teachers"));
@@ -67,7 +66,7 @@ class TeacherControllerTest {
     @Test
     void testDelete() throws Exception {
         TeacherDto teacher = new TeacherDto();
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/teachers/delete/")
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.delete("/teachers/")
                 .flashAttr("teacher", teacher);
         ResultActions result = mockMvc.perform(request);
         result.andExpect(MockMvcResultMatchers.view().name("redirect:/teachers"));
@@ -77,7 +76,7 @@ class TeacherControllerTest {
     @Test
     void testNewTeacher() throws Exception {
         TeacherDto teacher = new TeacherDto();        
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/teachers/newTeacher/");
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/teachers/new/");
         ResultActions result = mockMvc.perform(request);
         result.andExpect(MockMvcResultMatchers.view().name("teacherform"))
                 .andExpect(MockMvcResultMatchers.model().attributeExists("teacher"))
@@ -88,7 +87,7 @@ class TeacherControllerTest {
     void testOtherTeachersWhenInputNumberNegativeAndShowFirstTeachersYet() throws Exception {        
         List<Teacher> teachers = CreatorTestEntities.createTeachers();
         when(teacherServiceMock.findNumberOfUsers(5, 0)).thenReturn(teachers);        
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/teachers/other/").param("number", "-5").sessionAttr("numberUsers", 0);
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/teachers/-1").sessionAttr("numberUsers", 0);
         ResultActions result = mockMvc.perform(request);
         result.andExpect(MockMvcResultMatchers.view().name("teachers"))
                 .andExpect(MockMvcResultMatchers.model().attributeExists("teachers"))
@@ -99,8 +98,8 @@ class TeacherControllerTest {
     void testOtherTeachers() throws Exception {
         List<Teacher> nextTeachers = CreatorTestEntities.createTeachers();
         nextTeachers.remove(1);
-        when(teacherServiceMock.findNumberOfUsers(5, 1)).thenReturn(nextTeachers);
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/teachers/other/").param("number", "1").sessionAttr("numberUsers", 0);
+        when(teacherServiceMock.findNumberOfUsers(5, 5)).thenReturn(nextTeachers);
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/teachers/1").sessionAttr("numberUsers", 0);
         ResultActions result = mockMvc.perform(request);
         result.andExpect(MockMvcResultMatchers.view().name("teachers"))
                 .andExpect(MockMvcResultMatchers.model().attributeExists("teachers"))
@@ -112,7 +111,7 @@ class TeacherControllerTest {
         List<Teacher> teachers = CreatorTestEntities.createTeachers();
         when(teacherServiceMock.findNumberOfUsers(5, 0)).thenReturn(teachers);
         when(teacherServiceMock.findNumberOfUsers(5, 5)).thenReturn(new ArrayList<Teacher>());
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/teachers/other/").param("number", "5").sessionAttr("numberUsers", 0);
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/teachers/1").sessionAttr("numberUsers", 0);
         ResultActions result = mockMvc.perform(request);
         result.andExpect(MockMvcResultMatchers.view().name("teachers"))
                 .andExpect(MockMvcResultMatchers.model().attributeExists("teachers"))

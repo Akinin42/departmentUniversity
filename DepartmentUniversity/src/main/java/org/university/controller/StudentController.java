@@ -1,6 +1,5 @@
 package org.university.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -16,19 +15,20 @@ import org.university.exceptions.AuthorisationFailException;
 import org.university.exceptions.EntityNotExistException;
 import org.university.service.CourseService;
 import org.university.service.StudentService;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.experimental.FieldDefaults;
 
 @Controller
 @RequestMapping("/students")
 @SessionAttributes("numberUsers")
+@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
+@AllArgsConstructor
 public class StudentController {
 
     private static final String REDIRECT = "redirect:/students";
-
-    @Autowired
-    private StudentService studentService;
-
-    @Autowired
-    private CourseService courseService;
+    StudentService studentService;
+    CourseService courseService;
 
     @GetMapping()
     public String getStudents(Model model) {
