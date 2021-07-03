@@ -106,4 +106,17 @@ class ClassroomDaoImplTest {
     void findByNumberShouldReturnExpectedClassroomWhenInputExistentNumber() {
         assertThat(classroomDao.findByNumber(1).get()).isEqualTo(CreatorTestEntities.createClassrooms().get(0));
     }
+    
+    @Test
+    void updateShouldUpdateClassroomWithInputData() {
+        Classroom existClassroom = CreatorTestEntities.createClassrooms().get(0);
+        Classroom updatedClassroom = Classroom.builder()
+                .withId(existClassroom.getId())
+                .withNumber(17)
+                .withAddress("new address")
+                .withCapacity(25)
+                .build();
+        classroomDao.update(updatedClassroom);
+        assertThat(classroomDao.findById(1).get()).isEqualTo(updatedClassroom);
+    }
 }

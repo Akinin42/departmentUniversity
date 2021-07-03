@@ -108,5 +108,21 @@ class TeacherDaoImplTest {
     @Test
     void findByEmailShouldReturnEmptyOptionalWhenInputEmailNotExists() {
         assertThat(teacherDao.findByEmail("notexistenemail")).isEmpty();
-    }    
+    }
+    
+    @Test
+    void updateShouldUpdateTeacherWithInputData() {
+        Teacher existTeacher = CreatorTestEntities.createTeachers().get(0);
+        Teacher updatedTeacher = Teacher.builder()
+                .withId(existTeacher.getId())
+                .withSex("New sex")
+                .withName("New name")
+                .withEmail("New email")
+                .withPhone("New phone")
+                .withPassword("New password")
+                .withScientificDegree("new degree")
+                .build();
+        teacherDao.update(updatedTeacher);
+        assertThat(teacherDao.findById(1).get()).isEqualTo(updatedTeacher);
+    }
 }

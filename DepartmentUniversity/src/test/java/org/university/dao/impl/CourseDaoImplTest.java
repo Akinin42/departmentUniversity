@@ -116,4 +116,16 @@ class CourseDaoImplTest {
     void findAllByStudentShouldReturnEmptyListWhenStudentHasNotIt() {
         assertThat(courseDao.findAllByStudent(5)).isEmpty();
     }
+    
+    @Test
+    void updateShouldUpdateCourseWithInputData() {
+        Course existCourse = CreatorTestEntities.createCourses().get(0);
+        Course updatedCourse = Course.builder()
+                .withId(existCourse.getId())
+                .withName("new name")
+                .withDescription("new")
+                .build();
+        courseDao.update(updatedCourse);
+        assertThat(courseDao.findById(1).get()).isEqualTo(updatedCourse);
+    }
 }

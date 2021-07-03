@@ -104,4 +104,15 @@ class GroupDaoImplTest {
     void findByNameShouldReturnExpectedGroupWhenInputExistentName() {
         assertThat(groupDao.findByName("AB-22").get()).isEqualTo(CreatorTestEntities.createGroups().get(0));
     }
+    
+    @Test
+    void updateShouldUpdateGroupWithInputData() {
+        Group existGroup = CreatorTestEntities.createGroups().get(0);
+        Group updatedGroup = Group.builder()
+                .withId(existGroup.getId())
+                .withName("new")
+                .build();
+        groupDao.update(updatedGroup);
+        assertThat(groupDao.findById(1).get()).isEqualTo(updatedGroup);
+    }
 }
