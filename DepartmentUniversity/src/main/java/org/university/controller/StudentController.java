@@ -3,11 +3,12 @@ package org.university.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.university.dto.StudentDto;
 import org.university.entity.Course;
@@ -22,73 +23,73 @@ import org.university.service.StudentService;
 public class StudentController {
 
     private static final String REDIRECT = "redirect:/students";
-    
+
     @Autowired
     private StudentService studentService;
-    
+
     @Autowired
     private CourseService courseService;
 
     @GetMapping()
-    public String getStudents(Model model) {        
+    public String getStudents(Model model) {
         model.addAttribute("students", studentService.findNumberOfUsers(5, 0));
         model.addAttribute("courses", courseService.findAllCourses());
         model.addAttribute("student", new StudentDto());
         model.addAttribute("numberUsers", Integer.valueOf(0));
         return "students";
     }
-    
-    @GetMapping("/other")
-    public String getOtherStudents(@RequestParam("number") int inputNumber, Model model) {
+
+    @GetMapping("/{page}")
+    public String getOtherStudents(@PathVariable("page") int page, Model model) {
         model.addAttribute("students", null);
         model.addAttribute("courses", courseService.findAllCourses());
-        model.addAttribute("student", new StudentDto());        
-        int number = (int) model.getAttribute("numberUsers") + inputNumber;
+        model.addAttribute("student", new StudentDto());
+        int number = (int) model.getAttribute("numberUsers") + (page * 5);
         if (number < 0) {
             number = 0;
-        }        
+        }
         if (studentService.findNumberOfUsers(5, number).isEmpty()) {
-            number -= inputNumber;
+            number -= (page * 5);
         }
         model.addAttribute("students", studentService.findNumberOfUsers(5, number));
         return "students";
     }
-    
-    @GetMapping("/newStudent")
-    public String newStudent(Model model) {       
-        model.addAttribute("student", new StudentDto());        
+
+    @GetMapping("/new")
+    public String newStudent(Model model) {
+        model.addAttribute("student", new StudentDto());
         return "studentform";
-    }    
-    
-    @PostMapping("/addStudent")
-    public String addStudent(@ModelAttribute("student") StudentDto student) {        
-        studentService.register(student);        
+    }
+
+    @PostMapping()
+    public String addStudent(@ModelAttribute("student") StudentDto student) {
+        studentService.register(student);
         return REDIRECT;
     }
-    
-    @PostMapping("/delete")
-    public String delete(@ModelAttribute("student") StudentDto student) {        
-        studentService.delete(student);  
+
+    @DeleteMapping()
+    public String delete(@ModelAttribute("student") StudentDto student) {
+        studentService.delete(student);
         return REDIRECT;
     }
-    
-    @PostMapping("/addCourse")
+
+    @PostMapping("/course")
     public String addCourse(@ModelAttribute("student") StudentDto student) {
         Course course = courseService.createCourse(student.getCourseName());
-        studentService.addStudentToCourse(student, course);         
+        studentService.addStudentToCourse(student, course);
         return REDIRECT;
     }
-    
-    @PostMapping("/deleteCourse")
+
+    @DeleteMapping("/course")
     public String deleteCourse(@ModelAttribute("student") StudentDto student) {
         Course course = courseService.createCourse(student.getCourseName());
-        studentService.deleteStudentFromCourse(student, course);         
+        studentService.deleteStudentFromCourse(student, course);
         return REDIRECT;
     }
-    
+
     @PostMapping("/login")
     public String login(@ModelAttribute("student") StudentDto studentDto, Model model) {
-        try {            
+        try {
             model.addAttribute("student", studentService.login(studentDto.getEmail(), studentDto.getPassword()));
             return "studentprofile";
         } catch (EntityNotExistException e) {

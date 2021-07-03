@@ -23,7 +23,7 @@
 							<div class="col-sm-12 col-xs-12">
 								<h4 class="title pull-left">Student List</h4>
 								
-								<a href="/DepartmentUniversity/students/newStudent"	class="btn btn-sm btn-primary pull-right">Add student</a>
+								<a href="/DepartmentUniversity/students/new"	class="btn btn-sm btn-primary pull-right">Add student</a>
 							</div>
 						</div>
 					</div>
@@ -73,7 +73,7 @@
 									<td>
 										<ul class="action-list">
 											<li>
-												<form action="#" th:action="@{/students/addCourse}"	th:object="${student}" method="post">
+												<form action="#" th:action="@{/students/course}"	th:object="${student}" method="post">
 													<input class="form-control" type="hidden" th:value="${student.id}" id="id" name="id" /> 
 													   <select	id="courseName" th:field="*{courseName}" class="form-group" aria-label="Default select example">
 														  <option th:each="course : ${courses}"	th:value="${course.name}" th:text="${course.name}"></option>
@@ -88,7 +88,7 @@
 									<td>
 										<ul class="action-list">
 											<li>
-												<form action="#" th:action="@{/students/deleteCourse}" th:object="${student}" method="post">
+												<form action="#" th:action="@{/students/course}" th:object="${student}" th:method="delete">
 													<input class="form-control" type="hidden" th:value="${student.id}" id="id" name="id" /> 
 													   <select	id="courseName" th:field="*{courseName}" class="form-group" aria-label="Default select example">
 														  <option th:each="course : ${courses}" th:value="${course.name}" th:text="${course.name}"></option>
@@ -103,7 +103,7 @@
 									<td>
 										<ul class="action-list">
 											<li>
-												<form action="#" th:action="@{/students/delete}" th:object="${student}" method="post">
+												<form action="#" th:action="@{/students}" th:object="${student}" th:method="delete">
 													<input class="form-control" type="hidden" th:value="${student.id}" id="id" name="id" />
 													<button type="submit" class="btn btn-danger" th:value="student">
 														<i class="fa fa-trash"></i>
@@ -120,8 +120,8 @@
 						<div class="row">
 							<div class="col-sm-6 col-xs-6">
 								<ul class="pagination hidden-xs pull-right">
-									<li><a href="/DepartmentUniversity/students/other?number=-5">«</a></li>
-									<li><a href="/DepartmentUniversity/students/other?number=5">»</a></li>
+									<li><a href="/DepartmentUniversity/students/-1">«</a></li>
+									<li><a href="/DepartmentUniversity/students/1">»</a></li>
 								</ul>
 							</div>
 						</div>

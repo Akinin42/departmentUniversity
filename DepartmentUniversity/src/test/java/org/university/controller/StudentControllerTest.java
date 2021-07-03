@@ -66,7 +66,7 @@ class StudentControllerTest {
     @Test
     void testAddStudent() throws Exception {
         StudentDto student = new StudentDto();
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/students/addStudent/")
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/students/")
                 .flashAttr("student", student);
         ResultActions result = mockMvc.perform(request);
         result.andExpect(MockMvcResultMatchers.view().name("redirect:/students"));
@@ -76,7 +76,7 @@ class StudentControllerTest {
     @Test
     void testDelete() throws Exception {
         StudentDto student = new StudentDto();
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/students/delete/")
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.delete("/students/")
                 .flashAttr("student", student);
         ResultActions result = mockMvc.perform(request);
         result.andExpect(MockMvcResultMatchers.view().name("redirect:/students"));
@@ -86,7 +86,7 @@ class StudentControllerTest {
     @Test
     void testNewStudent() throws Exception {
         StudentDto student = new StudentDto();
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/students/newStudent/");
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/students/new/");
         ResultActions result = mockMvc.perform(request);
         result.andExpect(MockMvcResultMatchers.view().name("studentform"))
                 .andExpect(MockMvcResultMatchers.model().attributeExists("student"))
@@ -97,7 +97,7 @@ class StudentControllerTest {
     void testOtherStudentsWhenInputNumberNegativeAndShowFirstStudentsYet() throws Exception {
         List<Student> students = CreatorTestEntities.createStudents();
         when(studentServiceMock.findNumberOfUsers(5, 0)).thenReturn(students);
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/students/other/").param("number", "-5").sessionAttr("numberUsers", 0);
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/students/-1").sessionAttr("numberUsers", 0);
         ResultActions result = mockMvc.perform(request);
         result.andExpect(MockMvcResultMatchers.view().name("students"))
                 .andExpect(MockMvcResultMatchers.model().attributeExists("students"))
@@ -108,8 +108,8 @@ class StudentControllerTest {
     void testOtherStudents() throws Exception {
         List<Student> nextStudents = CreatorTestEntities.createStudents();
         nextStudents.remove(1);
-        when(studentServiceMock.findNumberOfUsers(5, 1)).thenReturn(nextStudents);
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/students/other/").param("number", "1").sessionAttr("numberUsers", 0);
+        when(studentServiceMock.findNumberOfUsers(5, 5)).thenReturn(nextStudents);
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/students/1").sessionAttr("numberUsers", 0);
         ResultActions result = mockMvc.perform(request);
         result.andExpect(MockMvcResultMatchers.view().name("students"))
                 .andExpect(MockMvcResultMatchers.model().attributeExists("students"))
@@ -121,7 +121,7 @@ class StudentControllerTest {
         List<Student> students = CreatorTestEntities.createStudents();
         when(studentServiceMock.findNumberOfUsers(5, 1)).thenReturn(students);
         when(studentServiceMock.findNumberOfUsers(5, 6)).thenReturn(new ArrayList<Student>());
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/students/other/").param("number", "5").sessionAttr("numberUsers", 1);
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/students/1").sessionAttr("numberUsers", 1);
         ResultActions result = mockMvc.perform(request);
         result.andExpect(MockMvcResultMatchers.view().name("students"))
                 .andExpect(MockMvcResultMatchers.model().attributeExists("students"))
@@ -134,7 +134,7 @@ class StudentControllerTest {
         student.setCourseName("test");
         Course course = Course.builder().withName("test").build();
         when(courseServiceMock.createCourse("test")).thenReturn(course);
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/students/addCourse/")
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/students/course/")
                 .flashAttr("student", student);
         ResultActions result = mockMvc.perform(request);
         result.andExpect(MockMvcResultMatchers.view().name("redirect:/students"));
@@ -147,7 +147,7 @@ class StudentControllerTest {
         student.setCourseName("test");
         Course course = Course.builder().withName("test").build();
         when(courseServiceMock.createCourse("test")).thenReturn(course);
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/students/deleteCourse/")
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.delete("/students/course/")
                 .flashAttr("student", student);
         ResultActions result = mockMvc.perform(request);
         result.andExpect(MockMvcResultMatchers.view().name("redirect:/students"));
