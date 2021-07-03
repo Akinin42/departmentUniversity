@@ -18,10 +18,12 @@ public class ClassroomDaoImpl extends AbstractCrudImpl<Classroom> implements Cla
     private static final String FIND_ALL_PAGINATION_QUERY = "SELECT * FROM classrooms ORDER BY classroom_id LIMIT ? OFFSET ?;";
     private static final String DELETE_BY_ID_QUERY = "DELETE FROM classrooms WHERE classroom_id = ?;";
     private static final String FIND_BY_NUMBER_QUERY = "SELECT * FROM classrooms WHERE classroom_number = ?;";
+    private static final String UPDATE_QUERY = "UPDATE classrooms "
+            + "SET classroom_number = ?, classroom_address = ?, classroom_capacity = ? WHERE classroom_id = ?;";
 
     public ClassroomDaoImpl(JdbcTemplate jdbcTemplate) {
         super(jdbcTemplate, SAVE_QUERY, FIND_BY_ID_QUERY, FIND_ALL_QUERY, FIND_ALL_PAGINATION_QUERY,
-                DELETE_BY_ID_QUERY);
+                DELETE_BY_ID_QUERY, UPDATE_QUERY);
     }
 
     @Override
@@ -45,5 +47,15 @@ public class ClassroomDaoImpl extends AbstractCrudImpl<Classroom> implements Cla
         } catch (EmptyResultDataAccessException e) {
             return Optional.empty();
         }
+    }
+
+    @Override
+    protected Object[] updateArgs(Classroom classroom) {
+        Object[] arguments = new Object[4];
+        arguments[0] = classroom.getNumber();
+        arguments[1] = classroom.getAddress();
+        arguments[2] = classroom.getCapacity();
+        arguments[3] = classroom.getId();
+        return arguments;
     }
 }

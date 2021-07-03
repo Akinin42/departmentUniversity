@@ -18,10 +18,11 @@ public class GroupDaoImpl extends AbstractCrudImpl<Group> implements GroupDao {
     private static final String FIND_ALL_PAGINATION_QUERY = "SELECT * FROM groups ORDER BY group_id LIMIT ? OFFSET ?;";
     private static final String DELETE_BY_ID_QUERY = "DELETE FROM groups WHERE group_id = ?;";
     private static final String FIND_BY_NAME_QUERY = "SELECT  * FROM groups WHERE group_name =  ?;";
+    private static final String UPDATE_QUERY = "UPDATE groups SET group_name = ? WHERE group_id = ?;";
 
     public GroupDaoImpl(JdbcTemplate jdbcTemplate) {
         super(jdbcTemplate, SAVE_QUERY, FIND_BY_ID_QUERY, FIND_ALL_QUERY, FIND_ALL_PAGINATION_QUERY,
-                DELETE_BY_ID_QUERY);
+                DELETE_BY_ID_QUERY, UPDATE_QUERY);
     }
 
     @Override
@@ -43,5 +44,13 @@ public class GroupDaoImpl extends AbstractCrudImpl<Group> implements GroupDao {
         } catch (EmptyResultDataAccessException e) {
             return Optional.empty();
         }
+    }
+
+    @Override
+    protected Object[] updateArgs(Group group) {
+        Object[] arguments = new Object[2];
+        arguments[0] = group.getName();
+        arguments[1] = group.getId();
+        return arguments;
     }
 }

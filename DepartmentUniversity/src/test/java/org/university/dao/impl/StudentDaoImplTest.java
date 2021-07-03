@@ -188,4 +188,19 @@ class StudentDaoImplTest {
         studentDao.deleteStudentFromCourse(studentId, 1);
         assertThat(studentDao.findAllByCourse("Law")).doesNotContain(CreatorTestEntities.createStudents().get(0));
     }
+    
+    @Test
+    void updateShouldUpdateStudentWithInputData() {
+        Student existStudent = CreatorTestEntities.createStudents().get(0);
+        Student updatedStudent = Student.builder()
+                .withId(existStudent.getId())
+                .withSex("New sex")
+                .withName("New name")
+                .withEmail("New email")
+                .withPhone("New phone")
+                .withPassword("New password")
+                .build();
+        studentDao.update(updatedStudent);
+        assertThat(studentDao.findById(1).get()).isEqualTo(updatedStudent);
+    }
 }

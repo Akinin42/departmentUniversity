@@ -38,10 +38,13 @@ public class LessonDaoImpl extends AbstractCrudImpl<Lesson> implements LessonDao
             + "WHERE EXTRACT(MONTH FROM lesson_start) = ? AND lesson_group = ? ORDER BY lesson_start";
     private static final String FIND_ALL_BY_DATE_QUERY = SELECT_INNER_JOIN_OTHERS_TABLES
             + "WHERE lesson_start::date = ? ORDER BY lesson_start";
+    private static final String UPDATE_QUERY = "UPDATE lessons "
+            + "SET lesson_start = ?, lesson_end = ?, lesson_online = ?, lesson_link = ?, lesson_classroom = ?, lesson_course = ? "
+            + ",lesson_teacher = ?, lesson_group = ? WHERE lesson_id = ?;";
 
     public LessonDaoImpl(JdbcTemplate jdbcTemplate) {
         super(jdbcTemplate, SAVE_QUERY, FIND_BY_ID_QUERY, FIND_ALL_QUERY, FIND_ALL_PAGINATION_QUERY,
-                DELETE_BY_ID_QUERY);
+                DELETE_BY_ID_QUERY, UPDATE_QUERY);
     }
 
     @Override
@@ -96,5 +99,20 @@ public class LessonDaoImpl extends AbstractCrudImpl<Lesson> implements LessonDao
     @Override
     public List<Lesson> findAllByDate(String date) {
         return jdbcTemplate.query(FIND_ALL_BY_DATE_QUERY, getMapper(), LocalDate.parse(date));
+    }
+
+    @Override
+    protected Object[] updateArgs(Lesson lesson) {
+        Object[] arguments = new Object[9];
+        arguments[0] = lesson.getStartLesson();
+        arguments[1] = lesson.getEndLesson();
+        arguments[2] = lesson.getOnlineLesson();
+        arguments[3] = lesson.getLessonLink();
+        arguments[4] = lesson.getClassroom().getId();
+        arguments[5] = lesson.getCourse().getId();
+        arguments[6] = lesson.getTeacher().getId();
+        arguments[7] = lesson.getGroup().getId();
+        arguments[8] = lesson.getId();
+        return arguments;
     }
 }

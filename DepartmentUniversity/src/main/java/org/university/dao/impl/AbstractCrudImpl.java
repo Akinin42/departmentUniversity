@@ -20,6 +20,7 @@ public abstract class AbstractCrudImpl<E> implements CrudDao<E, Integer> {
     String findAllQuery;
     String findAllPaginationQuery;
     String deleteByIdQuery;
+    String updateQuery;
 
     @Override
     public void save(E entity) {
@@ -49,8 +50,15 @@ public abstract class AbstractCrudImpl<E> implements CrudDao<E, Integer> {
     public void deleteById(Integer id) {
         jdbcTemplate.update(deleteByIdQuery, id);
     }
+    
+    @Override
+    public void update(E entity) {
+        jdbcTemplate.update(updateQuery, updateArgs(entity));
+    }
 
     protected abstract Object[] insert(E entity);
 
     protected abstract RowMapper<E> getMapper();
+    
+    protected abstract Object[] updateArgs(E entity);
 }

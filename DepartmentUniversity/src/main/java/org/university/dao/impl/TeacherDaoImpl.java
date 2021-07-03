@@ -20,10 +20,12 @@ public class TeacherDaoImpl extends AbstractCrudImpl<Teacher> implements Teacher
     private static final String FIND_ALL_PAGINATION_QUERY = "SELECT * FROM teachers ORDER BY teacher_id LIMIT ? OFFSET ?;";
     private static final String DELETE_BY_ID_QUERY = "DELETE FROM teachers WHERE teacher_id = ?;";
     private static final String FIND_BY_EMAIL_QUERY = "SELECT  * FROM teachers WHERE teacher_email =  ?;";
+    private static final String UPDATE_QUERY = "UPDATE teachers "
+            + "SET teacher_sex = ?, teacher_name = ?, teacher_email = ?, teacher_phone = ?, teacher_password = ?, teacher_degree = ? WHERE teacher_id = ?;";
 
     public TeacherDaoImpl(JdbcTemplate jdbcTemplate) {
         super(jdbcTemplate, SAVE_QUERY, FIND_BY_ID_QUERY, FIND_ALL_QUERY, FIND_ALL_PAGINATION_QUERY,
-                DELETE_BY_ID_QUERY);
+                DELETE_BY_ID_QUERY,UPDATE_QUERY);
     }
 
     @Override
@@ -50,5 +52,18 @@ public class TeacherDaoImpl extends AbstractCrudImpl<Teacher> implements Teacher
         } catch (EmptyResultDataAccessException e) {
             return Optional.empty();
         }
+    }
+    
+    @Override
+    protected Object[] updateArgs(Teacher teacher) {
+        Object[] arguments = new Object[7];
+        arguments[0] = teacher.getSex();
+        arguments[1] = teacher.getName();
+        arguments[2] = teacher.getEmail();
+        arguments[3] = teacher.getPhone();
+        arguments[4] = teacher.getPassword();
+        arguments[5] = teacher.getScientificDegree();
+        arguments[6] = teacher.getId();
+        return arguments;
     }
 }

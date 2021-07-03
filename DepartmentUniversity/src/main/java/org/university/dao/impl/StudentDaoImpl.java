@@ -34,10 +34,12 @@ public class StudentDaoImpl extends AbstractCrudImpl<Student> implements Student
             + "WHERE student_id = ? AND group_id = ?";
     private static final String DELETE_STUDENT_FROM_COURSE_QUERY = "DELETE FROM students_to_courses "
             + "WHERE student_id = ? AND course_id = ?";
+    private static final String UPDATE_QUERY = "UPDATE students "
+            + "SET student_sex = ?, student_name = ?, student_email = ?, student_phone = ?, student_password = ? WHERE student_id = ?;";
 
     public StudentDaoImpl(JdbcTemplate jdbcTemplate) {
         super(jdbcTemplate, SAVE_QUERY, FIND_BY_ID_QUERY, FIND_ALL_QUERY, FIND_ALL_PAGINATION_QUERY,
-                DELETE_BY_ID_QUERY);
+                DELETE_BY_ID_QUERY, UPDATE_QUERY);
     }
 
     @Override
@@ -95,5 +97,17 @@ public class StudentDaoImpl extends AbstractCrudImpl<Student> implements Student
     @Override
     public void deleteStudentFromCourse(int studentId, int courseId) {
         jdbcTemplate.update(DELETE_STUDENT_FROM_COURSE_QUERY, studentId, courseId);
+    }
+
+    @Override
+    protected Object[] updateArgs(Student student) {
+        Object[] arguments = new Object[6];
+        arguments[0] = student.getSex();
+        arguments[1] = student.getName();
+        arguments[2] = student.getEmail();
+        arguments[3] = student.getPhone();
+        arguments[4] = student.getPassword();
+        arguments[5] = student.getId();
+        return arguments;
     }
 }

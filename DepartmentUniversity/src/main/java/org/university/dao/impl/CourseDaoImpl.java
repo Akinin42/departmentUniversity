@@ -22,10 +22,12 @@ public class CourseDaoImpl extends AbstractCrudImpl<Course> implements CourseDao
     private static final String FIND_ALL_BY_STUDENT = "SELECT * FROM courses " + 
             "INNER JOIN students_to_courses ON students_to_courses.course_id = courses.course_id " + 
             "WHERE student_id = ?";
+    private static final String UPDATE_QUERY = "UPDATE courses "
+            + "SET course_name = ?, course_description = ? WHERE course_id = ?;";
 
     public CourseDaoImpl(JdbcTemplate jdbcTemplate) {
         super(jdbcTemplate, SAVE_QUERY, FIND_BY_ID_QUERY, FIND_ALL_QUERY, FIND_ALL_PAGINATION_QUERY,
-                DELETE_BY_ID_QUERY);
+                DELETE_BY_ID_QUERY, UPDATE_QUERY);
     }
 
     @Override
@@ -53,5 +55,14 @@ public class CourseDaoImpl extends AbstractCrudImpl<Course> implements CourseDao
     @Override
     public List<Course> findAllByStudent(int studentId) {        
         return jdbcTemplate.query(FIND_ALL_BY_STUDENT, getMapper(), studentId);
+    }
+
+    @Override
+    protected Object[] updateArgs(Course course) {
+        Object[] arguments = new Object[3];
+        arguments[0] = course.getName();
+        arguments[1] = course.getDescription();
+        arguments[2] = course.getId();
+        return arguments;
     }
 }

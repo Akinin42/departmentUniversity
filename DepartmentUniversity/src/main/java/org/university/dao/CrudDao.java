@@ -13,5 +13,7 @@ public interface CrudDao <E, ID> {
     
     List<E> findAll(int limit, int offset);
     
-    void deleteById(ID id);       
+    void deleteById(ID id);
+    
+    void update(E entity);
 }
