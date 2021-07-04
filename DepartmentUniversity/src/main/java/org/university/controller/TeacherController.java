@@ -13,6 +13,9 @@ import org.university.dto.DayTimetableDto;
 import org.university.dto.TeacherDto;
 import org.university.exceptions.AuthorisationFailException;
 import org.university.exceptions.EntityNotExistException;
+import org.university.exceptions.InvalidEmailException;
+import org.university.exceptions.InvalidPhoneException;
+import org.university.exceptions.InvalidUserNameException;
 import org.university.service.TeacherService;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -24,12 +27,13 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class TeacherController {
-    
+
     private TeacherService teacherService;
-    private static final String REDIRECT = "redirect:/teachers";   
+    private static final String REDIRECT = "redirect:/teachers";
+    private static final String TEACHER_FORM = "teacherform";
 
     @GetMapping()
-    public String getTeachers(Model model) {
+    public String getTeachers(@ModelAttribute("message") String message, Model model) {
         model.addAttribute("teachers", teacherService.findNumberOfUsers(5, 0));
         model.addAttribute("teacher", new TeacherDto());
         model.addAttribute("timetable", new DayTimetableDto());
@@ -56,13 +60,18 @@ public class TeacherController {
     @GetMapping("/new")
     public String newTeacher(Model model) {
         model.addAttribute("teacher", new TeacherDto());
-        return "teacherform";
+        return TEACHER_FORM;
     }
 
     @PostMapping()
-    public String addTeacher(@ModelAttribute("teacher") TeacherDto teacher) {
-        teacherService.register(teacher);
-        return REDIRECT;
+    public String addTeacher(@ModelAttribute("teacher") TeacherDto teacher, Model model) {
+        try {
+            teacherService.register(teacher);
+            return REDIRECT;
+        } catch (InvalidEmailException | InvalidPhoneException | InvalidUserNameException e) {
+            model.addAttribute("message", e.getMessage());
+            return TEACHER_FORM;
+        }
     }
 
     @DeleteMapping()
@@ -73,13 +82,14 @@ public class TeacherController {
 
     @PostMapping("/login")
     public String login(@ModelAttribute("teacher") TeacherDto teacherDto, Model model) {
-        try {            
+        try {
             model.addAttribute("teacher", teacherService.login(teacherDto.getEmail(), teacherDto.getPassword()));
             return "teacherprofile";
         } catch (EntityNotExistException e) {
-            return "teacherform";
+            return TEACHER_FORM;
         } catch (AuthorisationFailException e) {
-            return "passwordFailMessage";
+            model.addAttribute("message", "Password isn't correct!");
+            return REDIRECT;
         }
     }
 }

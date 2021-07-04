@@ -30,6 +30,7 @@ import lombok.experimental.FieldDefaults;
 public class StudentController {
 
     private static final String REDIRECT = "redirect:/students";
+    private static final String STUDENT_FORM = "studentform";
     StudentService studentService;
     CourseService courseService;
 
@@ -39,7 +40,6 @@ public class StudentController {
         model.addAttribute("courses", courseService.findAllCourses());
         model.addAttribute("student", new StudentDto());
         model.addAttribute("numberUsers", Integer.valueOf(0));
-        model.addAttribute("message", message);
         return "students";
     }
 
@@ -62,7 +62,7 @@ public class StudentController {
     @GetMapping("/new")
     public String newStudent(Model model) {
         model.addAttribute("student", new StudentDto());
-        return "studentform";
+        return STUDENT_FORM;
     }
 
     @PostMapping()
@@ -72,7 +72,7 @@ public class StudentController {
             return REDIRECT;
         } catch (InvalidEmailException | InvalidPhoneException | InvalidUserNameException e) {
             model.addAttribute("message", e.getMessage());
-            return "studentform";
+            return STUDENT_FORM;
         }
     }
 
@@ -102,7 +102,7 @@ public class StudentController {
             model.addAttribute("student", studentService.login(studentDto.getEmail(), studentDto.getPassword()));
             return "studentprofile";
         } catch (EntityNotExistException e) {
-            return "studentform";
+            return STUDENT_FORM;
         } catch (AuthorisationFailException e) {
             model.addAttribute("message", "Password isn't correct!");
             return REDIRECT;

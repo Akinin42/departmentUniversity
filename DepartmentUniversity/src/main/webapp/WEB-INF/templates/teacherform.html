@@ -87,7 +87,7 @@
 							<span class="input-group-addon">
 							<i class="fa fa-user fa" aria-hidden="true"></i>
 							</span> 
-							<input type="text" class="form-control" th:value="${teacher.name}" name="name" id="name" placeholder="Enter your Name" />
+							<input type="text" class="form-control" th:value="${teacher.name}" name="name" id="name" placeholder="Enter your Name" required />
 						</div>
 					</div>
 				</div>
@@ -114,7 +114,7 @@
 							<span class="input-group-addon">
 							<i class="fa fa-envelope fa" aria-hidden="true"></i>
 							</span> 
-							<input type="text" class="form-control" th:value="${teacher.email}" name="email" id="email" placeholder="Enter your Email" />
+							<input type="email" class="form-control" th:value="${teacher.email}" name="email" id="email" placeholder="Enter your Email" required />
 						</div>
 					</div>
 				</div>
@@ -126,7 +126,7 @@
 							<span class="input-group-addon">
 							<i class="fa fa-users fa" aria-hidden="true"></i>
 							</span> 
-							<input type="text" class="form-control" th:value="${teacher.phone}"	name="phone" id="phone" placeholder="Enter your phone" />
+							<input type="text" class="form-control" th:value="${teacher.phone}"	name="phone" id="phone" placeholder="Enter your phone" required />
 						</div>
 					</div>
 				</div>
@@ -138,7 +138,7 @@
                             <span class="input-group-addon">
                             <i class="fa fa-user fa" aria-hidden="true"></i>
                             </span> 
-                            <select id="scientificDegree" th:field="*{scientificDegree}" class="form-select" aria-label="Default select example">
+                            <select id="scientificDegree" th:field="*{scientificDegree}" class="form-select" aria-label="Default select example" >
                                 <option th:value="Professor" th:text="Professor" >Professor</option>
                                 <option th:value="Doctor" th:text="Doctor" >Doctor</option>
                                 <option th:value="Assistant" th:text="Assistant" >Assistant</option>
@@ -154,7 +154,7 @@
 							<span class="input-group-addon">
 							<i class="fa fa-lock fa-lg" aria-hidden="true"></i>
 							</span> 
-							<input type="password" class="form-control" th:value="${teacher.password}" name="password"	id="password" placeholder="Enter your Password" />
+							<input type="password" class="form-control" th:value="${teacher.password}" name="password"	id="password" placeholder="Enter your Password" required />
 						</div>
 					</div>
 				</div>
@@ -165,11 +165,11 @@
 						<div class="input-group">
 							<span class="input-group-addon">
 							<i class="fa fa-lock fa-lg" aria-hidden="true"></i></span> 
-							<input	type="password" class="form-control" th:value="${teacher.confirmPassword}" name="confirmPassword" id="confirmPassword" placeholder="Confirm your Password" />
+							<input	type="password" class="form-control" th:value="${teacher.confirmPassword}" name="confirmPassword" id="confirmPassword" placeholder="Confirm your Password" required />
 						</div>
 					</div>
 				</div>
-
+                <p th:text="${message}"></p>
 				<div class="form-group ">
 					<button type="submit" id="button" class="btn btn-primary btn-lg btn-block login-button" th:value="teacher">Register</button>
 				</div>

@@ -154,6 +154,6 @@ class TeacherControllerTest {
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/teachers/login/")
                 .flashAttr("teacher", teacher);
         ResultActions result = mockMvc.perform(request);
-        result.andExpect(MockMvcResultMatchers.view().name("passwordFailMessage"));
+        result.andExpect(MockMvcResultMatchers.view().name("redirect:/teachers"));
     }
 }
