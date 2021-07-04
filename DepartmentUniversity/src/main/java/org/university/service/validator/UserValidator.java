@@ -6,7 +6,6 @@ import org.university.entity.User;
 import org.university.exceptions.InvalidEmailException;
 import org.university.exceptions.InvalidPhoneException;
 import org.university.exceptions.InvalidUserNameException;
-
 import lombok.extern.slf4j.Slf4j;
 
 @Component

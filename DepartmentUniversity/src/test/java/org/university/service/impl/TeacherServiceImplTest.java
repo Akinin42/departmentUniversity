@@ -19,6 +19,8 @@ import org.university.exceptions.AuthorisationFailException;
 import org.university.exceptions.EntityAlreadyExistException;
 import org.university.exceptions.EntityNotExistException;
 import org.university.exceptions.InvalidEmailException;
+import org.university.exceptions.InvalidPhoneException;
+import org.university.exceptions.InvalidUserNameException;
 import org.university.service.validator.UserValidator;
 import org.university.utils.CreatorTestEntities;
 
@@ -66,6 +68,20 @@ class TeacherServiceImplTest {
         TeacherDto teacher = getTestTeacherDto();
         teacher.setEmail("invalidemail");
         assertThatThrownBy(() -> teacherService.register(teacher)).isInstanceOf(InvalidEmailException.class);
+    }
+    
+    @Test
+    void registerShouldThrowInvalidUserNameExceptionWhenInputTeacherHasInvalidName() {
+        TeacherDto teacher = getTestTeacherDto();
+        teacher.setName("4");
+        assertThatThrownBy(() -> teacherService.register(teacher)).isInstanceOf(InvalidUserNameException.class);
+    }
+    
+    @Test
+    void registerShouldThrowInvalidPhoneExceptionWhenInputStudentHasInvalidPhone() {
+        TeacherDto teacher = getTestTeacherDto();
+        teacher.setPhone("invalidphone");
+        assertThatThrownBy(() -> teacherService.register(teacher)).isInstanceOf(InvalidPhoneException.class);
     }
 
     @Test

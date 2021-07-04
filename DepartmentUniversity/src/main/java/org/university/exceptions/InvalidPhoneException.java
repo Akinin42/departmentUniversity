@@ -5,7 +5,4 @@ public class InvalidPhoneException extends RuntimeException {
     public InvalidPhoneException(String messages) {
         super(messages);
     }
-    
-    public InvalidPhoneException() {
-    }
 }

@@ -1,5 +1,6 @@
 package org.university.controller;
 
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -22,6 +23,9 @@ import org.university.dto.TeacherDto;
 import org.university.entity.Teacher;
 import org.university.exceptions.AuthorisationFailException;
 import org.university.exceptions.EntityNotExistException;
+import org.university.exceptions.InvalidEmailException;
+import org.university.exceptions.InvalidPhoneException;
+import org.university.exceptions.InvalidUserNameException;
 import org.university.service.TeacherService;
 import org.university.utils.CreatorTestEntities;
 
@@ -61,6 +65,42 @@ class TeacherControllerTest {
         ResultActions result = mockMvc.perform(request);
         result.andExpect(MockMvcResultMatchers.view().name("redirect:/teachers"));
         verify(teacherServiceMock).register(teacher);
+    }
+    
+    @Test
+    void testAddTeacherWhenInputInvalidName() throws Exception {
+        TeacherDto teacher = new TeacherDto();
+        teacher.setName("invalid name");
+        doThrow(new InvalidUserNameException("Input name isn't valid!")).when(teacherServiceMock).register(teacher);
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/teachers/")
+                .flashAttr("teacher", teacher);
+        ResultActions result = mockMvc.perform(request);
+        result.andExpect(MockMvcResultMatchers.view().name("teacherform"))
+                .andExpect(MockMvcResultMatchers.model().attribute("message", "Input name isn't valid!"));
+    }
+    
+    @Test
+    void testAddTeacherWhenInputInvalidEmail() throws Exception {
+        TeacherDto teacher = new TeacherDto();
+        teacher.setEmail("invalid email");
+        doThrow(new InvalidEmailException("Input email isn't valid!")).when(teacherServiceMock).register(teacher);
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/teachers/")
+                .flashAttr("teacher", teacher);
+        ResultActions result = mockMvc.perform(request);
+        result.andExpect(MockMvcResultMatchers.view().name("teacherform"))
+        .andExpect(MockMvcResultMatchers.model().attribute("message", "Input email isn't valid!"));
+    }
+    
+    @Test
+    void testAddTeacherWhenInputInvalidPhone() throws Exception {
+        TeacherDto teacher = new TeacherDto();
+        teacher.setEmail("invalid email");
+        doThrow(new InvalidPhoneException("Input phone isn't valid!")).when(teacherServiceMock).register(teacher);
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/teachers/")
+                .flashAttr("teacher", teacher);
+        ResultActions result = mockMvc.perform(request);
+        result.andExpect(MockMvcResultMatchers.view().name("teacherform"))
+        .andExpect(MockMvcResultMatchers.model().attribute("message", "Input phone isn't valid!"));
     }
 
     @Test
