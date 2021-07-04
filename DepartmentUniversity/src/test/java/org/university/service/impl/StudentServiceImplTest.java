@@ -48,7 +48,7 @@ class StudentServiceImplTest {
                 .withSex("Test")
                 .withName("Test")
                 .withEmail("test@test.ru")
-                .withPhone("Test")
+                .withPhone("79236170788")
                 .withPassword("encodePassword")
                 .build();
         verify(studentDaoMock).save(studentWithEncodePassword);
@@ -61,7 +61,7 @@ class StudentServiceImplTest {
         student.setSex("Female");
         student.setName("Jane Wood");
         student.setEmail("Wood@email.ru");
-        student.setPhone("test-phone");
+        student.setPhone("78954756666");
         student.setPassword("test-password");
         assertThatThrownBy(() -> studentService.register(student)).isInstanceOf(EntityAlreadyExistException.class);
     }
@@ -241,10 +241,7 @@ class StudentServiceImplTest {
         List<Course> courses = new ArrayList<>();
         courses.add(course);
         studentService.addStudentToCourse(studentDto, course);
-        Student student = Student
-                .builder()
-                .withId(6)
-                .build();
+        Student student = CreatorTestEntities.createStudents().get(5);
         verify(studentDaoMock).insertStudentToCourses(student, courses);
     }
 
@@ -327,7 +324,7 @@ class StudentServiceImplTest {
         student.setSex("Test");
         student.setName("Test");
         student.setEmail("test@test.ru");
-        student.setPhone("Test");
+        student.setPhone("79236170788");
         student.setPassword("Test");
         return student;
     }
@@ -349,7 +346,7 @@ class StudentServiceImplTest {
     private static PasswordEncoder createEncoderMock() {
         PasswordEncoder encoderMock = mock(PasswordEncoder.class);
         when(encoderMock.encode("Test")).thenReturn("encodePassword");
-        when(encoderMock.matches("Test", "encodePassword")).thenReturn(true);
+        when(encoderMock.matches("Test", "encodePassword")).thenReturn(true);        
         return encoderMock;
     }
 

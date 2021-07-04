@@ -91,6 +91,7 @@ public class StudentServiceImpl extends AbstractUserServiceImpl<Student> impleme
     public void addStudentToCourse(@NonNull StudentDto studentDto, @NonNull Course course) {
         Student student = mapDtoToEntity(studentDto);
         existsStudentAndCourse(student, course);
+        student = studentDao.findById(studentDto.getId()).get();
         if (!studentDao.findAllByCourse(course.getName()).contains(student)) {
             List<Course> courses = new ArrayList<>();
             courses.add(course);

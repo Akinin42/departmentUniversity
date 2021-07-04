@@ -41,7 +41,7 @@ class TeacherServiceImplTest {
                 .withSex("Test")
                 .withName("Test")
                 .withEmail("test@test.ru")
-                .withPhone("Test")
+                .withPhone("78956547475")
                 .withPassword("encodePassword")
                 .withScientificDegree("Test")
                 .build();
@@ -55,7 +55,7 @@ class TeacherServiceImplTest {
         teacher.setSex("Male");
         teacher.setName("Bob Moren");
         teacher.setEmail("Bob@mail.ru");
-        teacher.setPhone("89758657788");
+        teacher.setPhone("79758657788");
         teacher.setPassword("test-password");
         teacher.setScientificDegree("professor");
         assertThatThrownBy(() -> teacherService.register(teacher)).isInstanceOf(EntityAlreadyExistException.class);
@@ -146,7 +146,7 @@ class TeacherServiceImplTest {
         teacher.setSex("Test");
         teacher.setName("Test");
         teacher.setEmail("test@test.ru");
-        teacher.setPhone("Test");
+        teacher.setPhone("78956547475");
         teacher.setPassword("Test");
         teacher.setScientificDegree("Test");
         return teacher;

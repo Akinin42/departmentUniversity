@@ -13,6 +13,9 @@ import org.university.dto.StudentDto;
 import org.university.entity.Course;
 import org.university.exceptions.AuthorisationFailException;
 import org.university.exceptions.EntityNotExistException;
+import org.university.exceptions.InvalidEmailException;
+import org.university.exceptions.InvalidPhoneException;
+import org.university.exceptions.InvalidUserNameException;
 import org.university.service.CourseService;
 import org.university.service.StudentService;
 import lombok.AccessLevel;
@@ -63,9 +66,14 @@ public class StudentController {
     }
 
     @PostMapping()
-    public String addStudent(@ModelAttribute("student") StudentDto student) {
-        studentService.register(student);
-        return REDIRECT;
+    public String addStudent(@ModelAttribute("student") StudentDto student, Model model) {
+        try {
+            studentService.register(student);
+            return REDIRECT;
+        } catch (InvalidEmailException | InvalidPhoneException | InvalidUserNameException e) {
+            model.addAttribute("message", e.getMessage());
+            return "studentform";
+        }
     }
 
     @DeleteMapping()

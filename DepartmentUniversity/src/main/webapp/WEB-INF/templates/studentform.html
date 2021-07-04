@@ -84,7 +84,7 @@
 					<div class="cols-sm-10">
 						<div class="input-group">
 							<span class="input-group-addon"><i class="fa fa-user fa" aria-hidden="true"></i></span> 
-							<input type="text" class="form-control" th:value="${student.name}" name="name" id="name" placeholder="Enter your Name" />
+							<input type="text" class="form-control" th:value="${student.name}" name="name" id="name" placeholder="Enter your Name" required />
 						</div>
 					</div>
 				</div>
@@ -111,7 +111,7 @@
 							<span class="input-group-addon">
 							<i class="fa fa-envelope fa" aria-hidden="true"></i>
 							</span> 
-							<input type="text" class="form-control" th:value="${student.email}" name="email" id="email" placeholder="Enter your Email" />
+							<input type="email" class="form-control" th:value="${student.email}" name="email" id="email" placeholder="Enter your Email" required />
 						</div>
 					</div>
 				</div>
@@ -123,7 +123,7 @@
 							<span class="input-group-addon">
 							<i class="fa fa-users fa" aria-hidden="true"></i>
 							</span> 
-							<input type="text" class="form-control" th:value="${student.phone}"	name="phone" id="phone" placeholder="Enter your phone" />
+							<input type="text" class="form-control" th:value="${student.phone}"	name="phone" id="phone" placeholder="Enter your phone" required />
 						</div>
 					</div>
 				</div>
@@ -135,7 +135,7 @@
 							<span class="input-group-addon">
 							<i class="fa fa-lock fa-lg" aria-hidden="true"></i>
 							</span> 
-							<input type="password" class="form-control" th:value="${student.password}" name="password"	id="password" placeholder="Enter your Password" />
+							<input type="password" class="form-control" th:value="${student.password}" name="password"	id="password" placeholder="Enter your Password" required />
 						</div>
 					</div>
 				</div>
@@ -146,11 +146,11 @@
 						<div class="input-group">
 							<span class="input-group-addon">
 							<i class="fa fa-lock fa-lg" aria-hidden="true"></i></span> 
-							<input	type="password" class="form-control" th:value="${student.confirmPassword}" name="confirmPassword" id="confirmPassword" placeholder="Confirm your Password" />
+							<input	type="password" class="form-control" th:value="${student.confirmPassword}" name="confirmPassword" id="confirmPassword" placeholder="Confirm your Password" required />
 						</div>
 					</div>
 				</div>
-
+                <p th:text="${message}"></p>
 				<div class="form-group ">
 					<button type="submit" id="button" class="btn btn-primary btn-lg btn-block login-button" th:value="student">Register</button>
 				</div>
