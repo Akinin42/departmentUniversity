@@ -7,14 +7,14 @@ import org.university.exceptions.InvalidGroupNameException;
 
 @Component
 public class GroupValidator implements Validator<Group> {
-    
+
     private static final Pattern GROUP_NAME_PATTERN = Pattern.compile("[A-Z]{2}-\\d{2}");
 
     @Override
     public void validate(Group group) {
         String groupName = group.getName();
-        if (!GROUP_NAME_PATTERN.matcher(groupName).matches()) {
+        if (groupName == null || !GROUP_NAME_PATTERN.matcher(groupName).matches()) {
             throw new InvalidGroupNameException();
-        }        
+        }
     }
 }

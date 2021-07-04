@@ -31,11 +31,12 @@ public class StudentController {
     CourseService courseService;
 
     @GetMapping()
-    public String getStudents(Model model) {
+    public String getStudents(@ModelAttribute("message") String message, Model model) {
         model.addAttribute("students", studentService.findNumberOfUsers(5, 0));
         model.addAttribute("courses", courseService.findAllCourses());
         model.addAttribute("student", new StudentDto());
         model.addAttribute("numberUsers", Integer.valueOf(0));
+        model.addAttribute("message", message);
         return "students";
     }
 
@@ -95,7 +96,8 @@ public class StudentController {
         } catch (EntityNotExistException e) {
             return "studentform";
         } catch (AuthorisationFailException e) {
-            return "passwordFailMessage";
+            model.addAttribute("message", "Password isn't correct!");
+            return REDIRECT;
         }
     }
 }

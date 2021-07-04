@@ -33,9 +33,10 @@
                                 <label class="sr-only" for="Email">Email</label> 
                                 <input type="email" class="form-group" th:value="${email}" id="email" name="email" placeholder="Email" autofocus required />
                                 <label class="sr-only" for="Password">Password</label> 
-                                <input type="password" class="form-group" th:value="${password}" id="password" name="password" placeholder="Password" required />
+                                <input type="password" class="form-group" th:value="${password}" id="password" name="password" placeholder="Password" required />                                
                                 <button type="submit" class="btn btn-success">Sign in</button>                                                  
                             </form>
+                            <div th:text="${message}"></div>
                         </div>
 					</div>
 					<div class="panel-body table-responsive">

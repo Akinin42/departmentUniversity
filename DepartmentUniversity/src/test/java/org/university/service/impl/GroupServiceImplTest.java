@@ -61,6 +61,13 @@ class GroupServiceImplTest {
         group.setName("invalid name");
         assertThatThrownBy(() -> groupService.addGroup(group)).isInstanceOf(InvalidGroupNameException.class);
     }
+    
+    @Test
+    void addGroupShouldThrowInvalidGroupNameExceptionWhenInputNameNull() {
+        GroupDto group = new GroupDto();
+        group.setName(null);
+        assertThatThrownBy(() -> groupService.addGroup(group)).isInstanceOf(InvalidGroupNameException.class);
+    }
 
     @Test
     void addGroupShouldThrowEntityAlreadyExistExceptionWhenInputGroupExistInDatabase() {
