@@ -8,8 +8,8 @@ import org.university.dto.ClassroomDto;
 import org.university.entity.Classroom;
 import org.university.exceptions.EntityAlreadyExistException;
 import org.university.exceptions.EntityNotExistException;
-import org.university.exceptions.InvalidClassroomCapacityException;
 import org.university.service.ClassroomService;
+import org.university.service.validator.Validator;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
@@ -23,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 public class ClassroomServiceImpl implements ClassroomService {
 
     ClassroomDao classroomDao;
+    Validator<Classroom> validator;
 
     @Override
     public Classroom createClassroom(int classroomNumber) {
@@ -38,9 +39,7 @@ public class ClassroomServiceImpl implements ClassroomService {
         if (classroom.getId() != null && existClassroom(classroom)) {
             throw new EntityAlreadyExistException();
         }
-        if (classroom.getCapacity() <= 0) {
-            throw new InvalidClassroomCapacityException();
-        }
+        validator.validate(classroom);
         classroomDao.save(classroom);
         log.info("Classroom with number {} added succesfull!", classroom.getNumber());
     }

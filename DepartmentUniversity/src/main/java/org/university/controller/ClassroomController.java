@@ -8,6 +8,9 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.university.dto.ClassroomDto;
+import org.university.exceptions.InvalidAddressException;
+import org.university.exceptions.InvalidClassroomCapacityException;
+import org.university.exceptions.InvalidClassroomNumberException;
 import org.university.service.ClassroomService;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -23,16 +26,21 @@ public class ClassroomController {
     ClassroomService classroomService;
     
     @GetMapping()
-    public String getAll(Model model) {
+    public String getAll(@ModelAttribute("message") String message, Model model) {
         model.addAttribute("classroom", new ClassroomDto());
         model.addAttribute("classrooms", classroomService.findAllClassrooms());
         return "classrooms";
     }
     
     @PostMapping()
-    public String add(@ModelAttribute("classroom") ClassroomDto classroom) {        
+    public String add(@ModelAttribute("classroom") ClassroomDto classroom , Model model) {
+        try {
         classroomService.addClassroom(classroom);  
         return REDIRECT;
+        } catch (InvalidClassroomNumberException | InvalidClassroomCapacityException | InvalidAddressException e) {
+            model.addAttribute("message", e.getMessage());
+            return REDIRECT;
+        }
     }
     
     @DeleteMapping()

@@ -24,6 +24,7 @@
 								<h4 class="title pull-left">Classroom List</h4>
 								<div class="row pull-right">
 									<div class="input-group mb-3">
+									<p th:text="${message}"></p>
 										<form action="#" th:action="@{/classrooms}"	th:object="${classroom}" method="post">
 											<label for="number">Number:</label> 
 											<input type="number" class="form-group" th:field="*{number}" id="number" style="width: 200px;"> 

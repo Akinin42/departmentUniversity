@@ -1,5 +1,6 @@
 package org.university.controller;
 
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -19,6 +20,9 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.university.dto.ClassroomDto;
 import org.university.entity.Classroom;
+import org.university.exceptions.InvalidAddressException;
+import org.university.exceptions.InvalidClassroomCapacityException;
+import org.university.exceptions.InvalidClassroomNumberException;
 import org.university.service.ClassroomService;
 import org.university.utils.CreatorTestEntities;
 
@@ -58,6 +62,42 @@ class ClassroomControllerTest {
         ResultActions result = mockMvc.perform(request);
         result.andExpect(MockMvcResultMatchers.view().name("redirect:/classrooms"));
         verify(classroomServiceMock).addClassroom(classroom);
+    }
+    
+    @Test
+    void testAddWhenInputInvalidNumber() throws Exception {
+        ClassroomDto classroom = new ClassroomDto();
+        classroom.setNumber(-5);
+        doThrow(new InvalidClassroomNumberException("Input classroom number can't be negative or zero!")).when(classroomServiceMock).addClassroom(classroom);
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/classrooms/").flashAttr("classroom",
+                classroom);
+        ResultActions result = mockMvc.perform(request);
+        result.andExpect(MockMvcResultMatchers.view().name("redirect:/classrooms"))
+                .andExpect(MockMvcResultMatchers.model().attribute("message", "Input classroom number can't be negative or zero!"));
+    }
+    
+    @Test
+    void testAddWhenInputInvalidCapacity() throws Exception {
+        ClassroomDto classroom = new ClassroomDto();
+        classroom.setCapacity(-5);
+        doThrow(new InvalidClassroomCapacityException("Input classroom capacity can't be negative or zero!")).when(classroomServiceMock).addClassroom(classroom);
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/classrooms/").flashAttr("classroom",
+                classroom);
+        ResultActions result = mockMvc.perform(request);
+        result.andExpect(MockMvcResultMatchers.view().name("redirect:/classrooms"))
+                .andExpect(MockMvcResultMatchers.model().attribute("message", "Input classroom capacity can't be negative or zero!"));
+    }
+    
+    @Test
+    void testAddWhenInputInvalidAddress() throws Exception {
+        ClassroomDto classroom = new ClassroomDto();
+        classroom.setAddress("fff");
+        doThrow(new InvalidAddressException("Input address isn't valid!")).when(classroomServiceMock).addClassroom(classroom);
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/classrooms/").flashAttr("classroom",
+                classroom);
+        ResultActions result = mockMvc.perform(request);
+        result.andExpect(MockMvcResultMatchers.view().name("redirect:/classrooms"))
+                .andExpect(MockMvcResultMatchers.model().attribute("message", "Input address isn't valid!"));
     }
 
     @Test
