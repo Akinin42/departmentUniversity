@@ -2,6 +2,7 @@ package org.university.controller;
 
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.doThrow;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +24,9 @@ import org.university.entity.Course;
 import org.university.entity.Student;
 import org.university.exceptions.AuthorisationFailException;
 import org.university.exceptions.EntityNotExistException;
+import org.university.exceptions.InvalidEmailException;
+import org.university.exceptions.InvalidPhoneException;
+import org.university.exceptions.InvalidUserNameException;
 import org.university.service.CourseService;
 import org.university.service.StudentService;
 import org.university.utils.CreatorTestEntities;
@@ -65,18 +69,50 @@ class StudentControllerTest {
     @Test
     void testAddStudent() throws Exception {
         StudentDto student = new StudentDto();
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/students/")
-                .flashAttr("student", student);
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/students/").flashAttr("student", student);
         ResultActions result = mockMvc.perform(request);
         result.andExpect(MockMvcResultMatchers.view().name("redirect:/students"));
         verify(studentServiceMock).register(student);
     }
 
     @Test
+    void testAddStudentWhenInputInvalidName() throws Exception {
+        StudentDto student = new StudentDto();
+        student.setName("invalid name");
+        doThrow(new InvalidUserNameException("Input name isn't valid!")).when(studentServiceMock).register(student);
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/students/").flashAttr("student", student);
+        ResultActions result = mockMvc.perform(request);
+        result.andExpect(MockMvcResultMatchers.view().name("studentform"))
+                .andExpect(MockMvcResultMatchers.model().attribute("message", "Input name isn't valid!"));
+    }
+    
+    @Test
+    void testAddStudentWhenInputInvalidEmail() throws Exception {
+        StudentDto student = new StudentDto();
+        student.setEmail("invalid email");
+        doThrow(new InvalidEmailException("Input email isn't valid!")).when(studentServiceMock).register(student);
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/students/").flashAttr("student", student);
+        ResultActions result = mockMvc.perform(request);
+        result.andExpect(MockMvcResultMatchers.view().name("studentform"))
+        .andExpect(MockMvcResultMatchers.model().attribute("message", "Input email isn't valid!"));
+    }
+    
+    @Test
+    void testAddStudentWhenInputInvalidPhone() throws Exception {
+        StudentDto student = new StudentDto();
+        student.setEmail("invalid email");
+        doThrow(new InvalidPhoneException("Input phone isn't valid!")).when(studentServiceMock).register(student);
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/students/").flashAttr("student", student);
+        ResultActions result = mockMvc.perform(request);
+        result.andExpect(MockMvcResultMatchers.view().name("studentform"))
+        .andExpect(MockMvcResultMatchers.model().attribute("message", "Input phone isn't valid!"));
+    }
+
+    @Test
     void testDelete() throws Exception {
         StudentDto student = new StudentDto();
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.delete("/students/")
-                .flashAttr("student", student);
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.delete("/students/").flashAttr("student",
+                student);
         ResultActions result = mockMvc.perform(request);
         result.andExpect(MockMvcResultMatchers.view().name("redirect:/students"));
         verify(studentServiceMock).delete(student);
@@ -96,7 +132,8 @@ class StudentControllerTest {
     void testOtherStudentsWhenInputNumberNegativeAndShowFirstStudentsYet() throws Exception {
         List<Student> students = CreatorTestEntities.createStudents();
         when(studentServiceMock.findNumberOfUsers(5, 0)).thenReturn(students);
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/students/-1").sessionAttr("numberUsers", 0);
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/students/-1").sessionAttr("numberUsers",
+                0);
         ResultActions result = mockMvc.perform(request);
         result.andExpect(MockMvcResultMatchers.view().name("students"))
                 .andExpect(MockMvcResultMatchers.model().attributeExists("students"))
@@ -133,26 +170,26 @@ class StudentControllerTest {
         student.setCourseName("test");
         Course course = Course.builder().withName("test").build();
         when(courseServiceMock.createCourse("test")).thenReturn(course);
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/students/course/")
-                .flashAttr("student", student);
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/students/course/").flashAttr("student",
+                student);
         ResultActions result = mockMvc.perform(request);
         result.andExpect(MockMvcResultMatchers.view().name("redirect:/students"));
         verify(studentServiceMock).addStudentToCourse(student, course);
     }
-    
+
     @Test
     void testDeleteCourse() throws Exception {
         StudentDto student = new StudentDto();
         student.setCourseName("test");
         Course course = Course.builder().withName("test").build();
         when(courseServiceMock.createCourse("test")).thenReturn(course);
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.delete("/students/course/")
-                .flashAttr("student", student);
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.delete("/students/course/").flashAttr("student",
+                student);
         ResultActions result = mockMvc.perform(request);
         result.andExpect(MockMvcResultMatchers.view().name("redirect:/students"));
         verify(studentServiceMock).deleteStudentFromCourse(student, course);
     }
-    
+
     @Test
     void testLoginWhenStudentWithInputEmailAndPasswordExists() throws Exception {
         StudentDto student = new StudentDto();
@@ -160,35 +197,37 @@ class StudentControllerTest {
         student.setPassword("test");
         Student expectedStudent = Student.builder().withEmail("test").build();
         when(studentServiceMock.login(student.getEmail(), student.getPassword())).thenReturn(expectedStudent);
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/students/login/")
-                .flashAttr("student", student);
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/students/login/").flashAttr("student",
+                student);
         ResultActions result = mockMvc.perform(request);
         result.andExpect(MockMvcResultMatchers.view().name("studentprofile"))
                 .andExpect(MockMvcResultMatchers.model().attributeExists("student"))
-                .andExpect(MockMvcResultMatchers.model().attribute("student", expectedStudent));        
+                .andExpect(MockMvcResultMatchers.model().attribute("student", expectedStudent));
     }
-    
+
     @Test
     void testLoginWhenStudentWithInputEmailNotExists() throws Exception {
         StudentDto student = new StudentDto();
         student.setEmail("notexistemail");
-        student.setPassword("test");        
-        when(studentServiceMock.login(student.getEmail(), student.getPassword())).thenThrow(EntityNotExistException.class);
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/students/login/")
-                .flashAttr("student", student);
+        student.setPassword("test");
+        when(studentServiceMock.login(student.getEmail(), student.getPassword()))
+                .thenThrow(EntityNotExistException.class);
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/students/login/").flashAttr("student",
+                student);
         ResultActions result = mockMvc.perform(request);
         result.andExpect(MockMvcResultMatchers.view().name("studentform"));
     }
-    
+
     @Test
     void testLoginWhenStudentWithInputEmailExistsButPasswordNotCorrect() throws Exception {
         StudentDto student = new StudentDto();
         student.setEmail("test");
-        student.setPassword("incorrect password");        
-        when(studentServiceMock.login(student.getEmail(), student.getPassword())).thenThrow(AuthorisationFailException.class);
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/students/login/")
-                .flashAttr("student", student);
+        student.setPassword("incorrect password");
+        when(studentServiceMock.login(student.getEmail(), student.getPassword()))
+                .thenThrow(AuthorisationFailException.class);
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/students/login/").flashAttr("student",
+                student);
         ResultActions result = mockMvc.perform(request);
         result.andExpect(MockMvcResultMatchers.view().name("redirect:/students"));
-    }    
+    }
 }
