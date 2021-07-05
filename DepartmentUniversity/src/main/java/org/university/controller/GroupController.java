@@ -11,6 +11,7 @@ import org.university.dto.DayTimetableDto;
 import org.university.dto.GroupDto;
 import org.university.dto.StudentDto;
 import org.university.entity.Group;
+import org.university.exceptions.InvalidGroupNameException;
 import org.university.service.GroupService;
 import org.university.service.StudentService;
 import lombok.AccessLevel;
@@ -28,7 +29,7 @@ public class GroupController {
     StudentService studentService;
 
     @GetMapping()
-    public String getAll(Model model) {
+    public String getAll(@ModelAttribute("message") String message, Model model) {
         model.addAttribute("group", new GroupDto());
         model.addAttribute("student", new StudentDto());
         model.addAttribute("groups", groupService.findAllGroups());
@@ -38,9 +39,14 @@ public class GroupController {
     }
 
     @PostMapping()
-    public String add(@ModelAttribute("group") GroupDto group) {
+    public String add(@ModelAttribute("group") GroupDto group, Model model) {
+        try {
         groupService.addGroup(group);
         return REDIRECT;
+        } catch (InvalidGroupNameException e) {
+            model.addAttribute("message", e.getMessage());
+            return REDIRECT;
+        }
     }
 
     @PostMapping("/student")

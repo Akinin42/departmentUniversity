@@ -1,5 +1,6 @@
 package org.university.controller;
 
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -21,6 +22,7 @@ import org.university.dto.GroupDto;
 import org.university.dto.StudentDto;
 import org.university.entity.Group;
 import org.university.entity.Student;
+import org.university.exceptions.InvalidGroupNameException;
 import org.university.service.GroupService;
 import org.university.service.StudentService;
 import org.university.utils.CreatorTestEntities;
@@ -67,6 +69,18 @@ class GroupControllerTest {
         ResultActions result = mockMvc.perform(request);
         result.andExpect(MockMvcResultMatchers.view().name("redirect:/groups"));
         verify(groupServiceMock).addGroup(group);
+    }
+    
+    @Test
+    void testAddWhenInputInvalidName() throws Exception {
+        GroupDto group = new GroupDto();
+        group.setName("invalid name");
+        doThrow(new InvalidGroupNameException("Input course name isn't valid! You should input f.e. 'AA-11'")).when(groupServiceMock)
+                .addGroup(group);
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/groups/").flashAttr("group", group);
+        ResultActions result = mockMvc.perform(request);
+        result.andExpect(MockMvcResultMatchers.view().name("redirect:/groups"))
+                .andExpect(MockMvcResultMatchers.model().attribute("message", "Input course name isn't valid! You should input f.e. 'AA-11'"));
     }
 
     @Test

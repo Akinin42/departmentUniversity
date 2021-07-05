@@ -24,6 +24,7 @@
 								<h4 class="title pull-left">Group List</h4>
 								<div class="row pull-right">
 									<div class="input-group mb-3">
+									<p th:text="${message}"></p>
 										<form action="#" th:action="@{/groups}"	th:object="${group}" method="post">
 											<label for="name">Group name:</label> 
 											<input type="text" class="form-group" th:field="*{name}" id="name">
