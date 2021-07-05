@@ -23,7 +23,8 @@ import org.university.exceptions.EntityAlreadyExistException;
 import org.university.exceptions.EntityNotExistException;
 import org.university.exceptions.InvalidClassroomCapacityException;
 import org.university.exceptions.InvalidLessonTimeException;
-import org.university.service.mapper.LessonMapper;
+import org.university.exceptions.InvalidLinkException;
+import org.university.service.mapper.LessonDtoMapper;
 import org.university.service.validator.LessonValidator;
 import org.university.utils.CreatorTestEntities;
 
@@ -32,12 +33,12 @@ class LessonServiceImplTest {
     private static LessonServiceImpl lessonService;
     private static LessonDaoImpl lessonDaoMock;
     private static Lesson lessonMock;
-    private static LessonMapper mapperMock;
+    private static LessonDtoMapper mapperMock;
 
     @BeforeAll
     static void init() {
         lessonDaoMock = createLessonDaoMock();
-        mapperMock = mock(LessonMapper.class);
+        mapperMock = mock(LessonDtoMapper.class);
         lessonService = new LessonServiceImpl(lessonDaoMock, new LessonValidator(), mapperMock);
         lessonMock = createLessonMock();
     }
@@ -140,6 +141,7 @@ class LessonServiceImplTest {
     void addLessonShouldThrowInvalidLessonTimeExceptionWhenGroupBusyThisTime() {
         when(lessonMock.getStartLesson()).thenReturn(LocalDateTime.of(2021, Month.OCTOBER, 19, 10, 00, 00));
         when(lessonMock.getEndLesson()).thenReturn(LocalDateTime.of(2021, Month.OCTOBER, 19, 12, 00, 00));
+        when(lessonMock.getOnlineLesson()).thenReturn(false);
         List<Lesson> lessons = CreatorTestEntities.createLessons();
         lessons.remove(2);
         lessons.remove(1);
@@ -147,6 +149,28 @@ class LessonServiceImplTest {
         LessonDto lessonDto = new LessonDto();
         when(mapperMock.mapDtoToEntity(lessonDto)).thenReturn(lessonMock);
         assertThatThrownBy(() -> lessonService.addLesson(lessonDto)).isInstanceOf(InvalidLessonTimeException.class);
+    }
+    
+    @Test
+    void addLessonShouldThrowInvalidLinkExceptionWhenInputLinkNull() {
+        when(lessonMock.getStartLesson()).thenReturn(LocalDateTime.of(2021, Month.OCTOBER, 19, 18, 00, 00));
+        when(lessonMock.getEndLesson()).thenReturn(LocalDateTime.of(2021, Month.OCTOBER, 19, 19, 00, 00));
+        when(lessonMock.getOnlineLesson()).thenReturn(true);
+        when(lessonMock.getLessonLink()).thenReturn(null);
+        LessonDto lessonDto = new LessonDto();
+        when(mapperMock.mapDtoToEntity(lessonDto)).thenReturn(lessonMock);
+        assertThatThrownBy(() -> lessonService.addLesson(lessonDto)).isInstanceOf(InvalidLinkException.class);
+    }
+    
+    @Test
+    void addLessonShouldThrowInvalidLinkExceptionWhenInputLinkInvalid() {
+        when(lessonMock.getStartLesson()).thenReturn(LocalDateTime.of(2021, Month.OCTOBER, 19, 18, 00, 00));
+        when(lessonMock.getEndLesson()).thenReturn(LocalDateTime.of(2021, Month.OCTOBER, 19, 19, 00, 00));
+        when(lessonMock.getOnlineLesson()).thenReturn(true);
+        when(lessonMock.getLessonLink()).thenReturn("d");
+        LessonDto lessonDto = new LessonDto();
+        when(mapperMock.mapDtoToEntity(lessonDto)).thenReturn(lessonMock);
+        assertThatThrownBy(() -> lessonService.addLesson(lessonDto)).isInstanceOf(InvalidLinkException.class);
     }
 
     @Test
@@ -199,6 +223,7 @@ class LessonServiceImplTest {
         when(lessonMock.getStartLesson()).thenReturn(LocalDateTime.of(2021, Month.OCTOBER, 19, 10, 00, 00));
         when(lessonMock.getEndLesson()).thenReturn(LocalDateTime.of(2021, Month.OCTOBER, 19, 12, 00, 00));
         when(lessonMock.getClassroom()).thenReturn(CreatorTestEntities.createClassrooms().get(0));
+        when(lessonMock.getOnlineLesson()).thenReturn(false);
         List<Lesson> lessons = CreatorTestEntities.createLessons();
         lessons.remove(0);
         when(lessonDaoMock.findAllByDateAndTeacher("2021-10-19", 2)).thenReturn(lessons);

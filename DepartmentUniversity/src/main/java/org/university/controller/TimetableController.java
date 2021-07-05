@@ -11,6 +11,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.university.dto.DayTimetableDto;
 import org.university.dto.LessonDto;
+import org.university.exceptions.ClassroomBusyException;
+import org.university.exceptions.InvalidClassroomCapacityException;
+import org.university.exceptions.InvalidLessonTimeException;
+import org.university.exceptions.InvalidLinkException;
 import org.university.service.ClassroomService;
 import org.university.service.CourseService;
 import org.university.service.DayTimetableService;
@@ -27,6 +31,7 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 public class TimetableController {
     
+    private static final String LESSON_FORM = "lessonform";    
     DayTimetableService timetableService;
     GroupService groupService;
     TeacherService teacherService;
@@ -61,21 +66,26 @@ public class TimetableController {
     }
 
     @GetMapping("/new")
-    public String newLesson(Model model) {
+    public String newLesson(@ModelAttribute("message") String message, Model model) {
         model.addAttribute("groups", groupService.findAllGroups());
         model.addAttribute("teachers", teacherService.findAll());
         model.addAttribute("lesson", new LessonDto());
         model.addAttribute("courses", courseService.findAllCourses());
         model.addAttribute("classrooms", classroomService.findAllClassrooms());
-        return "lessonform";
+        return LESSON_FORM;
     }
 
     @PostMapping()
     public String addLesson(@ModelAttribute("lesson") LessonDto lesson, Model model) {
+        try {
         lessonService.addLesson(lesson);
         String date = LocalDateTime.parse(lesson.getStartLesson()).toLocalDate().toString();
         model.addAttribute("lessons", timetableService.createDayTimetable(date).getLessons());
         return "lessons";
+        } catch (InvalidLessonTimeException | InvalidClassroomCapacityException | ClassroomBusyException | InvalidLinkException e) {
+            model.addAttribute("message", e.getMessage());
+            return "redirect:/timetables/new";
+        }
     }
     
     @DeleteMapping()

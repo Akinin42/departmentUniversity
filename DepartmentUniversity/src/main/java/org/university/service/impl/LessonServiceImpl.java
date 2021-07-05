@@ -13,7 +13,7 @@ import org.university.exceptions.EntityAlreadyExistException;
 import org.university.exceptions.EntityNotExistException;
 import org.university.exceptions.InvalidLessonTimeException;
 import org.university.service.LessonService;
-import org.university.service.mapper.LessonMapper;
+import org.university.service.mapper.LessonDtoMapper;
 import org.university.service.validator.LessonValidator;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -29,7 +29,7 @@ public class LessonServiceImpl implements LessonService {
 
     LessonDao lessonDao;
     LessonValidator validator;
-    LessonMapper mapper;
+    LessonDtoMapper mapper;
 
     @Override
     public Lesson createLesson(String startLesson, String teacherEmail, String groupName) {        
@@ -50,10 +50,10 @@ public class LessonServiceImpl implements LessonService {
         List<Lesson> teacherLessons = lessonDao.findAllByDateAndTeacher(lessonDate, lesson.getTeacher().getId());
         List<Lesson> groupLessons = lessonDao.findAllByDateAndGroup(lessonDate, lesson.getGroup().getId());
         if (!checkFreeTime(lesson, teacherLessons) || !checkFreeTime(lesson, groupLessons)) {
-            throw new InvalidLessonTimeException();
+            throw new InvalidLessonTimeException("Group or teacher is busy on this time!");
         }
         if (!checkFreeClassroom(lesson)) {
-            throw new ClassroomBusyException();
+            throw new ClassroomBusyException("The classroom is busy on this time");
         }
         lessonDao.save(lesson);
         log.info("Lesson added succesfull!");

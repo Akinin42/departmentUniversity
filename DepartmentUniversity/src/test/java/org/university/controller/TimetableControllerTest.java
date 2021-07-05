@@ -1,5 +1,6 @@
 package org.university.controller;
 
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -26,6 +27,10 @@ import org.university.entity.DayTimetable;
 import org.university.entity.Group;
 import org.university.entity.Lesson;
 import org.university.entity.Teacher;
+import org.university.exceptions.ClassroomBusyException;
+import org.university.exceptions.InvalidClassroomCapacityException;
+import org.university.exceptions.InvalidLessonTimeException;
+import org.university.exceptions.InvalidLinkException;
 import org.university.service.ClassroomService;
 import org.university.service.CourseService;
 import org.university.service.DayTimetableService;
@@ -140,6 +145,50 @@ class TimetableControllerTest {
                 .andExpect(MockMvcResultMatchers.model().attributeExists("lessons"))
                 .andExpect(MockMvcResultMatchers.model().attribute("lessons", lessons));
         verify(lessonServiceMock).addLesson(lesson);
+    }
+    
+    @Test
+    void testAddLessonWhenInputInvalidTime() throws Exception {
+        LessonDto lesson = new LessonDto();        
+        doThrow(new InvalidLessonTimeException("Message about invalid time!")).when(lessonServiceMock).addLesson(lesson);
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/timetables/")
+                .flashAttr("lesson", lesson);
+        ResultActions result = mockMvc.perform(request);
+        result.andExpect(MockMvcResultMatchers.view().name("redirect:/timetables/new"))
+                .andExpect(MockMvcResultMatchers.model().attribute("message", "Message about invalid time!"));
+    }
+    
+    @Test
+    void testAddLessonWhenInputGroupMoreThanInputClassroomCapacity() throws Exception {
+        LessonDto lesson = new LessonDto();        
+        doThrow(new InvalidClassroomCapacityException("Message about invalid classroom capacity!")).when(lessonServiceMock).addLesson(lesson);
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/timetables/")
+                .flashAttr("lesson", lesson);
+        ResultActions result = mockMvc.perform(request);
+        result.andExpect(MockMvcResultMatchers.view().name("redirect:/timetables/new"))
+        .andExpect(MockMvcResultMatchers.model().attribute("message", "Message about invalid classroom capacity!"));
+    }
+    
+    @Test
+    void testAddLessonWhenInputClassroomBusy() throws Exception {
+        LessonDto lesson = new LessonDto();        
+        doThrow(new ClassroomBusyException("Message about classroom is busy!")).when(lessonServiceMock).addLesson(lesson);
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/timetables/")
+                .flashAttr("lesson", lesson);
+        ResultActions result = mockMvc.perform(request);
+        result.andExpect(MockMvcResultMatchers.view().name("redirect:/timetables/new"))
+        .andExpect(MockMvcResultMatchers.model().attribute("message", "Message about classroom is busy!"));
+    }
+    
+    @Test
+    void testAddLessonWhenInputInvalidLink() throws Exception {
+        LessonDto lesson = new LessonDto();        
+        doThrow(new InvalidLinkException("Message about invalid link!")).when(lessonServiceMock).addLesson(lesson);
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/timetables/")
+                .flashAttr("lesson", lesson);
+        ResultActions result = mockMvc.perform(request);
+        result.andExpect(MockMvcResultMatchers.view().name("redirect:/timetables/new"))
+        .andExpect(MockMvcResultMatchers.model().attribute("message", "Message about invalid link!"));
     }
 
     @Test

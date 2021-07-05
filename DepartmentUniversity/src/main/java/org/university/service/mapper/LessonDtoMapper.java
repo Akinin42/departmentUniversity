@@ -11,7 +11,7 @@ import org.university.entity.Lesson;
 import org.university.service.GroupService;
 
 @Component
-public class LessonMapper {    
+public class LessonDtoMapper {    
     
     @Autowired
     private CourseDao courseDao;

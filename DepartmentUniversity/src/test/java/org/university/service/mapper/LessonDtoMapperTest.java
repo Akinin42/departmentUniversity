@@ -24,7 +24,7 @@ import org.university.service.GroupService;
 import org.university.utils.CreatorTestEntities;
 
 @ExtendWith(MockitoExtension.class)
-class LessonMapperTest {
+class LessonDtoMapperTest {
     
     @Mock
     private CourseDao courseDaoMock;
@@ -39,7 +39,7 @@ class LessonMapperTest {
     private ClassroomDao classroomDaoMock;
     
     @InjectMocks
-    private LessonMapper lessonMapper;    
+    private LessonDtoMapper lessonMapper;    
 
     @Test
     void mapDtoToEntityShouldReturnExpectedLessonWhenInputValidLessonDto() {        
