@@ -16,6 +16,9 @@ import org.university.dto.CourseDto;
 import org.university.entity.Course;
 import org.university.exceptions.EntityAlreadyExistException;
 import org.university.exceptions.EntityNotExistException;
+import org.university.exceptions.InvalidCourseNameException;
+import org.university.exceptions.InvalidDescriptionException;
+import org.university.service.validator.CourseValidator;
 import org.university.utils.CreatorTestEntities;
 
 class CourseServiceImplTest {
@@ -26,7 +29,7 @@ class CourseServiceImplTest {
     @BeforeAll
     static void init() {
         courseDaoMock = createCourseDaoMock();
-        courseService = new CourseServiceImpl(courseDaoMock);
+        courseService = new CourseServiceImpl(courseDaoMock, new CourseValidator());
     }
 
     @Test
@@ -49,6 +52,23 @@ class CourseServiceImplTest {
     }
     
     @Test
+    void addCourseShouldThrowInvalidCourseNameExceptionWhenInputInvalidName() {
+        CourseDto course = new CourseDto();
+        course.setId(5);
+        course.setName("");
+        assertThatThrownBy(() -> courseService.addCourse(course)).isInstanceOf(InvalidCourseNameException.class);
+    }
+    
+    @Test
+    void addCourseShouldThrowInvalidDescriptionExceptionWhenInputInvalidDescription() {
+        CourseDto course = new CourseDto();
+        course.setId(5);
+        course.setName("valid");
+        course.setDescription("");
+        assertThatThrownBy(() -> courseService.addCourse(course)).isInstanceOf(InvalidDescriptionException.class);
+    }
+    
+    @Test
     void addCourseShouldThrowIllegalArgumentExceptionWhenInputNull() {        
         assertThatThrownBy(() -> courseService.addCourse(null)).isInstanceOf(IllegalArgumentException.class);
     }
@@ -58,7 +78,7 @@ class CourseServiceImplTest {
         CourseDto courseDto = new CourseDto();
         courseDto.setId(4);
         courseDto.setName("test");
-        courseDto.setDescription("test");
+        courseDto.setDescription("test description");
         courseService.addCourse(courseDto);
         Course course = createTestCourse();
         verify(courseDaoMock).save(course);
@@ -68,11 +88,11 @@ class CourseServiceImplTest {
     void addCourseShouldSaveCourseWithoutIdInDatabaseWhenInputValidCourse() {
         CourseDto courseDto = new CourseDto();        
         courseDto.setName("test");
-        courseDto.setDescription("test");
+        courseDto.setDescription("test description");
         courseService.addCourse(courseDto);
         Course course = Course.builder()                
                 .withName("test")
-                .withDescription("test")
+                .withDescription("test description")
                 .build();
         verify(courseDaoMock).save(course);
     }
@@ -124,7 +144,7 @@ class CourseServiceImplTest {
         return Course.builder()
                 .withId(4)
                 .withName("test")
-                .withDescription("test")
+                .withDescription("test description")
                 .build();
     }
 }
