@@ -49,6 +49,8 @@
 									<th>Phone</th>
 									<th>ScientificDegree</th>
 									<th>Action</th>
+									<th>Week timetable</th>
+                                    <th>Month timetable</th>
 								</tr>
 							</thead>
 							<tbody>
@@ -61,6 +63,17 @@
 									<td th:text="${teacher.scientificDegree}" />
 									<td>
 										<ul class="action-list">
+										    <li>
+                                                <form action="#" th:action="@{/teachers/edit}" th:object="${teacher}" method="post">
+                                                    <input class="form-control" type="hidden" th:value="${teacher.id}" id="id" name="id"/>                                                    
+                                                    <input class="form-control" type="hidden" th:value="${teacher.name}" id="name" name="name"/>
+                                                    <input class="form-control" type="hidden" th:value="${teacher.email}" id="email" name="email"/>
+                                                    <input class="form-control" type="hidden" th:value="${teacher.phone}" id="phone" name="phone"/>
+                                                    <button type="submit" class="btn btn-primary" th:value="teacher">
+                                                        <i class="fa fa-pencil-square-o"></i>
+                                                    </button>
+                                                </form>
+                                            </li>
 											<li>
 												<form action="#" th:action="@{/teachers}" th:object="${teacher}" th:method="delete">
 													<input class="form-control" type="hidden" th:value="${teacher.id}" id="id" name="id" />
@@ -71,6 +84,68 @@
 											</li>
 										</ul>
 									</td>
+									<td>
+                                        <ul class="action-list">
+                                            <li>
+                                                <form action="#" th:action="@{/timetables/weekteacher}" th:object="${teacher}" method="post">
+                                                    <input class="form-control" type="hidden" th:value="${teacher.name}" id="name" name="name"/>
+                                                    <input class="form-control" type="hidden" th:value="${teacher.email}" id="email" name="email"/>
+                                                    <button type="submit" class="btn btn-success" th:value="teacher">
+                                                        <i class="fa fa-calendar-check-o"></i>
+                                                    </button>
+                                                </form>
+                                            </li>
+                                            <li>
+                                                <form action="#" th:action="@{/pdf/weekteacher}" th:object="${teacher}" method="post">
+                                                    <input class="form-control" type="hidden" th:value="${teacher.name}" id="name" name="name"/>
+                                                    <input class="form-control" type="hidden" th:value="${teacher.email}" id="email" name="email"/>
+                                                    <button type="submit" class="btn btn-success" th:value="teacher">
+                                                        <i class="fa fa-file-pdf-o" aria-hidden="true"></i>
+                                                    </button>
+                                                </form>
+                                            </li>
+                                            <li>
+                                                <form action="#" th:action="@{/csv/weekteacher}" th:object="${teacher}" method="post">
+                                                    <input class="form-control" type="hidden" th:value="${teacher.name}" id="name" name="name"/>
+                                                    <input class="form-control" type="hidden" th:value="${teacher.email}" id="email" name="email"/>
+                                                    <button type="submit" class="btn btn-success" th:value="teacher">
+                                                        <i class="fa fa-file-excel-o" aria-hidden="true"></i>
+                                                    </button>
+                                                </form>
+                                            </li>
+                                        </ul>
+                                    </td>
+                                    <td>
+                                        <ul class="action-list">
+                                            <li>
+                                                <form action="#" th:action="@{/timetables/monthteacher}" th:object="${teacher}" method="post">
+                                                    <input class="form-control" type="hidden" th:value="${teacher.name}" id="name" name="name"/>
+                                                    <input class="form-control" type="hidden" th:value="${teacher.email}" id="email" name="email"/>
+                                                    <button type="submit" class="btn btn-success" th:value="teacher">
+                                                        <i class="fa fa-calendar-check-o"></i>
+                                                    </button>
+                                                </form>
+                                            </li>
+                                            <li>
+                                                <form action="#" th:action="@{/pdf/monthteacher}" th:object="${teacher}" method="post">
+                                                    <input class="form-control" type="hidden" th:value="${teacher.name}" id="name" name="name"/>
+                                                    <input class="form-control" type="hidden" th:value="${teacher.email}" id="email" name="email"/>
+                                                    <button type="submit" class="btn btn-success" th:value="teacher">
+                                                        <i class="fa fa-file-pdf-o" aria-hidden="true"></i>
+                                                    </button>
+                                                </form>
+                                            </li>
+                                            <li>
+                                                <form action="#" th:action="@{/csv/monthteacher}" th:object="${teacher}" method="post">
+                                                    <input class="form-control" type="hidden" th:value="${teacher.name}" id="name" name="name"/>
+                                                    <input class="form-control" type="hidden" th:value="${teacher.email}" id="email" name="email"/>
+                                                    <button type="submit" class="btn btn-success" th:value="teacher">
+                                                        <i class="fa fa-file-excel-o" aria-hidden="true"></i>
+                                                    </button>
+                                                </form>
+                                            </li>
+                                        </ul>
+                                    </td>
 								</tr>
 							</tbody>
 						</table>

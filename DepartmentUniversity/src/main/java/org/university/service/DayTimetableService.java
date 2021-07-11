@@ -1,19 +1,23 @@
 package org.university.service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.university.entity.DayTimetable;
 
 public interface DayTimetableService {
     
-    DayTimetable createTeacherTimetable(String date, String teacherEmail);
+    DayTimetable createTeacherTimetable(LocalDate date, String teacherEmail);
     
-    DayTimetable createGroupTimetable(String date, String groupName);
+    DayTimetable createGroupTimetable(LocalDate date, String groupName);
     
-    List<DayTimetable> createMonthTeacherTimetable(String date, String teacherEmail);
+    List<DayTimetable> createMonthTeacherTimetable(LocalDate date, String teacherEmail);
     
-    List<DayTimetable> createMonthGroupTimetable(String date, String groupName);
+    List<DayTimetable> createMonthGroupTimetable(LocalDate date, String groupName);
     
-    DayTimetable createDayTimetable(String date);
-
+    DayTimetable createDayTimetable(LocalDate date);
+    
+    List<DayTimetable> createWeekTeacherTimetable(LocalDate date, String teacherEmail);
+    
+    List<DayTimetable> createWeekGroupTimetable(LocalDate date, String groupName);
 }

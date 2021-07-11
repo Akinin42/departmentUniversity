@@ -48,8 +48,8 @@ public class GroupServiceImpl implements GroupService {
     public void addGroup(@NonNull GroupDto groupDto) {
         Group group = mapDtoToEntity(groupDto);
         validator.validate(group);
-        if (group.getId() != null && existGroup(group)) {
-            throw new EntityAlreadyExistException();
+        if (existGroup(group)) {
+            throw new EntityAlreadyExistException("Group with this name already exist!");
         }
         groupDao.save(group);
         if (group.getStudents() != null) {
@@ -74,9 +74,20 @@ public class GroupServiceImpl implements GroupService {
         Group group = mapDtoToEntity(groupDto);
         groupDao.deleteById(group.getId());
     }
+    
+    @Override
+    public void edit(@NonNull GroupDto groupDto) {
+        Group group = mapDtoToEntity(groupDto);
+        if (!groupDao.findById(group.getId()).get().getName().equals(group.getName())&&existGroup(group)) {
+            throw new EntityAlreadyExistException("Group with this name already exist!");
+        }
+        validator.validate(group);
+        groupDao.update(group);
+        log.info("Group with name {} edited succesfull!", group.getName());
+    }
 
     private boolean existGroup(Group group) {
-        return !groupDao.findById(group.getId()).equals(Optional.empty());
+        return !groupDao.findByName(group.getName()).equals(Optional.empty());
     }
 
     private Group mapDtoToEntity(GroupDto group) {
@@ -85,5 +96,5 @@ public class GroupServiceImpl implements GroupService {
                 .withName(group.getName())
                 .withStudents(group.getStudents())
                 .build();
-    }
+    }    
 }

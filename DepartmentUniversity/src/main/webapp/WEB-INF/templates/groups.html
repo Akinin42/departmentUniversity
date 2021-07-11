@@ -45,6 +45,8 @@
 									<th>Add student</th>
 									<th>Delete student</th>
 									<th>Action</th>
+									<th>Week timetable</th>
+									<th>Month timetable</th>
 								</tr>
 							</thead>
 							<tbody>
@@ -93,6 +95,15 @@
 									</td>
 									<td>
 										<ul class="action-list">
+										<li>
+                                                <form action="#" th:action="@{/groups/edit}" th:object="${group}" method="post">
+                                                    <input class="form-control" type="hidden" th:value="${group.id}" id="id" name="id"/>
+                                                    <input class="form-control" type="hidden" th:value="${group.name}" id="name" name="name"/>                                                    
+                                                    <button type="submit" class="btn btn-primary" th:value="group">
+                                                        <i class="fa fa-pencil-square-o"></i>
+                                                    </button>
+                                                </form>
+                                            </li>
 											<li>
 												<form action="#" th:action="@{/groups/}" th:object="${group}" th:method="delete">
 													<input class="form-control" type="hidden" th:value="${group.id}" id="id" name="id" />
@@ -103,6 +114,62 @@
 											</li>
 										</ul>
 									</td>
+									<td>
+                                        <ul class="action-list">
+                                            <li>
+                                                <form action="#" th:action="@{/timetables/weekgroup}" th:object="${group}" method="post">
+                                                    <input class="form-control" type="hidden" th:value="${group.name}" id="name" name="name"/>
+                                                    <button type="submit" class="btn btn-success" th:value="group">
+                                                        <i class="fa fa-calendar-check-o"></i>
+                                                    </button>
+                                                </form>
+                                            </li>
+                                            <li>
+                                                <form action="#" th:action="@{/pdf/weekgroup}" th:object="${group}" method="post">
+                                                    <input class="form-control" type="hidden" th:value="${group.name}" id="name" name="name"/>
+                                                    <button type="submit" class="btn btn-success" th:value="group">
+                                                        <i class="fa fa-file-pdf-o" aria-hidden="true"></i>
+                                                    </button>
+                                                </form>
+                                            </li>
+                                            <li>
+                                                <form action="#" th:action="@{/csv/weekgroup}" th:object="${group}" method="post">
+                                                    <input class="form-control" type="hidden" th:value="${group.name}" id="name" name="name"/>
+                                                    <button type="submit" class="btn btn-success" th:value="group">
+                                                        <i class="fa fa-file-excel-o" aria-hidden="true"></i>
+                                                    </button>
+                                                </form>
+                                            </li>                                            
+                                        </ul>
+                                    </td>
+                                    <td>
+                                        <ul class="action-list">
+                                            <li>
+                                                <form action="#" th:action="@{/timetables/monthgroup}" th:object="${group}" method="post">
+                                                    <input class="form-control" type="hidden" th:value="${group.name}" id="name" name="name"/>
+                                                    <button type="submit" class="btn btn-success" th:value="group">
+                                                        <i class="fa fa-calendar-check-o"></i>
+                                                    </button>
+                                                </form>
+                                            </li>
+                                            <li>
+                                                <form action="#" th:action="@{/pdf/monthgroup}" th:object="${group}" method="post">
+                                                    <input class="form-control" type="hidden" th:value="${group.name}" id="name" name="name"/>
+                                                    <button type="submit" class="btn btn-success" th:value="group">
+                                                        <i class="fa fa-file-pdf-o" aria-hidden="true"></i>
+                                                    </button>
+                                                </form>
+                                            </li>
+                                            <li>
+                                                <form action="#" th:action="@{/csv/monthgroup}" th:object="${group}" method="post">
+                                                    <input class="form-control" type="hidden" th:value="${group.name}" id="name" name="name"/>
+                                                    <button type="submit" class="btn btn-success" th:value="group">
+                                                        <i class="fa fa-file-excel-o" aria-hidden="true"></i>
+                                                    </button>
+                                                </form>
+                                            </li>
+                                        </ul>
+                                    </td>
 								</tr>
 							</tbody>
 						</table>

@@ -36,8 +36,8 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public void addCourse(@NonNull CourseDto courseDto) {
         Course course = mapDtoToEntity(courseDto);        
-        if (course.getId() != null && existCourse(course)) {
-            throw new EntityAlreadyExistException();
+        if (existCourse(course)) {
+            throw new EntityAlreadyExistException("Course with this name already exist!");
         }
         validator.validate(course);
         courseDao.save(course);
@@ -57,9 +57,20 @@ public class CourseServiceImpl implements CourseService {
             log.info("Course with name {} deleted!", course.getName());
         }
     }
+    
+    @Override
+    public void edit(@NonNull CourseDto courseDto) {
+        Course course = mapDtoToEntity(courseDto);
+        if (!courseDao.findById(course.getId()).get().getName().equals(course.getName())&&existCourse(course)) {
+            throw new EntityAlreadyExistException("Course with this name already exist!");
+        }
+        validator.validate(course);
+        courseDao.update(course);
+        log.info("Course with name {} edited succesfull!", course.getName());
+    }
 
     private boolean existCourse(Course course) {
-        return !courseDao.findById(course.getId()).equals(Optional.empty());
+        return !courseDao.findByName(course.getName()).equals(Optional.empty());
     }
 
     private Course mapDtoToEntity(CourseDto course) {
@@ -68,5 +79,5 @@ public class CourseServiceImpl implements CourseService {
                 .withName(course.getName())
                 .withDescription(course.getDescription())
                 .build();
-    }
+    }    
 }

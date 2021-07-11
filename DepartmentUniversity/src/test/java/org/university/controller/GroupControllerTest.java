@@ -22,6 +22,7 @@ import org.university.dto.GroupDto;
 import org.university.dto.StudentDto;
 import org.university.entity.Group;
 import org.university.entity.Student;
+import org.university.exceptions.EntityAlreadyExistException;
 import org.university.exceptions.InvalidGroupNameException;
 import org.university.service.GroupService;
 import org.university.service.StudentService;
@@ -75,8 +76,8 @@ class GroupControllerTest {
     void testAddWhenInputInvalidName() throws Exception {
         GroupDto group = new GroupDto();
         group.setName("invalid name");
-        doThrow(new InvalidGroupNameException("Input course name isn't valid! You should input f.e. 'AA-11'")).when(groupServiceMock)
-                .addGroup(group);
+        doThrow(new InvalidGroupNameException("Input course name isn't valid! You should input f.e. 'AA-11'"))
+            .when(groupServiceMock).addGroup(group);
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/groups/").flashAttr("group", group);
         ResultActions result = mockMvc.perform(request);
         result.andExpect(MockMvcResultMatchers.view().name("redirect:/groups"))
@@ -86,8 +87,8 @@ class GroupControllerTest {
     @Test
     void testDelete() throws Exception {
         GroupDto group = new GroupDto();
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.delete("/groups/").flashAttr("group",
-                group);
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.delete("/groups/")
+                .flashAttr("group", group);
         ResultActions result = mockMvc.perform(request);
         result.andExpect(MockMvcResultMatchers.view().name("redirect:/groups"));
         verify(groupServiceMock).delete(group);
@@ -119,5 +120,50 @@ class GroupControllerTest {
         ResultActions result = mockMvc.perform(request);
         result.andExpect(MockMvcResultMatchers.view().name("redirect:/groups"));
         verify(studentServiceMock).deleteStudentFromGroup(student, group);
+    }
+    
+    @Test
+    void testGetEditForm() throws Exception {
+        GroupDto group = new GroupDto();
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/groups/edit/")
+                .flashAttr("group", group);
+        ResultActions result = mockMvc.perform(request);
+        result.andExpect(MockMvcResultMatchers.view().name("updateforms/group"))
+                .andExpect(MockMvcResultMatchers.model().attributeExists("group"))
+                .andExpect(MockMvcResultMatchers.model().attribute("group", group));
+    }
+    
+    @Test
+    void testEdit() throws Exception {
+        GroupDto group = new GroupDto();
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.patch("/groups/")
+                .flashAttr("group", group);
+        ResultActions result = mockMvc.perform(request);
+        result.andExpect(MockMvcResultMatchers.view().name("redirect:/groups"));
+        verify(groupServiceMock).edit(group);
+    }
+    
+    @Test
+    void testEditInputInvalidName() throws Exception {
+        GroupDto group = new GroupDto();
+        group.setName("invalid name");
+        doThrow(new InvalidGroupNameException("Input course name isn't valid! You should input f.e. 'AA-11'"))
+            .when(groupServiceMock).edit(group);
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.patch("/groups/").flashAttr("group", group);
+        ResultActions result = mockMvc.perform(request);
+        result.andExpect(MockMvcResultMatchers.view().name("updateforms/group"))
+                .andExpect(MockMvcResultMatchers.model().attribute("message", "Input course name isn't valid! You should input f.e. 'AA-11'"));
+    }
+    
+    @Test
+    void testEditInputExistName() throws Exception {
+        GroupDto group = new GroupDto();
+        group.setName("exist name");
+        doThrow(new EntityAlreadyExistException("Group with this name already exist!"))
+            .when(groupServiceMock).edit(group);
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.patch("/groups/").flashAttr("group", group);
+        ResultActions result = mockMvc.perform(request);
+        result.andExpect(MockMvcResultMatchers.view().name("updateforms/group"))
+                .andExpect(MockMvcResultMatchers.model().attribute("message", "Group with this name already exist!"));
     }
 }

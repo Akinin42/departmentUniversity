@@ -14,5 +14,6 @@ public interface CourseService {
     List<Course> findAllCourses();
     
     void delete(CourseDto courseDto);
-
+    
+    void edit(CourseDto courseDto);
 }

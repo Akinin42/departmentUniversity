@@ -152,6 +152,59 @@ class GroupServiceImplTest {
         groups.add(group);
         return groups;
     }
+    
+    @Test
+    void editShouldThrowIllegalArgumentExceptionWhenInputNull() {
+        assertThatThrownBy(() -> groupService.edit(null)).isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void editShouldThrowInvalidGroupNameExceptionWhenInputGroupWithInvalidName() {
+        GroupDto group = new GroupDto();
+        group.setId(1);
+        group.setName("invalid name");
+        assertThatThrownBy(() -> groupService.edit(group)).isInstanceOf(InvalidGroupNameException.class);
+    }
+    
+    @Test
+    void editShouldThrowInvalidGroupNameExceptionWhenInputNameNull() {
+        GroupDto group = new GroupDto();
+        group.setId(1);
+        group.setName(null);
+        assertThatThrownBy(() -> groupService.edit(group)).isInstanceOf(InvalidGroupNameException.class);
+    }
+
+    @Test
+    void editShouldThrowEntityAlreadyExistExceptionWhenInputGroupNameExistInDatabase() {
+        GroupDto group = new GroupDto();
+        group.setId(2);
+        group.setName("AB-22");
+        assertThatThrownBy(() -> groupService.edit(group)).isInstanceOf(EntityAlreadyExistException.class);
+    }
+    
+    @Test
+    void editShouldUpdateGroupWhenInputValidGroup() {
+        GroupDto group = new GroupDto();        
+        group.setId(1);
+        group.setName("NN-55");
+        Group groupEntity = Group.builder()
+                .withId(1)
+                .withName("NN-55")
+                .withStudents(null)
+                .build();
+        groupService.edit(group);
+        verify(groupDaoMock).update(groupEntity);
+    }
+    
+    @Test
+    void editShouldUpdateGroupWhenInputNotChange() {
+        GroupDto group = new GroupDto();        
+        group.setId(1);
+        group.setName("AB-22");
+        Group groupEntity = CreatorTestEntities.createGroups().get(0);
+        groupService.edit(group);
+        verify(groupDaoMock).update(groupEntity);
+    }
 
     private static GroupDaoImpl createGroupDaoMock() {
         GroupDaoImpl groupDaoMock = mock(GroupDaoImpl.class);

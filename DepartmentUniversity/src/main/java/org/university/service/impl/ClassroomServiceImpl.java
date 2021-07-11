@@ -37,7 +37,7 @@ public class ClassroomServiceImpl implements ClassroomService {
     public void addClassroom(@NonNull ClassroomDto classroomDto) {
         Classroom classroom = mapDtoToEntity(classroomDto);
         if (classroom.getId() != null && existClassroom(classroom)) {
-            throw new EntityAlreadyExistException();
+            throw new EntityAlreadyExistException("Classroom already exist!");
         }
         validator.validate(classroom);
         classroomDao.save(classroom);
@@ -57,6 +57,14 @@ public class ClassroomServiceImpl implements ClassroomService {
             log.info("Classroom with number {} deleted!", classroom.getNumber());
         }
     }
+    
+    @Override
+    public void edit(@NonNull ClassroomDto classroomDto) {
+        Classroom classroom = mapDtoToEntity(classroomDto);
+        validator.validate(classroom);
+        classroomDao.update(classroom);
+        log.info("Classroom with number {} edited succesfull!", classroom.getNumber());        
+    }
 
     private boolean existClassroom(Classroom classroom) {
         return !classroomDao.findById(classroom.getId()).equals(Optional.empty());
@@ -69,5 +77,5 @@ public class ClassroomServiceImpl implements ClassroomService {
                 .withAddress(classroomDto.getAddress())
                 .withCapacity(classroomDto.getCapacity())
                 .build();
-    }
+    }    
 }

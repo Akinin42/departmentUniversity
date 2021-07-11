@@ -5,6 +5,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -90,6 +91,24 @@ public class TeacherController {
         } catch (AuthorisationFailException e) {
             model.addAttribute("message", "Password isn't correct!");
             return REDIRECT;
+        }
+    }
+
+    @PostMapping("/edit")
+    public String getEditForm(@ModelAttribute("teacher") TeacherDto teacher, @ModelAttribute("message") String message,
+            Model model) {
+        model.addAttribute("teacher", teacher);
+        return "updateforms/teacher";
+    }
+
+    @PatchMapping()
+    public String edit(@ModelAttribute("teacher") TeacherDto teacher, Model model) {
+        try {
+            teacherService.edit(teacher);
+            return REDIRECT;
+        } catch (InvalidEmailException | InvalidPhoneException | InvalidUserNameException e) {
+            model.addAttribute("message", e.getMessage());
+            return "updateforms/teacher";
         }
     }
 }

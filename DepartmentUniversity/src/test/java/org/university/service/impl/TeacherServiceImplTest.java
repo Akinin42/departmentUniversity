@@ -32,12 +32,18 @@ class TeacherServiceImplTest {
     @BeforeAll
     static void init() {
         teacherDaoMock = createTeacherDaoMock();
-        teacherService = new TeacherServiceImpl(teacherDaoMock, new UserValidator<Teacher>(), createEncoderMock());
+        teacherService = new TeacherServiceImpl(teacherDaoMock, new UserValidator<Teacher>(null, teacherDaoMock), createEncoderMock());
     }
 
     @Test
     void registerShouldSaveTeacherToDatabaseWhenInputTeacherNotExistThere() {
-        TeacherDto teacher = getTestTeacherDto();
+        TeacherDto teacher = new TeacherDto();        
+        teacher.setSex("Test");
+        teacher.setName("Test");
+        teacher.setEmail("test@test.ru");
+        teacher.setPhone("78956547475");
+        teacher.setPassword("Test");
+        teacher.setScientificDegree("Test");
         teacherService.register(teacher);
         Teacher teacherWithEncodePassword = Teacher.builder()
                 .withSex("Test")
@@ -122,17 +128,17 @@ class TeacherServiceImplTest {
         Teacher teacherWithEncodePassword = Teacher.builder()
                 .withSex("Test")
                 .withName("Test")
-                .withEmail("test@test.ru")
+                .withEmail("test2@test.ru")
                 .withPhone("Test")
                 .withPassword("encodePassword")
                 .withScientificDegree("Test")
                 .build();
-        assertThat(teacherService.login("test@test.ru", "Test")).isEqualTo(teacherWithEncodePassword);
+        assertThat(teacherService.login("test2@test.ru", "Test")).isEqualTo(teacherWithEncodePassword);
     }
 
     @Test
     void loginShouldThrowAuthorisationFailExceptionWhenInputNotValide() {
-        assertThatThrownBy(() -> teacherService.login("test@test.ru", "invalidpassword"))
+        assertThatThrownBy(() -> teacherService.login("test2@test.ru", "invalidpassword"))
                 .isInstanceOf(AuthorisationFailException.class);
     }
 
@@ -155,6 +161,91 @@ class TeacherServiceImplTest {
         when(teacherDaoMock.findAll()).thenReturn(new ArrayList<Teacher>());
         assertThat(teacherService.findAll()).isEmpty();
     }
+    
+    @Test
+    void editShouldThrowInvalidEmailExceptionWhenStudentWithInputEmailExists() {
+        TeacherDto teacher = new TeacherDto();
+        teacher.setId(1);
+        teacher.setSex("Male");
+        teacher.setName("Bob Moren");
+        teacher.setEmail("test2@test.ru");
+        teacher.setPhone("79758657788");
+        teacher.setPassword("test-password");
+        teacher.setScientificDegree("professor");
+        assertThatThrownBy(() -> teacherService.edit(teacher)).isInstanceOf(InvalidEmailException.class);
+    }
+
+    @Test
+    void editShouldThrowInvalidEmailExceptionWhenInputInvalidEmail() {
+        TeacherDto teacher = getTestTeacherDto();        
+        teacher.setEmail("invalidemail");
+        assertThatThrownBy(() -> teacherService.edit(teacher)).isInstanceOf(InvalidEmailException.class);
+    }
+    
+    @Test
+    void editShouldThrowInvalidUserNameExceptionWhenInputInvalidName() {
+        TeacherDto teacher = getTestTeacherDto();
+        teacher.setName("4");
+        assertThatThrownBy(() -> teacherService.edit(teacher)).isInstanceOf(InvalidUserNameException.class);
+    }
+    
+    @Test
+    void editShouldThrowInvalidPhoneExceptionWhenInputInvalidPhone() {
+        TeacherDto teacher = getTestTeacherDto();
+        teacher.setPhone("invalidphone");
+        assertThatThrownBy(() -> teacherService.edit(teacher)).isInstanceOf(InvalidPhoneException.class);
+    }
+
+    @Test
+    void editShouldThrowIllegalArgumentExceptionWhenInputNull() {
+        assertThatThrownBy(() -> teacherService.edit(null)).isInstanceOf(IllegalArgumentException.class);
+    }
+    
+    @Test
+    void editShouldUpdateTeacherInDatabaseWhenInputValidTeacher() {
+        TeacherDto teacherDto = new TeacherDto();
+        teacherDto.setId(1);
+        teacherDto.setSex("Male");
+        teacherDto.setName("Bob Moren");
+        teacherDto.setEmail("test@test.ru");
+        teacherDto.setPhone("79758657788");
+        teacherDto.setPassword("Test");
+        teacherDto.setScientificDegree("professor");
+        Teacher teacher = Teacher.builder()
+                .withId(1)
+                .withSex("Male")
+                .withName("Bob Moren")
+                .withEmail("test@test.ru")
+                .withPhone("79758657788")
+                .withPassword("encodePassword")
+                .withScientificDegree("professor")
+                .build();
+        teacherService.edit(teacherDto);
+        verify(teacherDaoMock).update(teacher);
+    }
+    
+    @Test
+    void editShouldUpdateTeacherInDatabaseWhenInputValidTeacherAndEmailNotChange() {
+        TeacherDto teacherDto = new TeacherDto();
+        teacherDto.setId(5);
+        teacherDto.setSex("Male");
+        teacherDto.setName("Bob Moren");
+        teacherDto.setEmail("existe@mail.ru");
+        teacherDto.setPhone("79758657788");
+        teacherDto.setPassword("Test");
+        teacherDto.setScientificDegree("professor");
+        Teacher teacher = Teacher.builder()
+                .withId(5)
+                .withSex("Male")
+                .withName("Bob Moren")
+                .withEmail("existe@mail.ru")
+                .withPhone("79758657788")
+                .withPassword("encodePassword")
+                .withScientificDegree("professor")
+                .build();
+        teacherService.edit(teacherDto);
+        verify(teacherDaoMock).update(teacher);
+    }
 
     private TeacherDto getTestTeacherDto() {
         TeacherDto teacher = new TeacherDto();
@@ -175,12 +266,24 @@ class TeacherServiceImplTest {
         Teacher teacherWithEncodePassword = Teacher.builder()
                 .withSex("Test")
                 .withName("Test")
-                .withEmail("test@test.ru")
+                .withEmail("test2@test.ru")
                 .withPhone("Test")
                 .withPassword("encodePassword")
                 .withScientificDegree("Test")
                 .build();
-        when(teacherDaoMock.findByEmail("test@test.ru")).thenReturn(Optional.ofNullable(teacherWithEncodePassword));
+        when(teacherDaoMock.findByEmail("test@test.ru")).thenReturn(Optional.empty());
+        when(teacherDaoMock.findByEmail("test2@test.ru")).thenReturn(Optional.ofNullable(teacherWithEncodePassword));
+        Teacher teacher = Teacher.builder()
+                .withId(5)
+                .withSex("Male")
+                .withName("Bob Moren")
+                .withEmail("existe@mail.ru")
+                .withPhone("79758657788")
+                .withPassword("encodePassword")
+                .withScientificDegree("professor")
+                .build();
+        when(teacherDaoMock.findByEmail("existe@mail.ru")).thenReturn(Optional.ofNullable(teacher));
+        when(teacherDaoMock.findById(5)).thenReturn(Optional.ofNullable(teacher));
         return teacherDaoMock;
     }
 

@@ -5,6 +5,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.university.dto.ClassroomDto;
@@ -47,5 +48,22 @@ public class ClassroomController {
     public String delete(@ModelAttribute("classroom") ClassroomDto classroom) {        
         classroomService.delete(classroom);
         return REDIRECT;
+    }
+    
+    @PostMapping("/edit")
+    public String getEditForm(@ModelAttribute("classroom") ClassroomDto classroom, @ModelAttribute("message") String message, Model model) {
+        model.addAttribute("classroom", classroom);
+        return "updateforms/classroom";        
+    }
+    
+    @PatchMapping()
+    public String edit(@ModelAttribute("classroom") ClassroomDto classroom, Model model) {
+        try {
+            classroomService.edit(classroom);
+            return REDIRECT;
+        } catch (InvalidClassroomNumberException | InvalidClassroomCapacityException | InvalidAddressException e) {
+            model.addAttribute("message", e.getMessage());
+            return "updateforms/classroom";
+        }
     }
 }

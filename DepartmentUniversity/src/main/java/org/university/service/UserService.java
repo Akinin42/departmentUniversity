@@ -10,5 +10,6 @@ public interface UserService <E>{
     void delete(UserDto user);    
     
     List<E> findNumberOfUsers(int quantity, int number);
-
+    
+    void edit(UserDto user);
 }

@@ -1,17 +1,26 @@
 package org.university.service.validator;
 
+import java.util.Optional;
 import java.util.regex.Pattern;
 import org.springframework.stereotype.Component;
+import org.university.dao.StudentDao;
+import org.university.dao.TeacherDao;
+import org.university.entity.Student;
+import org.university.entity.Teacher;
 import org.university.entity.User;
 import org.university.exceptions.InvalidEmailException;
 import org.university.exceptions.InvalidPhoneException;
 import org.university.exceptions.InvalidUserNameException;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Component
 @Slf4j
+@AllArgsConstructor
 public class UserValidator<E> implements Validator<E> {
-    
+
+    private StudentDao studentDao;
+    private TeacherDao teacherDao;
     private static final Pattern NAME_PATTERN = Pattern.compile("^[A-Za-z\\s]{2,50}");
     private static final Pattern EMAIL_PATTERN = Pattern
             .compile("^[\\w-\\+]+(\\.[\\w]+)*@[\\w-]+(\\.[\\w]+)*(\\.[a-z]{2,})$");
@@ -33,6 +42,18 @@ public class UserValidator<E> implements Validator<E> {
         if (!PHONE_PATTERN.matcher(phone).matches()) {
             log.error("Input user has invalid phone: " + phone);
             throw new InvalidPhoneException("Input phone isn't valid!");
+        }
+        if (user.getClass() == Student.class && !studentDao.findByEmail(email).equals(Optional.empty())) {
+            if (studentDao.findById(((User) user).getId()).get().getEmail().equals(email)) {
+            } else {
+                throw new InvalidEmailException("Student with this email already exists!");
+            }
+        }
+        if (user.getClass() == Teacher.class && !teacherDao.findByEmail(email).equals(Optional.empty())) {
+            if (teacherDao.findById(((User) user).getId()).get().getEmail().equals(email)) {
+            } else {
+                throw new InvalidEmailException("Teacher with this email already exists!");
+            }
         }
     }
 }

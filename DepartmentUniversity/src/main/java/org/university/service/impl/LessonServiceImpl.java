@@ -1,5 +1,6 @@
 package org.university.service.impl;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,11 +33,11 @@ public class LessonServiceImpl implements LessonService {
     LessonDtoMapper mapper;
 
     @Override
-    public Lesson createLesson(String startLesson, String teacherEmail, String groupName) {        
-        if (!lessonDao.findByDateAndTeacherAndGroup(startLesson, teacherEmail, groupName).isPresent()) {
+    public Lesson createLesson(LocalDateTime startLesson, String teacherEmail, String groupName) {
+        if (!lessonDao.findByTimeAndTeacherAndGroup(startLesson, teacherEmail, groupName).isPresent()) {
             throw new EntityNotExistException();
         }
-        return lessonDao.findByDateAndTeacherAndGroup(startLesson, teacherEmail, groupName).get();
+        return lessonDao.findByTimeAndTeacherAndGroup(startLesson, teacherEmail, groupName).get();
     }
 
     @Override
@@ -44,9 +45,9 @@ public class LessonServiceImpl implements LessonService {
         Lesson lesson = mapper.mapDtoToEntity(lessonDto);
         validator.validate(lesson);
         if (existLesson(lesson)) {
-            throw new EntityAlreadyExistException();
+            throw new EntityAlreadyExistException("Lesson already exist!");
         }
-        String lessonDate = lesson.getStartLesson().toLocalDate().toString();
+        LocalDate lessonDate = lesson.getStartLesson().toLocalDate();
         List<Lesson> teacherLessons = lessonDao.findAllByDateAndTeacher(lessonDate, lesson.getTeacher().getId());
         List<Lesson> groupLessons = lessonDao.findAllByDateAndGroup(lessonDate, lesson.getGroup().getId());
         if (!checkFreeTime(lesson, teacherLessons) || !checkFreeTime(lesson, groupLessons)) {
@@ -60,9 +61,45 @@ public class LessonServiceImpl implements LessonService {
     }
 
     @Override
-    public void delete(@NonNull LessonDto lessonDto) {       
+    public void edit(@NonNull LessonDto lessonDto) {
+        Lesson lesson = mapper.mapDtoToEntity(lessonDto);
+        validator.validate(lesson);
+        LocalDate lessonDate = lesson.getStartLesson().toLocalDate();
+        List<Lesson> teacherLessons = lessonDao.findAllByDateAndTeacher(lessonDate, lesson.getTeacher().getId());
+        List<Lesson> groupLessons = lessonDao.findAllByDateAndGroup(lessonDate, lesson.getGroup().getId());
+        if ((!checkTimeNotChange(lessonDto) || !checkGroupAndTeacherNotChange(lessonDto))
+                && (!checkFreeTime(lesson, teacherLessons) || !checkFreeTime(lesson, groupLessons))) {
+            throw new InvalidLessonTimeException("Group or teacher is busy on this time!");
+        }
+        if ((!checkTimeNotChange(lessonDto) || !checkClassroomNotChange(lessonDto)) && !checkFreeClassroom(lesson)) {
+            throw new ClassroomBusyException("The classroom is busy on this time");
+        }
+        lessonDao.update(lesson);
+        log.info("Lesson edited succesfull!");
+    }
+
+    @Override
+    public void delete(@NonNull LessonDto lessonDto) {
         lessonDao.deleteById(lessonDto.getId());
         log.info("Lesson deleted succesfull!");
+    }
+
+    private boolean checkTimeNotChange(LessonDto lessonDto) {
+        return (lessonDao.findById(lessonDto.getId()).get().getStartLesson()
+                .isEqual(LocalDateTime.parse(lessonDto.getStartLesson()))
+                && lessonDao.findById(lessonDto.getId()).get().getEndLesson()
+                        .isEqual(LocalDateTime.parse(lessonDto.getEndLesson())));
+    }
+
+    private boolean checkGroupAndTeacherNotChange(LessonDto lessonDto) {
+        return (lessonDao.findById(lessonDto.getId()).get().getGroup().getName().equals(lessonDto.getGroupName())
+                && lessonDao.findById(lessonDto.getId()).get().getTeacher().getEmail()
+                        .equals(lessonDto.getTeacherEmail()));
+    }
+
+    private boolean checkClassroomNotChange(LessonDto lessonDto) {
+        return lessonDao.findById(lessonDto.getId()).get().getClassroom().getNumber()
+                .equals(lessonDto.getClassroomNumber());
     }
 
     private boolean existLesson(Lesson lesson) {
@@ -70,7 +107,7 @@ public class LessonServiceImpl implements LessonService {
     }
 
     private boolean checkFreeTime(Lesson lesson, List<Lesson> lessons) {
-        if(lessons.isEmpty()) {
+        if (lessons.isEmpty()) {
             return true;
         }
         LocalDateTime inputLessonStart = lesson.getStartLesson();
@@ -91,7 +128,7 @@ public class LessonServiceImpl implements LessonService {
     }
 
     private boolean checkFreeClassroom(Lesson inputLesson) {
-        String lessonDate = inputLesson.getStartLesson().toLocalDate().toString();
+        LocalDate lessonDate = inputLesson.getStartLesson().toLocalDate();
         List<Lesson> dayLessons = lessonDao.findAllByDate(lessonDate);
         List<Lesson> classroomLessons = new ArrayList<>();
         for (Lesson lesson : dayLessons) {

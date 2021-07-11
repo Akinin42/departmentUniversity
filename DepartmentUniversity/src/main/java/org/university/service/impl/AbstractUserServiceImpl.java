@@ -25,10 +25,10 @@ public abstract class AbstractUserServiceImpl<E> implements UserService<E> {
     @Override
     public void register(@NonNull UserDto userDto) {
         E user = mapDtoToEntity(userDto);
-        validator.validate(user);
         if (existsUser(user)) {
-            throw new EntityAlreadyExistException();
+            throw new EntityAlreadyExistException("User already exist!");
         }
+        validator.validate(user);
         userDao.save(mapUserWithPassword(user));
         log.info("User saved in database!");
     }
@@ -43,6 +43,13 @@ public abstract class AbstractUserServiceImpl<E> implements UserService<E> {
     @Override
     public List<E> findNumberOfUsers(int quantity, int number) {
         return userDao.findAll(quantity, number);
+    }
+    @Override
+    public void edit(@NonNull UserDto userDto) {
+        E user = mapDtoToEntity(userDto);
+        validator.validate(user);
+        userDao.update(mapUserWithPassword(user));
+        log.info("User edited!");
     }
 
     protected boolean existsUser(E user) {

@@ -39,12 +39,17 @@ class StudentServiceImplTest {
     static void init() {
         studentDaoMock = createStudentDaoMock();
         studentService = new StudentServiceImpl(studentDaoMock, createGroupDaoMock(), createCourseDaoMock(),
-                new UserValidator<Student>(), createEncoderMock());
+                new UserValidator<Student>(studentDaoMock, null), createEncoderMock());
     }
 
     @Test
     void registerShouldSaveStudentToDatabaseWhenInputStudentNotExistThere() {
-        StudentDto student = getTestStudentDto();
+        StudentDto student = new StudentDto();        
+        student.setSex("Test");
+        student.setName("Test");
+        student.setEmail("test@test.ru");
+        student.setPhone("79236170788");
+        student.setPassword("Test");
         studentService.register(student);
         Student studentWithEncodePassword = Student.builder()
                 .withSex("Test")
@@ -149,17 +154,17 @@ class StudentServiceImplTest {
                 .withId(7)
                 .withSex("Test")
                 .withName("Test")
-                .withEmail("test@test.ru")
+                .withEmail("test2@test.ru")
                 .withPhone("Test")
                 .withPassword("encodePassword")
                 .withCourses(new HashSet<Course>())
                 .build();
-        assertThat(studentService.login("test@test.ru", "Test")).isEqualTo(student);
+        assertThat(studentService.login("test2@test.ru", "Test")).isEqualTo(student);
     }
 
     @Test
     void loginShouldThrowAuthorisationFailExceptionWhenInputNotValide() {
-        assertThatThrownBy(() -> studentService.login("test@test.ru", "invalidpassword"))
+        assertThatThrownBy(() -> studentService.login("test2@test.ru", "invalidpassword"))
                 .isInstanceOf(AuthorisationFailException.class);
     }
 
@@ -333,6 +338,86 @@ class StudentServiceImplTest {
         assertThatThrownBy(() -> studentService.deleteStudentFromCourse(studentDto, null))
                 .isInstanceOf(IllegalArgumentException.class);
     }
+    
+    @Test
+    void editShouldThrowInvalidEmailExceptionWhenStudentWithInputEmailExists() {
+        StudentDto student = new StudentDto();
+        student.setId(1);
+        student.setSex("Female");
+        student.setName("Jane Wood");
+        student.setEmail("test2@test.ru");
+        student.setPhone("78954756666");
+        student.setPassword("test-password");
+        assertThatThrownBy(() -> studentService.edit(student)).isInstanceOf(InvalidEmailException.class);
+    }
+
+    @Test
+    void editShouldThrowInvalidEmailExceptionWhenInputInvalidEmail() {
+        StudentDto student = getTestStudentDto();        
+        student.setEmail("invalidemail");
+        assertThatThrownBy(() -> studentService.edit(student)).isInstanceOf(InvalidEmailException.class);
+    }
+    
+    @Test
+    void editShouldThrowInvalidUserNameExceptionWhenInputInvalidName() {
+        StudentDto student = getTestStudentDto();
+        student.setName("4");
+        assertThatThrownBy(() -> studentService.edit(student)).isInstanceOf(InvalidUserNameException.class);
+    }
+    
+    @Test
+    void editShouldThrowInvalidPhoneExceptionWhenInputInvalidPhone() {
+        StudentDto student = getTestStudentDto();
+        student.setPhone("invalidphone");
+        assertThatThrownBy(() -> studentService.edit(student)).isInstanceOf(InvalidPhoneException.class);
+    }
+
+    @Test
+    void editShouldThrowIllegalArgumentExceptionWhenInputNull() {
+        assertThatThrownBy(() -> studentService.edit(null)).isInstanceOf(IllegalArgumentException.class);
+    }
+    
+    @Test
+    void editShouldUpdateStudentInDatabaseWhenInputValidStudent() {
+        StudentDto studentDto = new StudentDto();
+        studentDto.setId(1);
+        studentDto.setSex("Female");
+        studentDto.setName("Jane Wood");
+        studentDto.setEmail("test@test.ru");
+        studentDto.setPhone("78954756666");
+        studentDto.setPassword("Test");
+        Student student = Student.builder()
+                .withId(1)
+                .withSex("Female")
+                .withName("Jane Wood")
+                .withEmail("test@test.ru")
+                .withPhone("78954756666")
+                .withPassword("encodePassword")                
+                .build();
+        studentService.edit(studentDto);
+        verify(studentDaoMock).update(student);
+    }
+    
+    @Test
+    void editShouldUpdateStudentInDatabaseWhenInputValidStudentAndEmailNotChange() {
+        StudentDto studentDto = new StudentDto();
+        studentDto.setId(8);
+        studentDto.setSex("Test");
+        studentDto.setName("Test");
+        studentDto.setEmail("existmail@test.ru");
+        studentDto.setPhone("79236170788");
+        studentDto.setPassword("Test");        
+        Student student = Student.builder()
+                .withId(8)
+                .withSex("Test")
+                .withName("Test")
+                .withEmail("existmail@test.ru")
+                .withPhone("79236170788")
+                .withPassword("encodePassword")                
+                .build();
+        studentService.edit(studentDto);
+        verify(studentDaoMock).update(student);
+    }
 
     private StudentDto getTestStudentDto() {
         StudentDto student = new StudentDto();
@@ -372,13 +457,23 @@ class StudentServiceImplTest {
                 .withId(7)
                 .withSex("Test")
                 .withName("Test")
-                .withEmail("test@test.ru")
+                .withEmail("test2@test.ru")
                 .withPhone("Test")
                 .withPassword("encodePassword")
                 .withCourses(new HashSet<Course>())
                 .build();
-        when(studentDaoMock.findByEmail("test@test.ru")).thenReturn(Optional.ofNullable(student));
-        when(studentDaoMock.findById(7)).thenReturn(Optional.empty());
+        when(studentDaoMock.findByEmail("test@test.ru")).thenReturn(Optional.empty());
+        when(studentDaoMock.findByEmail("test2@test.ru")).thenReturn(Optional.ofNullable(student));
+        Student newStudent = Student.builder()
+                .withId(8)
+                .withSex("Test")
+                .withName("Test")
+                .withEmail("existmail@test.ru")
+                .withPhone("79236170788")
+                .withPassword("encodePassword")                
+                .build();
+        when(studentDaoMock.findByEmail("existmail@test.ru")).thenReturn(Optional.ofNullable(newStudent));
+        when(studentDaoMock.findById(8)).thenReturn(Optional.ofNullable(newStudent));
         when(studentDaoMock.findById(1)).thenReturn(Optional.ofNullable(CreatorTestEntities.createStudents().get(0)));
         when(studentDaoMock.findById(6)).thenReturn(Optional.ofNullable(CreatorTestEntities.createStudents().get(5)));       
         List<Student> students = CreatorTestEntities.createStudents();

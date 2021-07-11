@@ -57,6 +57,22 @@
 									<td th:text="${lesson.lessonLink}" />
 									<td>
 										<ul class="action-list">
+										    <li>
+                                                <form action="#" th:action="@{/timetables/edit}" th:object="${lesson}" method="get">
+                                                    <input class="form-control" type="hidden" th:value="${lesson.id}" id="id" name="id" />                                                    
+                                                    <input class="form-control" type="hidden" th:value="${lesson.startLesson}" id="startLesson" name="startLesson" />
+                                                    <input class="form-control" type="hidden" th:value="${lesson.endLesson}" id="endLesson" name="endLesson" />
+                                                    <input class="form-control" type="hidden" th:value="${lesson.onlineLesson}" id="onlineLesson" name="onlineLesson" />
+                                                    <input class="form-control" type="hidden" th:value="${lesson.lessonLink}" id="lessonLink" name="lessonLink"/>
+                                                    <input class="form-control" type="hidden" th:value="${lesson.group.name}" id="groupName" name="groupName"/>
+                                                    <input class="form-control" type="hidden" th:value="${lesson.teacher.email}" id="teacherEmail" name="teacherEmail"/>
+                                                    <input class="form-control" type="hidden" th:value="${lesson.course.name}" id="courseName" name="courseName"/>
+                                                    <input class="form-control" type="hidden" th:value="${lesson.classroom.number}" id="classroomNumber" name="classroomNumber"/>
+                                                    <button type="submit" class="btn btn-primary" th:value="lesson">
+                                                        <i class="fa fa-pencil-square-o"></i>
+                                                    </button>
+                                                </form>
+                                            </li>
 											<li>
 												<form action="#" th:action="@{/timetables}" th:object="${lesson}" th:method="delete">
 													<input class="form-control" type="hidden" th:value="${lesson.startLesson}" id="startLesson"	name="startLesson" /> 

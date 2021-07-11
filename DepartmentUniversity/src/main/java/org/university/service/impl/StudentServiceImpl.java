@@ -60,6 +60,7 @@ public class StudentServiceImpl extends AbstractUserServiceImpl<Student> impleme
     @Override
     protected Student mapUserWithPassword(Student user) {
         return Student.builder()
+                .withId(user.getId())
                 .withSex(user.getSex())
                 .withName(user.getName())
                 .withEmail(user.getEmail())

@@ -22,7 +22,7 @@ import lombok.AllArgsConstructor;
 public class WebConfig implements WebMvcConfigurer {
 
     private final ApplicationContext applicationContext;
-
+    
     @Bean
     public SpringResourceTemplateResolver templateResolver() {
         SpringResourceTemplateResolver templateResolver = new SpringResourceTemplateResolver();

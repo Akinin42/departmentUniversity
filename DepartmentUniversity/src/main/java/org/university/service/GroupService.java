@@ -13,4 +13,6 @@ public interface GroupService {
     List<Group> findAllGroups();
     
     void delete(GroupDto groupDto);
+    
+    void edit(GroupDto groupDto);
 }

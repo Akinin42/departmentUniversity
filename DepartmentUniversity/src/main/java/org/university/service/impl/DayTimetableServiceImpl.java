@@ -28,22 +28,22 @@ public class DayTimetableServiceImpl implements DayTimetableService {
     GroupDao groupDao;
 
     @Override
-    public DayTimetable createTeacherTimetable(String date, String teacherEmail) {
+    public DayTimetable createTeacherTimetable(LocalDate date, String teacherEmail) {
         int teacherId = checkAndGetTeacherId(teacherEmail);
-        return new DayTimetable(LocalDate.parse(date), lessonDao.findAllByDateAndTeacher(date, teacherId));
+        return new DayTimetable(date, lessonDao.findAllByDateAndTeacher(date, teacherId));
     }
 
     @Override
-    public DayTimetable createGroupTimetable(String date, String groupName) {
+    public DayTimetable createGroupTimetable(LocalDate date, String groupName) {
         int groupId = checkAndGetGroupId(groupName);
-        return new DayTimetable(LocalDate.parse(date), lessonDao.findAllByDateAndGroup(date, groupId));
+        return new DayTimetable(date, lessonDao.findAllByDateAndGroup(date, groupId));
     }
 
     @Override
-    public List<DayTimetable> createMonthTeacherTimetable(String date, String teacherEmail) {
+    public List<DayTimetable> createMonthTeacherTimetable(LocalDate date, String teacherEmail) {
         int teacherId = checkAndGetTeacherId(teacherEmail);
-        Month month = LocalDate.parse(date).getMonth();
-        int year = LocalDate.parse(date).getYear();
+        Month month = date.getMonth();
+        int year = date.getYear();
         List<DayTimetable> monthTimetable = new ArrayList<>();
         List<Lesson> lessons = lessonDao.findAllByMonthAndTeacher(month.getValue(), teacherId);
         for (int i = 1; i <= month.maxLength(); i++) {
@@ -63,10 +63,10 @@ public class DayTimetableServiceImpl implements DayTimetableService {
     }
 
     @Override
-    public List<DayTimetable> createMonthGroupTimetable(String date, String groupName) {
+    public List<DayTimetable> createMonthGroupTimetable(LocalDate date, String groupName) {
         int groupId = checkAndGetGroupId(groupName);
-        Month month = LocalDate.parse(date).getMonth();
-        int year = LocalDate.parse(date).getYear();
+        Month month = date.getMonth();
+        int year = date.getYear();
         List<DayTimetable> monthTimetable = new ArrayList<>();
         List<Lesson> lessons = lessonDao.findAllByMonthAndGroup(month.getValue(), groupId);
         for (int i = 1; i <= month.maxLength(); i++) {
@@ -84,10 +84,54 @@ public class DayTimetableServiceImpl implements DayTimetableService {
         }
         return monthTimetable;
     }
-    
+
     @Override
-    public DayTimetable createDayTimetable(String date) {
-        return new DayTimetable(LocalDate.parse(date), lessonDao.findAllByDate(date));
+    public DayTimetable createDayTimetable(LocalDate date) {
+        return new DayTimetable(date, lessonDao.findAllByDate(date));
+    }
+
+    @Override
+    public List<DayTimetable> createWeekTeacherTimetable(LocalDate date, String teacherEmail) {
+        int teacherId = checkAndGetTeacherId(teacherEmail);
+        LocalDate monday = date.minusDays(date.getDayOfWeek().getValue() - 1);
+        List<DayTimetable> weekTimetable = new ArrayList<>();
+        List<Lesson> lessons = lessonDao.findAllByWeekAndTeacher(monday, monday.plusDays(6), teacherId);
+        for (int i = 0; i < 7; i++) {
+            LocalDate day = monday.plusDays(i);
+            List<Lesson> dayLessons = new ArrayList<>();
+            for (Lesson lesson : lessons) {
+                if (lesson.getStartLesson().getDayOfMonth() == day.getDayOfMonth()) {
+                    dayLessons.add(lesson);
+                }
+            }
+            if (!dayLessons.isEmpty()) {
+                DayTimetable dayTimetable = new DayTimetable(day, dayLessons);
+                weekTimetable.add(dayTimetable);
+            }
+        }
+        return weekTimetable;
+    }
+
+    @Override
+    public List<DayTimetable> createWeekGroupTimetable(LocalDate date, String groupName) {
+        int groupId = checkAndGetGroupId(groupName);
+        LocalDate monday = date.minusDays(date.getDayOfWeek().getValue() - 1);
+        List<DayTimetable> weekTimetable = new ArrayList<>();
+        List<Lesson> lessons = lessonDao.findAllByWeekAndGroup(monday, monday.plusDays(6), groupId);
+        for (int i = 0; i < 7; i++) {
+            LocalDate day = monday.plusDays(i);
+            List<Lesson> dayLessons = new ArrayList<>();
+            for (Lesson lesson : lessons) {
+                if (lesson.getStartLesson().getDayOfMonth() == day.getDayOfMonth()) {
+                    dayLessons.add(lesson);
+                }
+            }
+            if (!dayLessons.isEmpty()) {
+                DayTimetable dayTimetable = new DayTimetable(day, dayLessons);
+                weekTimetable.add(dayTimetable);
+            }
+        }
+        return weekTimetable;
     }
 
     private int checkAndGetTeacherId(String teacherEmail) {
@@ -104,5 +148,5 @@ public class DayTimetableServiceImpl implements DayTimetableService {
         }
         Group group = groupDao.findByName(groupName).get();
         return group.getId();
-    }    
+    }
 }

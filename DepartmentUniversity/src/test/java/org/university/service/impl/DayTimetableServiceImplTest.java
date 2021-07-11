@@ -34,13 +34,13 @@ class DayTimetableServiceImplTest {
     void createTeacherTimetableShouldReturnExpectedTimetableWhenTeacherLessonsExistOnInputDate() {
         List<Lesson> lessons = CreatorTestEntities.createLessons();
         lessons.remove(0);
-        assertThat(dayTimetableService.createTeacherTimetable("2021-10-19", "Ann@mail.ru"))
+        assertThat(dayTimetableService.createTeacherTimetable(LocalDate.of(2021, Month.OCTOBER, 19), "Ann@mail.ru"))
                 .isEqualTo(new DayTimetable(LocalDate.of(2021, 10, 19), lessons));
     }
 
     @Test
     void createTeacherTimetableShouldThrowEntityNotExistExceptionWhenTeacherEmailNotExist() {
-        assertThatThrownBy(() -> dayTimetableService.createTeacherTimetable("2021-10-19", "notexistedemail"))
+        assertThatThrownBy(() -> dayTimetableService.createTeacherTimetable(LocalDate.of(2021, Month.OCTOBER, 19), "notexistedemail"))
                 .isInstanceOf(EntityNotExistException.class);
     }
 
@@ -49,62 +49,96 @@ class DayTimetableServiceImplTest {
         List<Lesson> lessons = CreatorTestEntities.createLessons();
         lessons.remove(2);
         lessons.remove(1);
-        assertThat(dayTimetableService.createGroupTimetable("2021-10-19", "AB-22"))
+        assertThat(dayTimetableService.createGroupTimetable(LocalDate.of(2021, Month.OCTOBER, 19), "AB-22"))
                 .isEqualTo(new DayTimetable(LocalDate.of(2021, 10, 19), lessons));
     }
 
     @Test
     void createGroupTimetableShouldThrowEntityNotExistExceptionWhenGroupNameNotExist() {
-        assertThatThrownBy(() -> dayTimetableService.createGroupTimetable("2021-10-19", "notexistedname"))
+        assertThatThrownBy(() -> dayTimetableService.createGroupTimetable(LocalDate.of(2021, Month.OCTOBER, 19), "notexistedname"))
                 .isInstanceOf(EntityNotExistException.class);
     }
 
     @Test
     void createMonthTeacherTimetableShouldReturnExpectedMonthTimetablesWhenTeacherEmailExist() {
-        assertThat(dayTimetableService.createMonthTeacherTimetable("2021-10-19", "Bob@mail.ru"))
+        assertThat(dayTimetableService.createMonthTeacherTimetable(LocalDate.of(2021, Month.OCTOBER, 19), "Bob@mail.ru"))
                 .isEqualTo(createTestMonthTimetable());
     }
 
     @Test
     void createMonthTeacherTimetableShouldThrowEntityNotExistExceptionWhenTeacherEmailNotExist() {
-        assertThatThrownBy(() -> dayTimetableService.createMonthTeacherTimetable("2021-10-19", "notexistedemail"))
+        assertThatThrownBy(() -> dayTimetableService.createMonthTeacherTimetable(LocalDate.of(2021, Month.OCTOBER, 19), "notexistedemail"))
                 .isInstanceOf(EntityNotExistException.class);
     }
 
     @Test
     void createMonthTeacherTimetableShouldReturnEmptyListWhenTeacherLessonsNotExist() {
-        assertThat(dayTimetableService.createMonthTeacherTimetable("2021-12-19", "Bob@mail.ru")).isEmpty();
+        assertThat(dayTimetableService.createMonthTeacherTimetable(LocalDate.of(2021, Month.DECEMBER, 19), "Bob@mail.ru")).isEmpty();
     }
 
     @Test
     void createMonthGroupTimetableShouldReturnExpectedDayTimetablesWhenGroupNameExist() {
-        assertThat(dayTimetableService.createMonthGroupTimetable("2021-10-19", "AB-22"))
+        assertThat(dayTimetableService.createMonthGroupTimetable(LocalDate.of(2021, Month.OCTOBER, 19), "AB-22"))
                 .isEqualTo(createTestMonthTimetable());
     }
 
     @Test
     void createMonthGroupTimetableShouldThrowEntityNotExistExceptionWhenGroupNameNotExist() {
-        assertThatThrownBy(() -> dayTimetableService.createMonthGroupTimetable("2021-10-19", "notexistedname"))
+        assertThatThrownBy(() -> dayTimetableService.createMonthGroupTimetable(LocalDate.of(2021, Month.OCTOBER, 19), "notexistedname"))
                 .isInstanceOf(EntityNotExistException.class);
     }
 
     @Test
     void createMonthGroupTimetableShouldReturnEmptyListWhenGroupLessonsNotExist() {
-        assertThat(dayTimetableService.createMonthGroupTimetable("2021-12-19", "AB-22")).isEmpty();
+        assertThat(dayTimetableService.createMonthGroupTimetable(LocalDate.of(2021, Month.DECEMBER, 19), "AB-22")).isEmpty();
     }
     
     @Test
     void createDayTimetableShouldReturnExpectedDayTimetableWhenLessonsExistInInputDate() {
         List<Lesson> lessons = CreatorTestEntities.createLessons();        
-        assertThat(dayTimetableService.createDayTimetable("2021-10-19"))
+        assertThat(dayTimetableService.createDayTimetable(LocalDate.of(2021, 10, 19)))
         .isEqualTo(new DayTimetable(LocalDate.of(2021, 10, 19), lessons));
     }
     
     @Test
     void createDayTimetableShouldReturnExpectedDayTimetableWhenLessonsNotExistInInputDate() {
         List<Lesson> lessons = new ArrayList<>();        
-        assertThat(dayTimetableService.createDayTimetable("2021-10-21"))
-        .isEqualTo(new DayTimetable(LocalDate.of(2021, 10, 21), lessons));
+        assertThat(dayTimetableService.createDayTimetable(LocalDate.of(2021, 10, 23)))
+        .isEqualTo(new DayTimetable(LocalDate.of(2021, 10, 23), lessons));
+    }
+    
+    @Test
+    void createWeekTeacherTimetableShouldReturnExpectedWeekTimetablesWhenTeacherEmailExist() {               
+        assertThat(dayTimetableService.createWeekTeacherTimetable(LocalDate.of(2021, Month.OCTOBER, 19), "Bob@mail.ru"))
+                .isEqualTo(createTestWeekTimetable());
+    }
+    
+    @Test
+    void createWeekTeacherTimetableShouldThrowEntityNotExistExceptionWhenTeacherEmailNotExist() {
+        assertThatThrownBy(() -> dayTimetableService.createWeekTeacherTimetable(LocalDate.of(2021, Month.OCTOBER, 19), "notexistedemail"))
+                .isInstanceOf(EntityNotExistException.class);
+    }
+
+    @Test
+    void createWeekTeacherTimetableShouldReturnEmptyListWhenTeacherLessonsNotExist() {
+        assertThat(dayTimetableService.createWeekTeacherTimetable(LocalDate.of(2021, Month.DECEMBER, 19), "Bob@mail.ru")).isEmpty();
+    }
+    
+    @Test
+    void createWeekGroupTimetableShouldReturnExpectedWeekTimetablesWhenGroupNameExist() {               
+        assertThat(dayTimetableService.createWeekGroupTimetable(LocalDate.of(2021, Month.OCTOBER, 19), "AB-22"))
+                .isEqualTo(createTestWeekTimetable());
+    }
+    
+    @Test
+    void createWeekGroupTimetableShouldThrowEntityNotExistExceptionWhenGroupNameNotExist() {
+        assertThatThrownBy(() -> dayTimetableService.createWeekGroupTimetable(LocalDate.of(2021, Month.OCTOBER, 19), "notexistedname"))
+                .isInstanceOf(EntityNotExistException.class);
+    }
+
+    @Test
+    void createWeekGroupTimetableShouldReturnEmptyListWhenGroupLessonsNotExist() {
+        assertThat(dayTimetableService.createWeekGroupTimetable(LocalDate.of(2021, Month.DECEMBER, 19), "AB-22")).isEmpty();
     }
 
     private List<DayTimetable> createTestMonthTimetable() {
@@ -124,12 +158,29 @@ class DayTimetableServiceImplTest {
         monthTimetable.add(new DayTimetable(LocalDate.of(2021, 10, 30), lessonsThird));
         return monthTimetable;
     }
+    
+    private List<DayTimetable> createTestWeekTimetable() {
+        List<DayTimetable> weekTimetable = new ArrayList<>();
+        List<Lesson> lessonsFirst = new ArrayList<>();
+        Lesson lesson = createTestLessonWithDay(1,18);
+        lessonsFirst.add(lesson);
+        weekTimetable.add(new DayTimetable(LocalDate.of(2021, 10, 18), lessonsFirst));
+        List<Lesson> lessonsSecond = new ArrayList<>();
+        lesson = createTestLessonWithDay(2,20);
+        lessonsSecond.add(lesson);
+        weekTimetable.add(new DayTimetable(LocalDate.of(2021, 10, 20), lessonsSecond));
+        lesson = createTestLessonWithDay(3,22);
+        List<Lesson> lessonsThird = new ArrayList<>();
+        lessonsThird.add(lesson);
+        weekTimetable.add(new DayTimetable(LocalDate.of(2021, 10, 22), lessonsThird));
+        return weekTimetable;
+    }
 
     private static LessonDaoImpl createLessonDaoMock() {
         LessonDaoImpl lessonDaoMock = mock(LessonDaoImpl.class);
         List<Lesson> lessons = CreatorTestEntities.createLessons();        
         lessons.remove(0);
-        when(lessonDaoMock.findAllByDateAndTeacher("2021-10-19", 2)).thenReturn(lessons);
+        when(lessonDaoMock.findAllByDateAndTeacher(LocalDate.of(2021, Month.OCTOBER, 19), 2)).thenReturn(lessons);
         lessons = new ArrayList<>();
         lessons.add(createTestLessonWithDay(4,2));
         lessons.add(createTestLessonWithDay(1,19));
@@ -139,10 +190,16 @@ class DayTimetableServiceImplTest {
         lessons = CreatorTestEntities.createLessons();
         lessons.remove(2);
         lessons.remove(1);
-        when(lessonDaoMock.findAllByDateAndGroup("2021-10-19", 1)).thenReturn(lessons);
+        when(lessonDaoMock.findAllByDateAndGroup(LocalDate.of(2021, Month.OCTOBER, 19), 1)).thenReturn(lessons);
         lessons = CreatorTestEntities.createLessons();
-        when(lessonDaoMock.findAllByDate("2021-10-19")).thenReturn(lessons);
-        when(lessonDaoMock.findAllByDate("2021-10-21")).thenReturn(new ArrayList<Lesson>());
+        when(lessonDaoMock.findAllByDate(LocalDate.of(2021, Month.OCTOBER, 19))).thenReturn(lessons);
+        when(lessonDaoMock.findAllByDate(LocalDate.of(2021, Month.OCTOBER, 21))).thenReturn(new ArrayList<Lesson>());
+        List<Lesson> weekLessons = new ArrayList<>();
+        weekLessons.add(createTestLessonWithDay(1,18));
+        weekLessons.add(createTestLessonWithDay(2,20));
+        weekLessons.add(createTestLessonWithDay(3,22));
+        when(lessonDaoMock.findAllByWeekAndTeacher(LocalDate.of(2021, Month.OCTOBER, 18), LocalDate.of(2021, Month.OCTOBER, 24), 1)).thenReturn(weekLessons);
+        when(lessonDaoMock.findAllByWeekAndGroup(LocalDate.of(2021, Month.OCTOBER, 18), LocalDate.of(2021, Month.OCTOBER, 24), 1)).thenReturn(weekLessons);
         return lessonDaoMock;
     }
 

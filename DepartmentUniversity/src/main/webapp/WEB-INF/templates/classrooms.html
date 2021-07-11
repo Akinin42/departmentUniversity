@@ -59,6 +59,17 @@
 									<td>
 										<ul class="action-list">
 											<li>
+                                                <form action="#" th:action="@{/classrooms/edit}" th:object="${classroom}" method="post">
+                                                    <input class="form-control" type="hidden" th:value="${classroom.id}" id="id" name="id"/>
+                                                    <input class="form-control" type="hidden" th:value="${classroom.number}" id="number" name="number"/>
+                                                    <input class="form-control" type="hidden" th:value="${classroom.address}" id="address" name="address"/>
+                                                    <input class="form-control" type="hidden" th:value="${classroom.capacity}" id="capacity" name="capacity"/>
+                                                    <button type="submit" class="btn btn-primary" th:value="capacity">
+                                                        <i class="fa fa-pencil-square-o"></i>
+                                                    </button>
+                                                </form>
+                                            </li>											
+											<li>
 												<form action="#" th:action="@{/classrooms}" th:object="${classroom}" th:method="delete">
 													<input class="form-control" type="hidden" th:value="${classroom.id}" id="id" name="id" />
 													<button type="submit" class="btn btn-danger" th:value="classroom">

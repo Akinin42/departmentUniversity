@@ -32,6 +32,7 @@ public class TeacherServiceImpl extends AbstractUserServiceImpl<Teacher> impleme
     @Override
     protected Teacher mapUserWithPassword(Teacher user) {
         return Teacher.builder()
+                .withId(user.getId())
                 .withSex(user.getSex())
                 .withName(user.getName())
                 .withEmail(user.getEmail())

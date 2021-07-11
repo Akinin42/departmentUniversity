@@ -27,6 +27,7 @@ public class LessonDtoMapper {
     
     public Lesson mapDtoToEntity(LessonDto lesson) {
         return Lesson.builder()
+                .withId(lesson.getId())
                 .withCourse(courseDao.findByName(lesson.getCourseName()).get())
                 .withGroup(groupService.createGroup(lesson.getGroupName()))
                 .withTeacher(teacherDao.findByEmail(lesson.getTeacherEmail()).get())
