@@ -8,13 +8,15 @@ import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
+import javax.sql.DataSource;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.university.config.ApplicationContextInjector;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.university.dao.ScriptExecutor;
 import org.university.entity.Lesson;
+import org.university.io.FileReader;
+import org.university.utils.CreatorDataSource;
 import org.university.utils.CreatorTestEntities;
 
 class LessonDaoImplTest {
@@ -24,10 +26,9 @@ class LessonDaoImplTest {
 
     @BeforeAll
     static void init() {
-        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(
-                ApplicationContextInjector.class);
-        lessonDao = context.getBean(LessonDaoImpl.class);
-        executor = context.getBean(ScriptExecutor.class);
+        DataSource dataSource = CreatorDataSource.createTestDataSource();
+        lessonDao = new LessonDaoImpl(new JdbcTemplate(dataSource));
+        executor = new ScriptExecutor(dataSource, new FileReader());
     }
 
     @BeforeEach

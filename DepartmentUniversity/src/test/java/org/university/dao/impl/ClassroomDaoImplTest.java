@@ -3,14 +3,16 @@ package org.university.dao.impl;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import javax.sql.DataSource;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.university.config.ApplicationContextInjector;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.university.dao.ScriptExecutor;
 import org.university.entity.Classroom;
+import org.university.io.FileReader;
+import org.university.utils.CreatorDataSource;
 import org.university.utils.CreatorTestEntities;
 
 class ClassroomDaoImplTest {    
@@ -18,11 +20,10 @@ class ClassroomDaoImplTest {
     private static ScriptExecutor executor;
 
     @BeforeAll
-    static void init() {
-        AnnotationConfigApplicationContext context = 
-                new AnnotationConfigApplicationContext(ApplicationContextInjector.class);
-        classroomDao = context.getBean(ClassroomDaoImpl.class);
-        executor = context.getBean(ScriptExecutor.class);
+    static void init(){
+        DataSource dataSource = CreatorDataSource.createTestDataSource();
+        classroomDao = new ClassroomDaoImpl(new JdbcTemplate(dataSource));
+        executor = new ScriptExecutor(dataSource, new FileReader());
     }
 
     @BeforeEach

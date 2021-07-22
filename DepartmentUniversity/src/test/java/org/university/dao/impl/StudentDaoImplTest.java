@@ -5,17 +5,19 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.sql.DataSource;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
-import org.university.config.ApplicationContextInjector;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.university.dao.ScriptExecutor;
 import org.university.entity.Course;
 import org.university.entity.Group;
 import org.university.entity.Student;
+import org.university.io.FileReader;
+import org.university.utils.CreatorDataSource;
 import org.university.utils.CreatorTestEntities;
 
 class StudentDaoImplTest {
@@ -25,10 +27,9 @@ class StudentDaoImplTest {
 
     @BeforeAll
     static void init() {
-        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(
-                ApplicationContextInjector.class);
-        studentDao = context.getBean(StudentDaoImpl.class);
-        executor = context.getBean(ScriptExecutor.class);
+        DataSource dataSource = CreatorDataSource.createTestDataSource();
+        studentDao = new StudentDaoImpl(new JdbcTemplate(dataSource));
+        executor = new ScriptExecutor(dataSource, new FileReader());
     }
 
     @BeforeEach
