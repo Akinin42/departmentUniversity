@@ -18,7 +18,6 @@ services:
         image: tomcat
         volumes:
            - ./target/DepartmentUniversity-0.0.1-SNAPSHOT.war:/usr/local/tomcat/webapps/DepartmentUniversity.war
-        environment:
-          - URL=jdbc:postgresql://postgres:5432/departmentuniversity
+           - ./docker/context.xml:/usr/local/tomcat/conf/Catalina/localhost/context.xml.default
         ports:
           - "8080:8080"        
