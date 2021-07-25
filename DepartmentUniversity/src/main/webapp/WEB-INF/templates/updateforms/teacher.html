@@ -74,14 +74,14 @@
 	margin-top: 5px;
     }
     </style>
-    <title>Student form</title>
+    <title th:text="#{label.editteacher}"></title>
 </head>
 <body>
 	<div class="container">
 		<div class="row main-form">
 			<form class="" th:action="@{/teachers}" th:object="${teacher}" th:method="patch">
 				<div class="form-group">
-					<label for="name" class="cols-sm-2 control-label">Your Name</label>
+					<label for="name" class="cols-sm-2 control-label" th:text="#{label.name}"></label>
 					<div class="cols-sm-10">
 						<div class="input-group">
 						<input class="form-control" type="hidden" th:value="${teacher.id}" id="id" name="id" />
@@ -94,22 +94,22 @@
 				</div>
 				
 				<div class="form-group">
-                    <label for="gender" class="cols-sm-2 control-label">Your Gender</label>
+                    <label for="gender" class="cols-sm-2 control-label" th:text="#{label.gender}"></label>
                     <div class="cols-sm-10">
                         <div class="input-group">
                             <span class="input-group-addon">
                             <i class="fa fa-user fa" aria-hidden="true"></i>
                             </span> 
                             <select id="sex" th:field="*{sex}" class="form-select" aria-label="Default select example">
-                                <option th:value="Male" th:text="Male" >Male</option>
-                                <option th:value="Female" th:text="Female" >Female</option>
+                                <option th:value="Male" th:text="#{label.male}" ></option>
+                                <option th:value="Female" th:text="#{label.female}"></option>
                             </select>
                         </div>
                     </div>
                 </div>
 
 				<div class="form-group">
-					<label for="email" class="cols-sm-2 control-label">Your Email</label>
+					<label for="email" class="cols-sm-2 control-label" th:text="#{label.email}"></label>
 					<div class="cols-sm-10">
 						<div class="input-group">
 							<span class="input-group-addon">
@@ -121,7 +121,7 @@
 				</div>
 
 				<div class="form-group">
-					<label for="username" class="cols-sm-2 control-label">Your phone</label>
+					<label for="username" class="cols-sm-2 control-label" th:text="#{label.phone}"></label>
 					<div class="cols-sm-10">
 						<div class="input-group">
 							<span class="input-group-addon">
@@ -133,46 +133,46 @@
 				</div>
 				
 				<div class="form-group">
-                    <label for="degree" class="cols-sm-2 control-label">Your Degree</label>
+                    <label for="degree" class="cols-sm-2 control-label" th:text="#{label.scientificdegree}"></label>
                     <div class="cols-sm-10">
                         <div class="input-group">
                             <span class="input-group-addon">
                             <i class="fa fa-user fa" aria-hidden="true"></i>
                             </span> 
                             <select id="scientificDegree" th:field="*{scientificDegree}" class="form-select" aria-label="Default select example" >
-                                <option th:value="Professor" th:text="Professor" >Professor</option>
-                                <option th:value="Doctor" th:text="Doctor" >Doctor</option>
-                                <option th:value="Assistant" th:text="Assistant" >Assistant</option>
+                                <option th:value="Professor" th:text="#{label.professor}" ></option>
+                                <option th:value="Doctor" th:text="#{label.doctor}" ></option>
+                                <option th:value="Assistant" th:text="#{label.assistant}" ></option>
                             </select>
                         </div>
                     </div>
                 </div>
 
 				<div class="form-group">
-					<label for="password" class="cols-sm-2 control-label">Password</label>
+					<label for="password" class="cols-sm-2 control-label" th:text="#{label.password}"></label>
 					<div class="cols-sm-10">
 						<div class="input-group">
 							<span class="input-group-addon">
 							<i class="fa fa-lock fa-lg" aria-hidden="true"></i>
 							</span> 
-							<input type="password" class="form-control" th:value="${teacher.password}" name="password"	id="password" placeholder="Enter your Password" required />
+							<input type="password" class="form-control" th:value="${teacher.password}" name="password"	id="password" th:placeholder="#{label.enterpassword}" required />
 						</div>
 					</div>
 				</div>
 
 				<div class="form-group">
-					<label for="confirm" class="cols-sm-2 control-label">Confirm Password</label>
+					<label for="confirm" class="cols-sm-2 control-label" th:text="#{label.confirmpassword}"></label>
 					<div class="cols-sm-10">
 						<div class="input-group">
 							<span class="input-group-addon">
 							<i class="fa fa-lock fa-lg" aria-hidden="true"></i></span> 
-							<input	type="password" class="form-control" th:value="${teacher.confirmPassword}" name="confirmPassword" id="confirmPassword" placeholder="Confirm your Password" required />
+							<input	type="password" class="form-control" th:value="${teacher.confirmPassword}" name="confirmPassword" id="confirmPassword" th:placeholder="#{label.confirmpassword}" required />
 						</div>
 					</div>
 				</div>
                 <p th:text="${message}"></p>
 				<div class="form-group ">
-					<button type="submit" id="button" class="btn btn-primary btn-lg btn-block login-button" th:value="teacher">Edit</button>
+					<button type="submit" id="button" class="btn btn-primary btn-lg btn-block login-button" th:value="teacher" th:text="#{label.edit}"></button>
 				</div>
 			</form>
 		</div>

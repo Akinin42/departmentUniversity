@@ -73,14 +73,14 @@
     margin-top: 5px;
     }
     </style>
-    <title>Student form</title>
+    <title th:text="#{label.editcourse}"></title>
 </head>
 <body>
     <div class="container">
         <div class="row main-form">
             <form class="" th:action="@{/courses}" th:object="${course}" th:method="patch">
                 <div class="form-group">
-                    <label for="name" class="cols-sm-2 control-label">Course Name</label>
+                    <label for="name" class="cols-sm-2 control-label" th:text="#{label.coursename}"></label>
                     <div class="cols-sm-10">
                         <div class="input-group">
                             <input class="form-control" type="hidden" th:value="${course.id}" id="id" name="id" />
@@ -91,7 +91,7 @@
                 </div>                
 
                 <div class="form-group">
-                    <label for="username" class="cols-sm-2 control-label">Course description</label>
+                    <label for="username" class="cols-sm-2 control-label" th:text="#{label.coursedescription}"></label>
                     <div class="cols-sm-10">
                         <div class="input-group">
                             <span class="input-group-addon">                            
@@ -102,7 +102,7 @@
                 </div>
                 <p th:text="${message}"></p>
                 <div class="form-group ">
-                    <button type="submit" id="button" class="btn btn-primary btn-lg btn-block login-button" th:value="course">Edit</button>
+                    <button type="submit" id="button" class="btn btn-primary btn-lg btn-block login-button" th:value="course" th:text="#{label.edit}"></button>
                 </div>
             </form>
         </div>
