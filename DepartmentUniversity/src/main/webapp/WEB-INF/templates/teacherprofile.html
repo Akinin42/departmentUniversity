@@ -10,7 +10,7 @@
     crossorigin="anonymous">
 <link rel="stylesheet" th:href="@{/static/profile.css}" />
 <script src="https://use.fontawesome.com/fec1def459.js"></script>
-<title>Teacher profile!</title>
+<title th:text="#{label.teacherprofile}"></title>
 </head>
 <body>
 <div th:replace="header :: navbar"></div>
@@ -28,14 +28,14 @@
                         </div>
                         <div class="col-sm-8">
                             <div class="card-block">
-                                <h6 class="m-b-20 p-b-5 b-b-default f-w-600">Information</h6>
+                                <h6 class="m-b-20 p-b-5 b-b-default f-w-600" th:text="#{label.information}"></h6>
                                 <div class="row">
                                     <div class="col-sm-6">
-                                        <p class="m-b-10 f-w-600">Email</p>
+                                        <p class="m-b-10 f-w-600" th:text="#{label.email}"></p>
                                         <h6 class="text-muted f-w-400" th:text="${teacher.email}"></h6>
                                     </div>
                                     <div class="col-sm-6">
-                                        <p class="m-b-10 f-w-600">Phone</p>
+                                        <p class="m-b-10 f-w-600" th:text="#{label.phone}"></p>
                                         <h6 class="text-muted f-w-400" th:text="${teacher.phone}"></h6>
                                     </div>
                                 </div>                                

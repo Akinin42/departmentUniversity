@@ -10,51 +10,51 @@
     crossorigin="anonymous">
     <script src="https://use.fontawesome.com/fec1def459.js"></script>
 
-    <title>Lesson form</title>
+    <title th:text="#{label.addlesson}"></title>
 </head>
 <body>
     <div class="container">
 
             <form class="" th:action="@{/timetables}" th:object="${lesson}" method="post">
                 <div class="form-group">
-                    <label for="groupName" class="cols-sm-2 control-label">Group Name</label>
+                    <label for="groupName" class="cols-sm-2 control-label" th:text="#{label.groupname}"></label>
                     <select id="groupname" th:field="*{groupName}" class="form-select" aria-label="Default select example">
                     <option  th:each="group : ${groups}" th:value="${group.name}" th:text="${group.name}" ></option>
                     </select>        
                 </div>                
                 <div class="form-group">
-                    <label for="teacherName" class="cols-sm-2 control-label">Teacher Name</label>                    
+                    <label for="teacherName" class="cols-sm-2 control-label" th:text="#{label.teacher}"></label>                    
                             <select id="teachername" th:field="*{teacherEmail}" class="form-select" aria-label="Default select example">
                                 <option  th:each="teacher : ${teachers}" th:value="${teacher.email}" th:text="${teacher.name}" ></option>
                             </select>             
                 </div>
                 <div class="form-group">
-                    <label for="courseName" class="cols-sm-2 control-label">CourseName</label>
+                    <label for="courseName" class="cols-sm-2 control-label" th:text="#{label.coursename}"></label>
                             <select id="coursename" th:field="*{courseName}" class="form-select" aria-label="Default select example">
                                 <option  th:each="course : ${courses}" th:value="${course.name}" th:text="${course.name}" ></option>
                             </select>
                 </div>
                 <div class="form-group">
-                    <label for="classroomNumber" class="cols-sm-2 control-label">Classroom number</label>
+                    <label for="classroomNumber" class="cols-sm-2 control-label" th:text="#{label.classroomnumber}"></label>
                             <select id="classroom" th:field="*{classroomNumber}" class="form-select" aria-label="Default select example">
                                 <option  th:each="classroom : ${classrooms}" th:value="${classroom.number}" th:text="${classroom.number}" ></option>
                             </select>
                 </div>                
-                    <label for="startLesson" class="cols-sm-2 control-label">Start lesson</label>
+                    <label for="startLesson" class="cols-sm-2 control-label" th:text="#{label.startlesson}"></label>
                             <input  class="form-control" type="datetime-local" th:value="${startLesson}" name="startLesson"  id="startLesson" />
                
-                    <label for="Endlesson" class="cols-sm-2 control-label">End lesson</label>
+                    <label for="Endlesson" class="cols-sm-2 control-label" th:text="#{label.endlesson}"></label>
                             <input class="form-control" type="datetime-local"  th:value="${endLesson}" name="endLesson"  id="endLesson" />
-                    <label for="onlineLesson" class="cols-sm-2 control-label">Online lesson</label>    
+                    <label for="onlineLesson" class="cols-sm-2 control-label" th:text="#{label.onlinelesson}"></label>    
                             <input type="radio" name="onlineLesson" th:value="true">                                   
                             <input type="hidden" name="onlineLesson" th:value="false">                            
                                                      
                     <div class="form-group">
-                            <label for="lessonLink" class="cols-sm-2 control-label">Lesson link</label>
+                            <label for="lessonLink" class="cols-sm-2 control-label" th:text="#{label.lessonlink}"></label>
                             <input class="form-control" type="text"  th:value="${lessonLink}" name="lessonLink"  id="lessonLink" />
                     </div>
                 <div class="form-group">
-                    <button type="submit" id="button" class="btn btn-primary btn-lg btn-block login-button" th:value="lesson">Add lesson</button>
+                    <button type="submit" id="button" class="btn btn-primary btn-lg btn-block login-button" th:value="lesson" th:text="#{label.addlesson}"></button>
                 </div>
                 <p th:text="${message}"></p>
             </form>

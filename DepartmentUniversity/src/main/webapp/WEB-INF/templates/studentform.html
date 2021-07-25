@@ -73,86 +73,86 @@
 	margin-top: 5px;
     }
     </style>
-    <title>Student form</title>
+    <title th:text="#{label.addstudent}"></title>
 </head>
 <body>
 	<div class="container">
 		<div class="row main-form">
 			<form class="" th:action="@{/students}" th:object="${student}" method="post">
 				<div class="form-group">
-					<label for="name" class="cols-sm-2 control-label">Your Name</label>
+					<label for="name" class="cols-sm-2 control-label" th:text="#{label.name}"></label>
 					<div class="cols-sm-10">
 						<div class="input-group">
 							<span class="input-group-addon"><i class="fa fa-user fa" aria-hidden="true"></i></span> 
-							<input type="text" class="form-control" th:value="${student.name}" name="name" id="name" placeholder="Enter your Name" required />
+							<input type="text" class="form-control" th:value="${student.name}" name="name" id="name" th:placeholder="#{label.entername}" required />
 						</div>
 					</div>
 				</div>
 				
 				<div class="form-group">
-                    <label for="gender" class="cols-sm-2 control-label">Your Gender</label>
+                    <label for="gender" class="cols-sm-2 control-label" th:text="#{label.gender}"></label>
                     <div class="cols-sm-10">
                         <div class="input-group">
                             <span class="input-group-addon">
                             <i class="fa fa-user fa" aria-hidden="true"></i>
                             </span> 
                             <select id="sex" th:field="*{sex}" class="form-select" aria-label="Default select example">
-                                <option th:value="Male" th:text="Male" >Male</option>
-                                <option th:value="Female" th:text="Female" >Female</option>
+                                <option th:value="Male" th:text="#{label.male}" ></option>
+                                <option th:value="Female" th:text="#{label.female}" ></option>
                             </select>
                         </div>
                     </div>
                 </div>
 
 				<div class="form-group">
-					<label for="email" class="cols-sm-2 control-label">Your Email</label>
+					<label for="email" class="cols-sm-2 control-label" th:text="#{label.email}"></label>
 					<div class="cols-sm-10">
 						<div class="input-group">
 							<span class="input-group-addon">
 							<i class="fa fa-envelope fa" aria-hidden="true"></i>
 							</span> 
-							<input type="email" class="form-control" th:value="${student.email}" name="email" id="email" placeholder="Enter your Email" required />
+							<input type="email" class="form-control" th:value="${student.email}" name="email" id="email" th:placeholder="#{label.enteremail}" required />
 						</div>
 					</div>
 				</div>
 
 				<div class="form-group">
-					<label for="username" class="cols-sm-2 control-label">Your phone</label>
+					<label for="username" class="cols-sm-2 control-label" th:text="#{label.phone}"></label>
 					<div class="cols-sm-10">
 						<div class="input-group">
 							<span class="input-group-addon">
 							<i class="fa fa-users fa" aria-hidden="true"></i>
 							</span> 
-							<input type="text" class="form-control" th:value="${student.phone}"	name="phone" id="phone" placeholder="Enter your phone" required />
+							<input type="text" class="form-control" th:value="${student.phone}"	name="phone" id="phone" th:placeholder="#{label.enterphone}" required />
 						</div>
 					</div>
 				</div>
 
 				<div class="form-group">
-					<label for="password" class="cols-sm-2 control-label">Password</label>
+					<label for="password" class="cols-sm-2 control-label" th:text="#{label.password}"></label>
 					<div class="cols-sm-10">
 						<div class="input-group">
 							<span class="input-group-addon">
 							<i class="fa fa-lock fa-lg" aria-hidden="true"></i>
 							</span> 
-							<input type="password" class="form-control" th:value="${student.password}" name="password"	id="password" placeholder="Enter your Password" required />
+							<input type="password" class="form-control" th:value="${student.password}" name="password"	id="password" th:placeholder="#{label.enterpassword}" required />
 						</div>
 					</div>
 				</div>
 
 				<div class="form-group">
-					<label for="confirm" class="cols-sm-2 control-label">Confirm Password</label>
+					<label for="confirm" class="cols-sm-2 control-label" th:text="#{label.confirmpassword}"></label>
 					<div class="cols-sm-10">
 						<div class="input-group">
 							<span class="input-group-addon">
 							<i class="fa fa-lock fa-lg" aria-hidden="true"></i></span> 
-							<input	type="password" class="form-control" th:value="${student.confirmPassword}" name="confirmPassword" id="confirmPassword" placeholder="Confirm your Password" required />
+							<input	type="password" class="form-control" th:value="${student.confirmPassword}" name="confirmPassword" id="confirmPassword" th:placeholder="#{label.confirmpassword}" required />
 						</div>
 					</div>
 				</div>
                 <p th:text="${message}"></p>
 				<div class="form-group ">
-					<button type="submit" id="button" class="btn btn-primary btn-lg btn-block login-button" th:value="student">Register</button>
+					<button type="submit" id="button" class="btn btn-primary btn-lg btn-block login-button" th:value="student" th:text="#{label.register}"></button>
 				</div>
 			</form>
 		</div>
