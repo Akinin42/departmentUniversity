@@ -21,7 +21,7 @@ public class WebApplicationInitializer extends AbstractAnnotationConfigDispatche
     protected String[] getServletMappings() {
         return new String[] { "/" };
     }
-    
+
     @Override
     public void onStartup(ServletContext aServletContext) throws ServletException {
         super.onStartup(aServletContext);
@@ -29,7 +29,7 @@ public class WebApplicationInitializer extends AbstractAnnotationConfigDispatche
     }
 
     private void registerHiddenFieldFilter(ServletContext aContext) {
-        aContext.addFilter("hiddenHttpMethodFilter",
-                new HiddenHttpMethodFilter()).addMappingForUrlPatterns(null ,true, "/*");
+        aContext.addFilter("hiddenHttpMethodFilter", new HiddenHttpMethodFilter()).addMappingForUrlPatterns(null, true,
+                "/*");
     }
 }

@@ -10,7 +10,7 @@
 	crossorigin="anonymous">
 <link rel="stylesheet" th:href="@{/static/table.css}" />
 <script src="https://use.fontawesome.com/fec1def459.js"></script>
-<title>students!</title>
+<title th:text="#{label.students}"></title>
 </head>
 <body>
 	<div th:replace="header :: navbar"></div>
@@ -21,20 +21,18 @@
 					<div class="panel-heading">
 						<div class="row">
 							<div class="col-sm-12 col-xs-12">
-								<h4 class="title pull-left">Student List</h4>
+								<h4 class="title pull-left" th:text="#{label.students}"></h4>
 								
-								<a href="/DepartmentUniversity/students/new"	class="btn btn-sm btn-primary pull-right">Add student</a>
+								<a href="/DepartmentUniversity/students/new"	class="btn btn-sm btn-primary pull-right" th:text="#{label.addstudent}"></a>
 							</div>
 						</div>
 					</div>
 					<div class="panel-body">
 					   <div class="input-group mb-3">
-                           <form action="#" th:action="@{/students/login}" th:object="${student}" method="post">
-                                <label class="sr-only" for="Email">Email</label> 
-                                <input type="email" class="form-group" th:value="${email}" id="email" name="email" placeholder="Email" autofocus required />
-                                <label class="sr-only" for="Password">Password</label> 
-                                <input type="password" class="form-group" th:value="${password}" id="password" name="password" placeholder="Password" required />                                
-                                <button type="submit" class="btn btn-success">Sign in</button>                                                  
+                           <form action="#" th:action="@{/students/login}" th:object="${student}" method="post">                                
+                                <input type="email" class="form-group" th:value="${email}" id="email" name="email" th:placeholder="#{label.email}" autofocus required />
+                                <input type="password" class="form-group" th:value="${password}" id="password" name="password" th:placeholder="#{label.password}" required />                                
+                                <button type="submit" class="btn btn-success" th:text="#{label.signin}"></button>                                                  
                             </form>
                             <p th:text="${message}"></p>
                         </div>
@@ -43,15 +41,15 @@
 						<table class="table">
 							<thead>
 								<tr>
-									<th>Student ID</th>
-									<th>Gender</th>
-									<th>Name</th>
-									<th>Email</th>
-									<th>Phone</th>
-									<th>Courses</th>
-									<th>Add course</th>
-									<th>Delete course</th>
-									<th>Action</th>
+									<th th:text="#{label.id}"></th>
+									<th th:text="#{label.gender}"></th>
+									<th th:text="#{label.name}"></th>
+									<th th:text="#{label.email}"></th>
+									<th th:text="#{label.phone}"></th>
+									<th th:text="#{label.courses}"></th>
+									<th th:text="#{label.addcourse}"></th>
+									<th th:text="#{label.deletecourse}"></th>
+									<th th:text="#{label.actions}">Actions</th>
 								</tr>
 							</thead>
 							<tbody>
