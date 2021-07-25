@@ -10,7 +10,7 @@
 	crossorigin="anonymous">
 <link rel="stylesheet" th:href="@{/static/table.css}" />
 <script src="https://use.fontawesome.com/fec1def459.js"></script>
-<title>courses!</title>
+<title th:text="#{label.courses}"></title>
 </head>
 <body>
 	<div th:replace="header :: navbar"></div>
@@ -21,16 +21,16 @@
 					<div class="panel-heading">
 						<div class="row">
 							<div class="col-sm-12 col-xs-12">
-								<h4 class="title pull-left">Course List</h4>
+								<h4 class="title pull-left" th:text="#{label.courses}"></h4>
 								<div class="row pull-right">
 									<div class="input-group mb-3">
 									<p th:text="${message}"></p>
 										<form action="#" th:action="@{/courses}" th:object="${course}" method="post">
-											<label for="name">Course name:</label> 
+											<label for="name" th:text="#{label.coursename}"></label> 
 											<input type="text" class="form-group" th:field="*{name}" id="name" style="width: 200px;"> 
-											<label for="description">Course	description:</label> 
+											<label for="description" th:text="#{label.coursedescription}"></label> 
 											<input type="text" class="form-group" th:field="*{description}" id="description" style="width: 200px;">
-											<button class="btn btn-sm btn-primary pull-right" type="submit" th:value="course">Create course</button>
+											<button class="btn btn-sm btn-primary pull-right" type="submit" th:value="course" th:text="#{label.addcourse}"></button>
 										</form>
 									</div>
 								</div>
@@ -41,10 +41,10 @@
 						<table class="table">
 							<thead>
 								<tr>
-									<th>Course ID</th>
-									<th>Name</th>
-									<th>Description</th>
-									<th>Action</th>
+									<th th:text="#{label.id}"></th>
+									<th th:text="#{label.coursename}"></th>
+									<th th:text="#{label.coursedescription}"></th>
+									<th th:text="#{label.actions}"></th>
 								</tr>
 							</thead>
 							<tbody>

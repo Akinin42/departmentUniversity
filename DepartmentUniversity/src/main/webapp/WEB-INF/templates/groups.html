@@ -10,7 +10,7 @@
 	crossorigin="anonymous">
 <link rel="stylesheet" th:href="@{/static/table.css}" />
 <script src="https://use.fontawesome.com/fec1def459.js"></script>
-<title>groups!</title>
+<title th:text="#{label.groups}"></title>
 </head>
 <body>
 	<div th:replace="header :: navbar"></div>
@@ -21,14 +21,14 @@
 					<div class="panel-heading">
 						<div class="row">
 							<div class="col-sm-12 col-xs-12">
-								<h4 class="title pull-left">Group List</h4>
+								<h4 class="title pull-left" th:text="#{label.groups}"></h4>
 								<div class="row pull-right">
 									<div class="input-group mb-3">
 									<p th:text="${message}"></p>
 										<form action="#" th:action="@{/groups}"	th:object="${group}" method="post">
-											<label for="name">Group name:</label> 
+											<label for="name" th:text = "#{label.groupname}"></label> 
 											<input type="text" class="form-group" th:field="*{name}" id="name">
-											<button class="btn btn-sm btn-primary pull-right" type="submit" th:value="timetable">Create group</button>
+											<button class="btn btn-sm btn-primary pull-right" type="submit" th:value="timetable" th:text="#{label.addgroup}"></button>
 										</form>
 									</div>
 								</div>
@@ -39,14 +39,14 @@
 						<table class="table">
 							<thead>
 								<tr>
-									<th>Group ID</th>
-									<th>Name</th>
-									<th>Students</th>
-									<th>Add student</th>
-									<th>Delete student</th>
-									<th>Action</th>
-									<th>Week timetable</th>
-									<th>Month timetable</th>
+									<th th:text="#{label.id}"></th>
+									<th th:text = "#{label.groupname}"></th>
+									<th th:text="#{label.students}"></th>
+									<th th:text="#{label.addstudent}"></th>
+									<th th:text="#{label.deletestudent}"></th>
+									<th th:text="#{label.actions}"></th>
+                                    <th th:text="#{label.weektimetable}"></th>
+                                    <th th:text="#{label.monthtimetable}"></th>
 								</tr>
 							</thead>
 							<tbody>
@@ -181,7 +181,7 @@
 									<select id="name" th:field="*{groupName}" class="form-group" aria-label="Default select example">
 										<option th:each="group : ${groups}" th:value="${group.name}" th:text="${group.name}"></option>
 									</select> <input class="form-group" type="date" th:value="${day}" id="day" name="day" />
-									<button class="btn btn-sm btn-primary pull-right" type="submit"	th:value="timetable">Get group timetable</button>
+									<button class="btn btn-sm btn-primary pull-right" type="submit"	th:value="timetable" th:text="#{label.gettimetable}"></button>
 								</form>
 							</div>
 						</div>

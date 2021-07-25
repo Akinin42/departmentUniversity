@@ -10,7 +10,7 @@
 	crossorigin="anonymous">
 <link rel="stylesheet" th:href="@{/static/table.css}" />
 <script src="https://use.fontawesome.com/fec1def459.js"></script>
-<title>lessons!</title>
+<title th:text="#{label.lessons}"></title>
 </head>
 <body>
 	<div th:replace="header :: navbar"></div>
@@ -21,8 +21,8 @@
 					<div class="panel-heading">
 						<div class="row">
 							<div class="col-sm-12 col-xs-12">
-								<h4 class="title pull-left">Lesson List</h4>
-								<a href="/DepartmentUniversity/timetables/new" class="btn btn-sm btn-primary pull-right">Create New</a>
+								<h4 class="title pull-left" th:text="#{label.lessons}"></h4>
+								<a href="/DepartmentUniversity/timetables/new" class="btn btn-sm btn-primary pull-right" th:text="#{label.addlesson}"></a>
 							</div>
 						</div>
 					</div>
@@ -31,16 +31,16 @@
 							<thead>
 								<tr>
 									<th>No</th>
-									<th>Group</th>
-									<th>Teacher</th>
-									<th>Course</th>
-									<th>Date</th>
-									<th>Start lesson</th>
-									<th>End lesson</th>
-									<th>Classroom number</th>
-									<th>Online lesson</th>
-									<th>Lesson link</th>
-									<th>Action</th>
+									<th th:text="#{label.group}"></th>
+									<th th:text="#{label.teacher}"></th>
+									<th th:text="#{label.course}"></th>
+									<th th:text="#{label.date}"></th>
+									<th th:text="#{label.startlesson}"></th>
+                                    <th th:text="#{label.endlesson}"></th>
+									<th th:text="#{label.classroomnumber}"></th>
+									<th th:text="#{label.onlinelesson}"></th>
+									<th th:text="#{label.lessonlink}"></th>
+                                    <th th:text="#{label.actions}"></th>
 								</tr>
 							</thead>
 							<tbody>
@@ -93,7 +93,7 @@
 							<div class="input-group mb-3">
 								<form action="#" th:action="@{/timetables/date}" th:object="${timetable}" method="post">
 									<input class="form-group" type="date" th:value="${day}"	id="day" name="day" />
-									<button class="btn btn-sm btn-primary pull-right" type="submit"	th:value="timetable">Get timetable</button>
+									<button class="btn btn-sm btn-primary pull-right" type="submit"	th:value="timetable" th:text="#{label.gettimetable}"></button>
 								</form>
 							</div>
 						</div>

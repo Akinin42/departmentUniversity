@@ -10,7 +10,7 @@
 	crossorigin="anonymous">
 <link rel="stylesheet" th:href="@{/static/table.css}" />
 <script src="https://use.fontawesome.com/fec1def459.js"></script>
-<title>teachertimetable!</title>
+<title th:text="#{label.timetable}"></title>
 </head>
 <body>
 	<div th:replace="header :: navbar"></div>
@@ -21,7 +21,7 @@
 					<div class="panel-heading">
 						<div class="row">
 							<div class="col-sm-12 col-xs-12">
-								<h4 class="title pull-left" th:text=${teacher.name}>Timetable</h4>
+								<h4 class="title pull-left" th:text=${teacher.name}></h4>
 							</div>
 						</div>
 					</div>
@@ -29,14 +29,14 @@
 						<table class="table">
 							<thead>
 								<tr>
-									<th>Date</th>
-									<th>Start lesson</th>
-									<th>End lesson</th>
-									<th>Group</th>
-									<th>Course</th>
-									<th>Classroom</th>
-									<th>Lesson link</th>
-									<th>Action</th>
+									<th th:text="#{label.date}"></th>
+									<th th:text="#{label.startlesson}"></th>
+									<th th:text="#{label.endlesson}"></th>
+									<th th:text="#{label.group}"></th>
+									<th th:text="#{label.course}"></th>
+									<th th:text="#{label.classroom}"></th>
+									<th th:text="#{label.lessonlink}"></th>
+									<th th:text="#{label.actions}"></th>
 								</tr>
 							</thead>
 							<tbody>
