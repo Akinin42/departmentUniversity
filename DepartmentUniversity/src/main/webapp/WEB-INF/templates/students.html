@@ -34,7 +34,9 @@
                                 <input type="password" class="form-group" th:value="${password}" id="password" name="password" th:placeholder="#{label.password}" required />                                
                                 <button type="submit" class="btn btn-success" th:text="#{label.signin}"></button>                                                  
                             </form>
-                            <p th:text="${message}"></p>
+                            <div th:switch="${message}">                                        
+                                <p th:case="'passworddontcorrect'" th:text="#{label.passworddontcorrect}"></p>
+                            </div>
                         </div>
 					</div>
 					<div class="panel-body table-responsive">

@@ -16,6 +16,7 @@ import org.university.dao.impl.TeacherDaoImpl;
 import org.university.dto.TeacherDto;
 import org.university.entity.Teacher;
 import org.university.exceptions.AuthorisationFailException;
+import org.university.exceptions.EmailExistException;
 import org.university.exceptions.EntityAlreadyExistException;
 import org.university.exceptions.EntityNotExistException;
 import org.university.exceptions.InvalidEmailException;
@@ -172,7 +173,7 @@ class TeacherServiceImplTest {
         teacher.setPhone("79758657788");
         teacher.setPassword("test-password");
         teacher.setScientificDegree("professor");
-        assertThatThrownBy(() -> teacherService.edit(teacher)).isInstanceOf(InvalidEmailException.class);
+        assertThatThrownBy(() -> teacherService.edit(teacher)).isInstanceOf(EmailExistException.class);
     }
 
     @Test

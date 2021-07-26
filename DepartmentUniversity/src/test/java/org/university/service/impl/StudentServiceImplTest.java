@@ -22,6 +22,7 @@ import org.university.entity.Course;
 import org.university.entity.Group;
 import org.university.entity.Student;
 import org.university.exceptions.AuthorisationFailException;
+import org.university.exceptions.EmailExistException;
 import org.university.exceptions.EntityAlreadyExistException;
 import org.university.exceptions.EntityNotExistException;
 import org.university.exceptions.InvalidEmailException;
@@ -348,7 +349,7 @@ class StudentServiceImplTest {
         student.setEmail("test2@test.ru");
         student.setPhone("78954756666");
         student.setPassword("test-password");
-        assertThatThrownBy(() -> studentService.edit(student)).isInstanceOf(InvalidEmailException.class);
+        assertThatThrownBy(() -> studentService.edit(student)).isInstanceOf(EmailExistException.class);
     }
 
     @Test

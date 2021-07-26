@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import org.university.dto.StudentDto;
 import org.university.entity.Course;
 import org.university.exceptions.AuthorisationFailException;
+import org.university.exceptions.EmailExistException;
 import org.university.exceptions.EntityNotExistException;
 import org.university.exceptions.InvalidEmailException;
 import org.university.exceptions.InvalidPhoneException;
@@ -71,7 +72,7 @@ public class StudentController {
         try {
             studentService.register(student);
             return REDIRECT;
-        } catch (InvalidEmailException | InvalidPhoneException | InvalidUserNameException e) {
+        } catch (InvalidEmailException | InvalidPhoneException | InvalidUserNameException | EmailExistException e) {
             model.addAttribute("message", e.getMessage());
             return STUDENT_FORM;
         }
@@ -105,7 +106,7 @@ public class StudentController {
         } catch (EntityNotExistException e) {
             return STUDENT_FORM;
         } catch (AuthorisationFailException e) {
-            model.addAttribute("message", "Password isn't correct!");
+            model.addAttribute("message", "passworddontcorrect");
             return REDIRECT;
         }
     }
@@ -121,7 +122,7 @@ public class StudentController {
         try {
             studentService.edit(student);
             return REDIRECT;
-        } catch (InvalidEmailException | InvalidPhoneException | InvalidUserNameException e) {
+        } catch (InvalidEmailException | InvalidPhoneException | InvalidUserNameException | EmailExistException e) {
             model.addAttribute("message", e.getMessage());
             return "updateforms/student";
         }

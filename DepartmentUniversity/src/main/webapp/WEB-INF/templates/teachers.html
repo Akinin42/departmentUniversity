@@ -32,7 +32,9 @@
                                <input type="email" class="form-group" th:value="${email}" id="email" name="email" th:placeholder="#{label.email}" autofocus required />                               
                                <input type="password" class="form-group" th:value="${password}" id="password" name="password" th:placeholder="#{label.password}" required />
                                <button type="submit" class="btn btn-success" th:text="#{label.signin}"></button>
-                               <p th:text="${message}"></p>                                                  
+                               <div th:switch="${message}">                                        
+                                <p th:case="'passworddontcorrect'" th:text="#{label.passworddontcorrect}"></p>
+                               </div>                                                  
                            </form>
                         </div>
                     </div>

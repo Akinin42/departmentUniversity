@@ -26,7 +26,7 @@ public abstract class AbstractUserServiceImpl<E> implements UserService<E> {
     public void register(@NonNull UserDto userDto) {
         E user = mapDtoToEntity(userDto);
         if (existsUser(user)) {
-            throw new EntityAlreadyExistException("User already exist!");
+            throw new EntityAlreadyExistException("userexist");
         }
         validator.validate(user);
         userDao.save(mapUserWithPassword(user));

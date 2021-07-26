@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import org.university.dto.DayTimetableDto;
 import org.university.dto.TeacherDto;
 import org.university.exceptions.AuthorisationFailException;
+import org.university.exceptions.EmailExistException;
 import org.university.exceptions.EntityNotExistException;
 import org.university.exceptions.InvalidEmailException;
 import org.university.exceptions.InvalidPhoneException;
@@ -69,7 +70,7 @@ public class TeacherController {
         try {
             teacherService.register(teacher);
             return REDIRECT;
-        } catch (InvalidEmailException | InvalidPhoneException | InvalidUserNameException e) {
+        } catch (InvalidEmailException | InvalidPhoneException | InvalidUserNameException | EmailExistException e) {
             model.addAttribute("message", e.getMessage());
             return TEACHER_FORM;
         }
@@ -89,7 +90,7 @@ public class TeacherController {
         } catch (EntityNotExistException e) {
             return TEACHER_FORM;
         } catch (AuthorisationFailException e) {
-            model.addAttribute("message", "Password isn't correct!");
+            model.addAttribute("message", "passworddontcorrect");
             return REDIRECT;
         }
     }
@@ -106,7 +107,7 @@ public class TeacherController {
         try {
             teacherService.edit(teacher);
             return REDIRECT;
-        } catch (InvalidEmailException | InvalidPhoneException | InvalidUserNameException e) {
+        } catch (InvalidEmailException | InvalidPhoneException | InvalidUserNameException | EmailExistException e) {
             model.addAttribute("message", e.getMessage());
             return "updateforms/teacher";
         }
