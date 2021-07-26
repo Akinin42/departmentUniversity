@@ -9,6 +9,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.ViewResolverRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -83,9 +84,14 @@ public class WebConfig implements WebMvcConfigurer {
     }
 
     @Bean
-    public SessionLocaleResolver sessionLocaleResolver(){
+    public SessionLocaleResolver localeResolver(){
         SessionLocaleResolver localeResolver=new SessionLocaleResolver();
-        localeResolver.setDefaultLocale(new Locale("en","EN"));
+        localeResolver.setDefaultLocale(Locale.ENGLISH);
         return localeResolver;
+    }
+    
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(localeChangeInterceptor());
     }
 }
