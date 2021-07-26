@@ -16,8 +16,8 @@ public class GroupValidator implements Validator<Group> {
     public void validate(Group group) {
         String groupName = group.getName();
         if (groupName == null || !GROUP_NAME_PATTERN.matcher(groupName).matches()) {
-            log.error("Input course name isn't valid!");
-            throw new InvalidGroupNameException("Input course name isn't valid! You should input f.e. 'AA-11'");
+            log.error("Input group name isn't valid!");
+            throw new InvalidGroupNameException("invalidname");
         }
     }
 }

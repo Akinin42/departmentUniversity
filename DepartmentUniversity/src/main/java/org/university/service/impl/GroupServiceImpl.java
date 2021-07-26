@@ -49,7 +49,7 @@ public class GroupServiceImpl implements GroupService {
         Group group = mapDtoToEntity(groupDto);
         validator.validate(group);
         if (existGroup(group)) {
-            throw new EntityAlreadyExistException("Group with this name already exist!");
+            throw new EntityAlreadyExistException("groupexist");
         }
         groupDao.save(group);
         if (group.getStudents() != null) {
@@ -79,7 +79,7 @@ public class GroupServiceImpl implements GroupService {
     public void edit(@NonNull GroupDto groupDto) {
         Group group = mapDtoToEntity(groupDto);
         if (!groupDao.findById(group.getId()).get().getName().equals(group.getName())&&existGroup(group)) {
-            throw new EntityAlreadyExistException("Group with this name already exist!");
+            throw new EntityAlreadyExistException("groupexist");
         }
         validator.validate(group);
         groupDao.update(group);
