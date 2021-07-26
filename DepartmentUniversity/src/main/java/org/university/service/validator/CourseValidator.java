@@ -18,11 +18,11 @@ public class CourseValidator implements Validator<Course> {
     public void validate(Course course) {
         if (!NAME_PATTERN.matcher(course.getName()).matches()) {
             log.error("Input course has invalid name: " + course.getName());
-            throw new InvalidCourseNameException("Input course name isn't valid!");
+            throw new InvalidCourseNameException("invalidcoursename");
         }
         if (!DESCRIPTION_PATTERN.matcher(course.getDescription()).matches()) {
             log.error("Input course has invalid description: " + course.getDescription());
-            throw new InvalidDescriptionException("Input course description isn't valid!");
+            throw new InvalidDescriptionException("invaliddescription");
         }        
     }
 }

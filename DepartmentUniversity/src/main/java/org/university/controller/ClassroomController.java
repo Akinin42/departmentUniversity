@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.university.dto.ClassroomDto;
+import org.university.exceptions.EntityAlreadyExistException;
 import org.university.exceptions.InvalidAddressException;
 import org.university.exceptions.InvalidClassroomCapacityException;
 import org.university.exceptions.InvalidClassroomNumberException;
@@ -38,7 +39,7 @@ public class ClassroomController {
         try {
         classroomService.addClassroom(classroom);  
         return REDIRECT;
-        } catch (InvalidClassroomNumberException | InvalidClassroomCapacityException | InvalidAddressException e) {
+        } catch (InvalidClassroomNumberException | InvalidClassroomCapacityException | InvalidAddressException | EntityAlreadyExistException e) {
             model.addAttribute("message", e.getMessage());
             return REDIRECT;
         }

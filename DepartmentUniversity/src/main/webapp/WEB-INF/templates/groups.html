@@ -27,8 +27,7 @@
 									<div th:switch="${message}">                                        
                                         <p th:case="'invalidname'" th:text="#{label.invalidgroupname}"></p>                                       
                                         <p th:case="'groupexist'" th:text="#{label.groupexist}"></p>                                       
-                                    </div>
-									
+                                    </div>									
 										<form action="#" th:action="@{/groups}"	th:object="${group}" method="post">
 											<label for="name" th:text = "#{label.groupname}"></label> 
 											<input type="text" class="form-group" th:field="*{name}" id="name">

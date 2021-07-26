@@ -18,15 +18,15 @@ public class ClassroomValidator implements Validator<Classroom> {
     public void validate(Classroom classroom) {
         if (classroom.getNumber() <= 0) {
             log.error("Input classroom has invalid number: " + classroom.getNumber());
-            throw new InvalidClassroomNumberException("Input classroom number can't be negative or zero!");
+            throw new InvalidClassroomNumberException("invalidnumber");
         }        
         if (!ADDRESS_PATTERN.matcher(classroom.getAddress()).matches()) {
             log.error("Input classroom has invalid address: " + classroom.getAddress());
-            throw new InvalidAddressException("Input address isn't valid!");
+            throw new InvalidAddressException("invalidaddress");
         }
         if (classroom.getCapacity() <= 0) {
             log.error("Input classroom has invalid capacity: " + classroom.getCapacity());
-            throw new InvalidClassroomCapacityException("Input classroom capacity can't be negative or zero!");
+            throw new InvalidClassroomCapacityException("invalidcapacity");
         }        
     }
 }

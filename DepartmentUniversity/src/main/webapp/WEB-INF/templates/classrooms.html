@@ -24,7 +24,12 @@
 								<h4 class="title pull-left" th:text="#{label.classrooms}"></h4>
 								<div class="row pull-right">
 									<div class="input-group mb-3">
-									<p th:text="${message}"></p>
+									<div th:switch="${message}">                                        
+                                        <p th:case="'invalidnumber'" th:text="#{label.invalidnumber}"></p>                                       
+                                        <p th:case="'invalidaddress'" th:text="#{label.invalidaddress}"></p>                                       
+                                        <p th:case="'invalidcapacity'" th:text="#{label.invalidcapacity}"></p>                                       
+                                        <p th:case="'classroomexist'" th:text="#{label.classroomexist}"></p>                                       
+                                    </div>
 										<form action="#" th:action="@{/classrooms}"	th:object="${classroom}" method="post">
 											<label for="number" th:text="#{label.number}"></label> 
 											<input type="number" class="form-group" th:field="*{number}" id="number" style="width: 200px;"> 

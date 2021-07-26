@@ -37,7 +37,7 @@ public class CourseServiceImpl implements CourseService {
     public void addCourse(@NonNull CourseDto courseDto) {
         Course course = mapDtoToEntity(courseDto);        
         if (existCourse(course)) {
-            throw new EntityAlreadyExistException("Course with this name already exist!");
+            throw new EntityAlreadyExistException("courseexist");
         }
         validator.validate(course);
         courseDao.save(course);
@@ -62,7 +62,7 @@ public class CourseServiceImpl implements CourseService {
     public void edit(@NonNull CourseDto courseDto) {
         Course course = mapDtoToEntity(courseDto);
         if (!courseDao.findById(course.getId()).get().getName().equals(course.getName())&&existCourse(course)) {
-            throw new EntityAlreadyExistException("Course with this name already exist!");
+            throw new EntityAlreadyExistException("courseexist");
         }
         validator.validate(course);
         courseDao.update(course);

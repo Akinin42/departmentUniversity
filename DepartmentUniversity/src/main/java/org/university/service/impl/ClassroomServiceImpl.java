@@ -37,7 +37,7 @@ public class ClassroomServiceImpl implements ClassroomService {
     public void addClassroom(@NonNull ClassroomDto classroomDto) {
         Classroom classroom = mapDtoToEntity(classroomDto);
         if (classroom.getId() != null && existClassroom(classroom)) {
-            throw new EntityAlreadyExistException("Classroom already exist!");
+            throw new EntityAlreadyExistException("classroomexist");
         }
         validator.validate(classroom);
         classroomDao.save(classroom);
