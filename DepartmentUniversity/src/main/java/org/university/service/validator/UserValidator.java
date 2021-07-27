@@ -45,14 +45,12 @@ public class UserValidator<E> implements Validator<E> {
             throw new InvalidPhoneException("invalidphone");
         }
         if (user.getClass() == Student.class && !studentDao.findByEmail(email).equals(Optional.empty())) {
-            if (studentDao.findById(((User) user).getId()).get().getEmail().equals(email)) {
-            } else {
+            if (((User) user).getId() == null) {
                 throw new EmailExistException("studentemailexist");
             }
         }
         if (user.getClass() == Teacher.class && !teacherDao.findByEmail(email).equals(Optional.empty())) {
-            if (teacherDao.findById(((User) user).getId()).get().getEmail().equals(email)) {
-            } else {
+            if (((User) user).getId() == null) {
                 throw new EmailExistException("teacheremailexist");
             }
         }

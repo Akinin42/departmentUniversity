@@ -85,7 +85,7 @@
 						<div class="input-group">
 						    <input class="form-control" type="hidden" th:value="${student.id}" id="id" name="id" />
 							<span class="input-group-addon"><i class="fa fa-user fa" aria-hidden="true"></i></span> 
-							<input type="text" class="form-control" th:value="${student.name}" name="name" id="name" th:placeholder="#{name}" required />
+							<input type="text" class="form-control" th:value="${student.name}" name="name" id="name" th:placeholder="#{label.entername}" required />
 						</div>
 					</div>
 				</div>
@@ -112,7 +112,7 @@
 							<span class="input-group-addon">
 							<i class="fa fa-envelope fa" aria-hidden="true"></i>
 							</span> 
-							<input type="email" class="form-control" th:value="${student.email}" name="email" id="email" th:placeholder="#{email}" required />
+							<input type="email" class="form-control" th:value="${student.email}" name="email" id="email" th:placeholder="#{label.enteremail}" required />
 						</div>
 					</div>
 				</div>
@@ -124,7 +124,7 @@
 							<span class="input-group-addon">
 							<i class="fa fa-users fa" aria-hidden="true"></i>
 							</span> 
-							<input type="text" class="form-control" th:value="${student.phone}"	name="phone" id="phone" th:placeholder="#{phone}" required />
+							<input type="text" class="form-control" th:value="${student.phone}"	name="phone" id="phone" th:placeholder="#{label.enterphone}" required />
 						</div>
 					</div>
 				</div>

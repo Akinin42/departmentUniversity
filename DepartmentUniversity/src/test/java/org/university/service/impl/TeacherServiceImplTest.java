@@ -69,6 +69,18 @@ class TeacherServiceImplTest {
         teacher.setScientificDegree("professor");
         assertThatThrownBy(() -> teacherService.register(teacher)).isInstanceOf(EntityAlreadyExistException.class);
     }
+    
+    @Test
+    void registerShouldThrowEmailExistExceptionWhenInputEmailRegistered() {
+        TeacherDto teacher = new TeacherDto();        
+        teacher.setSex("Male");
+        teacher.setName("New user");
+        teacher.setEmail("existe@mail.ru");
+        teacher.setPhone("79758657788");
+        teacher.setPassword("test-password");
+        teacher.setScientificDegree("professor");
+        assertThatThrownBy(() -> teacherService.register(teacher)).isInstanceOf(EmailExistException.class);
+    }
 
     @Test
     void registerShouldThrowInvalidEmailExceptionWhenInputTeacherHasInvalidEmail() {
@@ -161,19 +173,6 @@ class TeacherServiceImplTest {
     void findAllShouldReturnEmptyListWhenTheyNotExist() {        
         when(teacherDaoMock.findAll()).thenReturn(new ArrayList<Teacher>());
         assertThat(teacherService.findAll()).isEmpty();
-    }
-    
-    @Test
-    void editShouldThrowInvalidEmailExceptionWhenStudentWithInputEmailExists() {
-        TeacherDto teacher = new TeacherDto();
-        teacher.setId(1);
-        teacher.setSex("Male");
-        teacher.setName("Bob Moren");
-        teacher.setEmail("test2@test.ru");
-        teacher.setPhone("79758657788");
-        teacher.setPassword("test-password");
-        teacher.setScientificDegree("professor");
-        assertThatThrownBy(() -> teacherService.edit(teacher)).isInstanceOf(EmailExistException.class);
     }
 
     @Test

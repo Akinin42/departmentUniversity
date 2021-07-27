@@ -73,6 +73,17 @@ class StudentServiceImplTest {
         student.setPassword("test-password");
         assertThatThrownBy(() -> studentService.register(student)).isInstanceOf(EntityAlreadyExistException.class);
     }
+    
+    @Test
+    void registerShouldThrowEmailExistExceptionWhenInputEmailRegistered() {
+        StudentDto student = new StudentDto();        
+        student.setSex("Female");
+        student.setName("New user");
+        student.setEmail("existmail@test.ru");
+        student.setPhone("78954756666");
+        student.setPassword("test-password");
+        assertThatThrownBy(() -> studentService.register(student)).isInstanceOf(EmailExistException.class);
+    }
 
     @Test
     void registerShouldThrowInvalidEmailExceptionWhenInputStudentHasInvalidEmail() {
@@ -338,18 +349,6 @@ class StudentServiceImplTest {
         studentDto.setId(1);
         assertThatThrownBy(() -> studentService.deleteStudentFromCourse(studentDto, null))
                 .isInstanceOf(IllegalArgumentException.class);
-    }
-    
-    @Test
-    void editShouldThrowInvalidEmailExceptionWhenStudentWithInputEmailExists() {
-        StudentDto student = new StudentDto();
-        student.setId(1);
-        student.setSex("Female");
-        student.setName("Jane Wood");
-        student.setEmail("test2@test.ru");
-        student.setPhone("78954756666");
-        student.setPassword("test-password");
-        assertThatThrownBy(() -> studentService.edit(student)).isInstanceOf(EmailExistException.class);
     }
 
     @Test
