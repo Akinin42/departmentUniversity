@@ -20,23 +20,22 @@ public class LessonValidator implements Validator<Lesson> {
     @Override
     public void validate(Lesson lesson) {
         if (lesson.getGroup().getStudents().size() > lesson.getClassroom().getCapacity()) {
-            throw new InvalidClassroomCapacityException("Number student in group more than classroom capacity!");
+            throw new InvalidClassroomCapacityException("lessoncapacity");
         }
         LocalDateTime inputLessonStart = lesson.getStartLesson();
         LocalDateTime inputLessonEnd = lesson.getEndLesson();
         if (inputLessonStart.getDayOfWeek().equals(DayOfWeek.SUNDAY)) {
-            throw new InvalidLessonTimeException("You can't create a lesson on sunday!");
+            throw new InvalidLessonTimeException("sunday");
         }
         if (inputLessonStart.getHour() < LESSONS_START_TIME || inputLessonStart.getHour() > LESSONS_FINISH_TIME) {
-            throw new InvalidLessonTimeException(
-                    "You can't create a lesson on this time! The university works from 9 a.m. to 6 p.m.");
+            throw new InvalidLessonTimeException("notworktime");
         }
         if (inputLessonEnd.isBefore(inputLessonStart) || inputLessonEnd.isEqual(inputLessonStart)) {
-            throw new InvalidLessonTimeException("The end of the lesson can't be earlier than the start, or equals!");
+            throw new InvalidLessonTimeException("endearlierstart");
         }
         if (Boolean.TRUE.equals(lesson.getOnlineLesson())
                 && (lesson.getLessonLink() == null || !LESSON_LINK.matcher(lesson.getLessonLink()).matches())) {
-            throw new InvalidLinkException("You try create online lesson, you should input valid link!");
+            throw new InvalidLinkException("onlinelink");
         }
     }
 }

@@ -6,15 +6,15 @@
 			<div class="navigation">
 				<ul class="nav justify-content-end"
 					style="background-color: #f5f5f5;">
-					<li class="nav-item" style="color: #333;"> <a class="nav-link"  th:href="@{students}"> <span style="color: #333;" th:text="#{label.students}"/><i style="color: #333;" class="fa fa-users"></i></a></li>
-					<li class="nav-item"> <a class="nav-link"  th:href="@{teachers}"> <span style="color: #333;" th:text="#{label.teachers}"/><i style="color: #333;" class="fa fa-users"></i></a></li>					
-					<li class="nav-item"> <a class="nav-link"  th:href="@{groups}"> <span style="color: #333;" th:text="#{label.groups}"/><i style="color: #333;" class="fa fa-graduation-cap"></i></a></li>
-					<li class="nav-item"> <a class="nav-link"  th:href="@{courses}"> <span style="color: #333;" th:text="#{label.courses}"/><i style="color: #333;" class="fa fa-book"></i></a></li>
-					<li class="nav-item"> <a class="nav-link"  th:href="@{classrooms}"> <span style="color: #333;" th:text="#{label.classrooms}"/><i style="color: #333;" class="fa fa-university"></i></a></li>
-					<li class="nav-item"> <a class="nav-link"  th:href="@{timetables}"> <span style="color: #333;" th:text="#{label.timetables}"/><i style="color: #333;" class="fa fa-calendar"></i></a></li>
+					<li class="nav-item" style="color: #333;"> <a class="nav-link"  th:href="@{~/DepartmentUniversity/students}"> <span style="color: #333;" th:text="#{label.students}"/><i style="color: #333;" class="fa fa-users"></i></a></li>
+					<li class="nav-item"> <a class="nav-link"  th:href="@{~/DepartmentUniversity/teachers}"> <span style="color: #333;" th:text="#{label.teachers}"/><i style="color: #333;" class="fa fa-users"></i></a></li>					
+					<li class="nav-item"> <a class="nav-link"  th:href="@{~/DepartmentUniversity/groups}"> <span style="color: #333;" th:text="#{label.groups}"/><i style="color: #333;" class="fa fa-graduation-cap"></i></a></li>
+					<li class="nav-item"> <a class="nav-link"  th:href="@{~/DepartmentUniversity/courses}"> <span style="color: #333;" th:text="#{label.courses}"/><i style="color: #333;" class="fa fa-book"></i></a></li>
+					<li class="nav-item"> <a class="nav-link"  th:href="@{~/DepartmentUniversity/classrooms}"> <span style="color: #333;" th:text="#{label.classrooms}"/><i style="color: #333;" class="fa fa-university"></i></a></li>
+					<li class="nav-item"> <a class="nav-link"  th:href="@{~/DepartmentUniversity/timetables}"> <span style="color: #333;" th:text="#{label.timetables}"/><i style="color: #333;" class="fa fa-calendar"></i></a></li>
 					<span style="float: right">
-                        <a href="?lang=en"><img th:src="@{static/images/united-kingdom.png}" width="24" height="24" alt="English"></a>   
-                        <a href="?lang=ru"><img th:src="@{static/images/russia.png}" width="24" height="24" alt="Russian"></a>
+                        <a th:href="@{?lang=en}"><img th:src="@{static/images/united-kingdom.png}" width="24" height="24" alt="English"></a>   
+                        <a th:href="@{?lang=ru}"><img th:src="@{static/images/russia.png}" width="24" height="24" alt="Russian"></a>
                     </span>					
 				</ul>
 			</div>

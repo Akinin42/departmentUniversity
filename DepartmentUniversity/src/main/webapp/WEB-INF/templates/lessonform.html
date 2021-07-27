@@ -56,7 +56,15 @@
                 <div class="form-group">
                     <button type="submit" id="button" class="btn btn-primary btn-lg btn-block login-button" th:value="lesson" th:text="#{label.addlesson}"></button>
                 </div>
-                <p th:text="${message}"></p>
+                <div th:switch="${message}">                                        
+                     <p th:case="'lessoncapacity'" th:text="#{label.lessoncapacity}"></p>                                       
+                     <p th:case="'sunday'" th:text="#{label.sunday}"></p>                                       
+                     <p th:case="'notworktime'" th:text="#{label.notworktime}"></p>                                       
+                     <p th:case="'endearlierstart'" th:text="#{label.endearlierstart}"></p>
+                     <p th:case="'onlinelink'" th:text="#{label.onlinelink}"></p>
+                     <p th:case="'groupteacherbusy'" th:text="#{label.groupteacherbusy}"></p>
+                     <p th:case="'classroombusy'" th:text="#{label.classroombusy}"></p>
+                </div>
             </form>
     </div>
 </body>

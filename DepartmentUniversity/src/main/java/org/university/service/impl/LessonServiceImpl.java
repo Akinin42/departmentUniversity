@@ -51,10 +51,10 @@ public class LessonServiceImpl implements LessonService {
         List<Lesson> teacherLessons = lessonDao.findAllByDateAndTeacher(lessonDate, lesson.getTeacher().getId());
         List<Lesson> groupLessons = lessonDao.findAllByDateAndGroup(lessonDate, lesson.getGroup().getId());
         if (!checkFreeTime(lesson, teacherLessons) || !checkFreeTime(lesson, groupLessons)) {
-            throw new InvalidLessonTimeException("Group or teacher is busy on this time!");
+            throw new InvalidLessonTimeException("groupteacherbusy");
         }
         if (!checkFreeClassroom(lesson)) {
-            throw new ClassroomBusyException("The classroom is busy on this time");
+            throw new ClassroomBusyException("classroombusy");
         }
         lessonDao.save(lesson);
         log.info("Lesson added succesfull!");
@@ -69,10 +69,10 @@ public class LessonServiceImpl implements LessonService {
         List<Lesson> groupLessons = lessonDao.findAllByDateAndGroup(lessonDate, lesson.getGroup().getId());
         if ((!checkTimeNotChange(lessonDto) || !checkGroupAndTeacherNotChange(lessonDto))
                 && (!checkFreeTime(lesson, teacherLessons) || !checkFreeTime(lesson, groupLessons))) {
-            throw new InvalidLessonTimeException("Group or teacher is busy on this time!");
+            throw new InvalidLessonTimeException("groupteacherbusy");
         }
         if ((!checkTimeNotChange(lessonDto) || !checkClassroomNotChange(lessonDto)) && !checkFreeClassroom(lesson)) {
-            throw new ClassroomBusyException("The classroom is busy on this time");
+            throw new ClassroomBusyException("classroombusy");
         }
         lessonDao.update(lesson);
         log.info("Lesson edited succesfull!");
