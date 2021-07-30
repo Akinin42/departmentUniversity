@@ -18,6 +18,7 @@ import org.university.exceptions.EntityNotExistException;
 import org.university.exceptions.InvalidEmailException;
 import org.university.exceptions.InvalidPhoneException;
 import org.university.exceptions.InvalidUserNameException;
+import org.university.service.AwsS3Service;
 import org.university.service.CourseService;
 import org.university.service.StudentService;
 import lombok.AccessLevel;
@@ -33,8 +34,10 @@ public class StudentController {
 
     private static final String REDIRECT = "redirect:/students";
     private static final String STUDENT_FORM = "studentform";
+    
     StudentService studentService;
     CourseService courseService;
+    AwsS3Service awsS3Service;
 
     @GetMapping()
     public String getStudents(@ModelAttribute("message") String message, Model model) {
@@ -70,6 +73,8 @@ public class StudentController {
     @PostMapping()
     public String addStudent(@ModelAttribute("student") StudentDto student, Model model) {
         try {
+            String filesURL = awsS3Service.uploadFile(student.getPhoto());
+            System.out.println(filesURL);
             studentService.register(student);
             return REDIRECT;
         } catch (InvalidEmailException | InvalidPhoneException | InvalidUserNameException | EmailExistException e) {

@@ -27,6 +27,7 @@ import org.university.exceptions.EntityNotExistException;
 import org.university.exceptions.InvalidEmailException;
 import org.university.exceptions.InvalidPhoneException;
 import org.university.exceptions.InvalidUserNameException;
+import org.university.service.AwsS3Service;
 import org.university.service.CourseService;
 import org.university.service.StudentService;
 import org.university.utils.CreatorTestEntities;
@@ -42,12 +43,15 @@ class StudentControllerTest {
 
     @Mock
     private CourseService courseServiceMock;
+    
+    @Mock
+    private AwsS3Service awsS3ServiceMock;
 
     private StudentController studentController;
 
     @BeforeEach
     public void setUpBeforeClass() throws Exception {
-        studentController = new StudentController(studentServiceMock, courseServiceMock);
+        studentController = new StudentController(studentServiceMock, courseServiceMock, awsS3ServiceMock);
         mockMvc = MockMvcBuilders.standaloneSetup(studentController).build();
     }
 

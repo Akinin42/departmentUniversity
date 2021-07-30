@@ -1,5 +1,6 @@
 package org.university.dto;
 
+import org.springframework.web.multipart.MultipartFile;
 import lombok.Data;
 
 @Data
@@ -11,4 +12,5 @@ public class UserDto {
     String phone;
     String password;
     String confirmPassword;
+    MultipartFile photo;
 }
