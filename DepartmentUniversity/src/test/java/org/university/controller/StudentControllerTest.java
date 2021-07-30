@@ -3,6 +3,7 @@ package org.university.controller;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +20,7 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.multipart.MultipartFile;
 import org.university.dto.StudentDto;
 import org.university.entity.Course;
 import org.university.entity.Student;
@@ -73,6 +75,9 @@ class StudentControllerTest {
     @Test
     void testAddStudent() throws Exception {
         StudentDto student = new StudentDto();
+        MultipartFile mockFile = mock(MultipartFile.class);
+        student.setPhoto(mockFile);
+        when(mockFile.isEmpty()).thenReturn(true);
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/students/").flashAttr("student", student);
         ResultActions result = mockMvc.perform(request);
         result.andExpect(MockMvcResultMatchers.view().name("redirect:/students"));
@@ -83,6 +88,9 @@ class StudentControllerTest {
     void testAddStudentWhenInputInvalidName() throws Exception {
         StudentDto student = new StudentDto();
         student.setName("invalid name");
+        MultipartFile mockFile = mock(MultipartFile.class);
+        student.setPhoto(mockFile);
+        when(mockFile.isEmpty()).thenReturn(true);
         doThrow(new InvalidUserNameException("Input name isn't valid!")).when(studentServiceMock).register(student);
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/students/").flashAttr("student", student);
         ResultActions result = mockMvc.perform(request);
@@ -94,6 +102,9 @@ class StudentControllerTest {
     void testAddStudentWhenInputInvalidEmail() throws Exception {
         StudentDto student = new StudentDto();
         student.setEmail("invalid email");
+        MultipartFile mockFile = mock(MultipartFile.class);
+        student.setPhoto(mockFile);
+        when(mockFile.isEmpty()).thenReturn(true);
         doThrow(new InvalidEmailException("Input email isn't valid!")).when(studentServiceMock).register(student);
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/students/").flashAttr("student", student);
         ResultActions result = mockMvc.perform(request);
@@ -105,6 +116,9 @@ class StudentControllerTest {
     void testAddStudentWhenInputInvalidPhone() throws Exception {
         StudentDto student = new StudentDto();
         student.setEmail("invalid email");
+        MultipartFile mockFile = mock(MultipartFile.class);
+        student.setPhoto(mockFile);
+        when(mockFile.isEmpty()).thenReturn(true);
         doThrow(new InvalidPhoneException("Input phone isn't valid!")).when(studentServiceMock).register(student);
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/students/").flashAttr("student", student);
         ResultActions result = mockMvc.perform(request);

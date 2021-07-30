@@ -12,6 +12,8 @@ import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.S3Object;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Component
@@ -27,19 +29,23 @@ public class AwsS3ServiceImpl implements AwsS3Service {
 
     @Override
     public String uploadFile(MultipartFile multipartFile) {
-        String fileURL = null;
-        String uniqueFileName = String.format("%s_%s", LocalDateTime.now(), multipartFile.getOriginalFilename());
+        String time = LocalDateTime.now().toString().replace(".", "").replace("-", "").replace(":", "");
+        String uniqueFileName = String.format("%s%s", time, multipartFile.getOriginalFilename());
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentType(multipartFile.getContentType());
         metadata.setContentLength(multipartFile.getSize());
         try {
             amazonS3.putObject(
                     new PutObjectRequest(bucketName, uniqueFileName, multipartFile.getInputStream(), metadata));
-            fileURL = amazonS3.getUrl(bucketName, uniqueFileName).toString();
             log.info("file is uploaded successfully");
-        } catch (AmazonServiceException | IOException e) {            
+        } catch (AmazonServiceException | IOException e) {
             log.error("file uploading is filed " + e.getMessage());
         }
-        return fileURL;
+        return uniqueFileName;
+    }
+
+    @Override
+    public S3Object downloadFile(String fileName) {
+        return amazonS3.getObject(bucketName, fileName);
     }
 }

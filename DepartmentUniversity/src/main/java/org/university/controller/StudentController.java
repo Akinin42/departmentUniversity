@@ -34,7 +34,7 @@ public class StudentController {
 
     private static final String REDIRECT = "redirect:/students";
     private static final String STUDENT_FORM = "studentform";
-    
+
     StudentService studentService;
     CourseService courseService;
     AwsS3Service awsS3Service;
@@ -72,9 +72,14 @@ public class StudentController {
 
     @PostMapping()
     public String addStudent(@ModelAttribute("student") StudentDto student, Model model) {
+        if (!student.getPhoto().isEmpty()) {
+            // here add validation files
+            String photoName = awsS3Service.uploadFile(student.getPhoto());
+            student.setPhotoName(photoName);
+        } else {
+            student.setPhotoName("here name defolt file");
+        }
         try {
-            String filesURL = awsS3Service.uploadFile(student.getPhoto());
-            System.out.println(filesURL);
             studentService.register(student);
             return REDIRECT;
         } catch (InvalidEmailException | InvalidPhoneException | InvalidUserNameException | EmailExistException e) {
@@ -115,13 +120,14 @@ public class StudentController {
             return REDIRECT;
         }
     }
-    
+
     @PostMapping("/edit")
-    public String getEditForm(@ModelAttribute("student") StudentDto student, @ModelAttribute("message") String message, Model model) {
+    public String getEditForm(@ModelAttribute("student") StudentDto student, @ModelAttribute("message") String message,
+            Model model) {
         model.addAttribute("student", student);
-        return "updateforms/student";        
+        return "updateforms/student";
     }
-    
+
     @PatchMapping()
     public String edit(@ModelAttribute("student") StudentDto student, Model model) {
         try {

@@ -13,4 +13,5 @@ public class UserDto {
     String password;
     String confirmPassword;
     MultipartFile photo;
+    String photoName;
 }
