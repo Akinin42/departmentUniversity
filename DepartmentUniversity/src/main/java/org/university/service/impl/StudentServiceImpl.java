@@ -66,6 +66,7 @@ public class StudentServiceImpl extends AbstractUserServiceImpl<Student> impleme
                 .withEmail(user.getEmail())
                 .withPhone(user.getPhone())
                 .withPassword(encoder.encode(user.getPassword()))
+                .withPhoto(user.getPhoto())
                 .build();
     }
 
@@ -157,6 +158,7 @@ public class StudentServiceImpl extends AbstractUserServiceImpl<Student> impleme
                 .withEmail(user.getEmail())
                 .withPhone(user.getPhone())
                 .withPassword(user.getPassword())
+                .withPhoto(user.getPhotoName())
                 .build();
     }
 }

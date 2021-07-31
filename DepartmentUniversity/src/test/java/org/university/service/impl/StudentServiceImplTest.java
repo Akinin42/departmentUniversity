@@ -51,6 +51,7 @@ class StudentServiceImplTest {
         student.setEmail("test@test.ru");
         student.setPhone("79236170788");
         student.setPassword("Test");
+        student.setPhotoName("testphoto");
         studentService.register(student);
         Student studentWithEncodePassword = Student.builder()
                 .withSex("Test")
@@ -58,6 +59,7 @@ class StudentServiceImplTest {
                 .withEmail("test@test.ru")
                 .withPhone("79236170788")
                 .withPassword("encodePassword")
+                .withPhoto("testphoto")
                 .build();
         verify(studentDaoMock).save(studentWithEncodePassword);
     }
@@ -406,14 +408,16 @@ class StudentServiceImplTest {
         studentDto.setName("Test");
         studentDto.setEmail("existmail@test.ru");
         studentDto.setPhone("79236170788");
-        studentDto.setPassword("Test");        
+        studentDto.setPassword("Test");
+        studentDto.setPhotoName("test-photo");
         Student student = Student.builder()
                 .withId(8)
                 .withSex("Test")
                 .withName("Test")
                 .withEmail("existmail@test.ru")
                 .withPhone("79236170788")
-                .withPassword("encodePassword")                
+                .withPassword("encodePassword")
+                .withPhoto("test-photo")
                 .build();
         studentService.edit(studentDto);
         verify(studentDaoMock).update(student);

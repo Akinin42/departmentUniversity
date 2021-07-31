@@ -39,6 +39,7 @@ public class TeacherServiceImpl extends AbstractUserServiceImpl<Teacher> impleme
                 .withPhone(user.getPhone())
                 .withPassword(encoder.encode(user.getPassword()))
                 .withScientificDegree(user.getScientificDegree())
+                .withPhoto(user.getPhoto())
                 .build();
     }
 
@@ -70,6 +71,7 @@ public class TeacherServiceImpl extends AbstractUserServiceImpl<Teacher> impleme
                 .withPhone(teacher.getPhone())
                 .withPassword(teacher.getPassword())
                 .withScientificDegree(teacher.getScientificDegree())
+                .withPhoto(teacher.getPhotoName())
                 .build();
     }
 }

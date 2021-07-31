@@ -45,6 +45,7 @@ class TeacherServiceImplTest {
         teacher.setPhone("78956547475");
         teacher.setPassword("Test");
         teacher.setScientificDegree("Test");
+        teacher.setPhotoName("test-photo");
         teacherService.register(teacher);
         Teacher teacherWithEncodePassword = Teacher.builder()
                 .withSex("Test")
@@ -53,6 +54,7 @@ class TeacherServiceImplTest {
                 .withPhone("78956547475")
                 .withPassword("encodePassword")
                 .withScientificDegree("Test")
+                .withPhoto("test-photo")
                 .build();
         verify(teacherDaoMock).save(teacherWithEncodePassword);
     }
@@ -211,6 +213,7 @@ class TeacherServiceImplTest {
         teacherDto.setPhone("79758657788");
         teacherDto.setPassword("Test");
         teacherDto.setScientificDegree("professor");
+        teacherDto.setPhotoName("test-photo");
         Teacher teacher = Teacher.builder()
                 .withId(1)
                 .withSex("Male")
@@ -219,6 +222,7 @@ class TeacherServiceImplTest {
                 .withPhone("79758657788")
                 .withPassword("encodePassword")
                 .withScientificDegree("professor")
+                .withPhoto("test-photo")
                 .build();
         teacherService.edit(teacherDto);
         verify(teacherDaoMock).update(teacher);
@@ -234,6 +238,7 @@ class TeacherServiceImplTest {
         teacherDto.setPhone("79758657788");
         teacherDto.setPassword("Test");
         teacherDto.setScientificDegree("professor");
+        teacherDto.setPhotoName("test-photo");
         Teacher teacher = Teacher.builder()
                 .withId(5)
                 .withSex("Male")
@@ -242,6 +247,7 @@ class TeacherServiceImplTest {
                 .withPhone("79758657788")
                 .withPassword("encodePassword")
                 .withScientificDegree("professor")
+                .withPhoto("test-photo")
                 .build();
         teacherService.edit(teacherDto);
         verify(teacherDaoMock).update(teacher);
