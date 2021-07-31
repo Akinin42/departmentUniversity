@@ -25,6 +25,7 @@ public class LessonMapper implements RowMapper<Lesson> {
                 .withPhone(resultSet.getString("teacher_phone"))
                 .withPassword(resultSet.getString("teacher_password"))
                 .withScientificDegree(resultSet.getString("teacher_degree"))
+                .withPhoto(resultSet.getString("teacher_photo"))
                 .build();
         Classroom classroom = Classroom.builder()
                 .withId(resultSet.getInt("classroom_id"))

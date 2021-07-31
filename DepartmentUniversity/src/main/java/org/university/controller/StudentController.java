@@ -17,9 +17,10 @@ import org.university.exceptions.EmailExistException;
 import org.university.exceptions.EntityNotExistException;
 import org.university.exceptions.InvalidEmailException;
 import org.university.exceptions.InvalidPhoneException;
+import org.university.exceptions.InvalidPhotoException;
 import org.university.exceptions.InvalidUserNameException;
-import org.university.service.AwsS3Service;
 import org.university.service.CourseService;
+import org.university.service.PhotoService;
 import org.university.service.StudentService;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -37,7 +38,7 @@ public class StudentController {
 
     StudentService studentService;
     CourseService courseService;
-    AwsS3Service awsS3Service;
+    PhotoService photoService;
 
     @GetMapping()
     public String getStudents(@ModelAttribute("message") String message, Model model) {
@@ -72,17 +73,12 @@ public class StudentController {
 
     @PostMapping()
     public String addStudent(@ModelAttribute("student") StudentDto student, Model model) {
-        if (!student.getPhoto().isEmpty()) {
-            // here add validation files
-            String photoName = awsS3Service.uploadFile(student.getPhoto());
-            student.setPhotoName(photoName);
-        } else {
-            student.setPhotoName("here name defolt file");
-        }
         try {
+            String photoName = photoService.savePhoto(student);
+            student.setPhotoName(photoName);
             studentService.register(student);
             return REDIRECT;
-        } catch (InvalidEmailException | InvalidPhoneException | InvalidUserNameException | EmailExistException e) {
+        } catch (InvalidEmailException | InvalidPhoneException | InvalidUserNameException | EmailExistException | InvalidPhotoException e) {
             model.addAttribute("message", e.getMessage());
             return STUDENT_FORM;
         }
