@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.university.dto.StudentDto;
 import org.university.entity.Course;
-import org.university.entity.Student;
 import org.university.exceptions.AuthorisationFailException;
 import org.university.exceptions.EmailExistException;
 import org.university.exceptions.EntityNotExistException;
@@ -117,9 +116,7 @@ public class StudentController {
     @PostMapping("/login")
     public String login(@ModelAttribute("student") StudentDto studentDto, Model model) {
         try {
-            Student student = studentService.login(studentDto.getEmail(), studentDto.getPassword());
-            model.addAttribute("student", student);
-            model.addAttribute("photoURL", photoService.createPhoto(student.getPhoto()));
+            model.addAttribute("student", studentService.login(studentDto.getEmail(), studentDto.getPassword()));
             return "studentprofile";
         } catch (EntityNotExistException e) {
             return STUDENT_FORM;
@@ -139,6 +136,8 @@ public class StudentController {
     @PatchMapping()
     public String edit(@ModelAttribute("student") StudentDto student, Model model) {
         try {
+            String photoName = photoService.savePhoto(student);
+            student.setPhotoName(photoName);
             studentService.edit(student);
             return REDIRECT;
         } catch (InvalidEmailException | InvalidPhoneException | InvalidUserNameException | EmailExistException e) {

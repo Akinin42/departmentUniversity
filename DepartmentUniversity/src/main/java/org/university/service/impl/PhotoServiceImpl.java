@@ -1,8 +1,5 @@
 package org.university.service.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.university.dto.StudentDto;
@@ -13,7 +10,6 @@ import org.university.service.validator.PhotoValidator;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
-
 
 @Component
 @Service
@@ -32,29 +28,13 @@ public class PhotoServiceImpl implements PhotoService {
             photoName = awsS3Service.uploadFile(user.getPhoto());
         } else {
             if (user.getClass() == StudentDto.class) {
-                photoName = user.getSex().equals("Male") ? "malestudent.png" : "femalestudent.png";
+                photoName = user.getSex().equals("Male") ? "~/DepartmentUniversity/static/images/malestudent.png"
+                        : "~/DepartmentUniversity/static/images/femalestudent.png";
             } else {
-                photoName = user.getSex().equals("Male") ? "maleteacher.png" : "femaleteacher.png";
+                photoName = user.getSex().equals("Male") ? "~/DepartmentUniversity/static/images/maleteacher.png"
+                        : "~/DepartmentUniversity/static/images/femaleteacher.png";
             }
         }
         return photoName;
     }
-
-    @Override
-    public String createPhoto(String fileName) {
-        String fileURL = null;
-        List<String> defoltPhotos = new ArrayList<>();
-        defoltPhotos.add("malestudent.png");
-        defoltPhotos.add("femalestudent.png");
-        defoltPhotos.add("maleteacher.png");
-        defoltPhotos.add("femaleteacher.png");
-        if(defoltPhotos.contains(fileName)) {
-            fileURL = String.format("~/DepartmentUniversity/static/images/%s", fileName);
-        }
-        else {
-            fileURL = fileName;
-        }
-        return fileURL;
-    }
-
 }

@@ -45,6 +45,7 @@
 								<tr>
 									<th th:text="#{label.id}"></th>
 									<th th:text="#{label.gender}"></th>
+									<th th:text="#{label.photo}"></th>
 									<th th:text="#{label.name}"></th>
 									<th th:text="#{label.email}"></th>
 									<th th:text="#{label.phone}"></th>
@@ -58,6 +59,9 @@
 								<tr th:each="student : ${students}">
 									<td th:text="${student.id}" />
 									<td th:text="${student.sex}" />
+									<td>
+									   <img th:src="@{${student.photo}}" alt="Avatar">    
+									</td>
 									<td th:text="${student.name}" />
 									<td th:text="${student.email}" />
 									<td th:text="${student.phone}" />
