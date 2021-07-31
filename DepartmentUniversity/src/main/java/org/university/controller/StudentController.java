@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.university.dto.StudentDto;
 import org.university.entity.Course;
+import org.university.entity.Student;
 import org.university.exceptions.AuthorisationFailException;
 import org.university.exceptions.EmailExistException;
 import org.university.exceptions.EntityNotExistException;
@@ -61,6 +62,14 @@ public class StudentController {
         if (studentService.findNumberOfUsers(5, number).isEmpty()) {
             number -= (page * 5);
         }
+        int numberUsers = 0;
+        if (page == 1 && !studentService.findNumberOfUsers(5, number).isEmpty()) {
+            numberUsers = (int) model.getAttribute("numberUsers") + 5;
+        }
+        if (page == -1 && number != 0) {
+            numberUsers = (int) model.getAttribute("numberUsers") - 5;
+        }
+        model.addAttribute("numberUsers", numberUsers);
         model.addAttribute("students", studentService.findNumberOfUsers(5, number));
         return "students";
     }
@@ -78,7 +87,8 @@ public class StudentController {
             student.setPhotoName(photoName);
             studentService.register(student);
             return REDIRECT;
-        } catch (InvalidEmailException | InvalidPhoneException | InvalidUserNameException | EmailExistException | InvalidPhotoException e) {
+        } catch (InvalidEmailException | InvalidPhoneException | InvalidUserNameException | EmailExistException
+                | InvalidPhotoException e) {
             model.addAttribute("message", e.getMessage());
             return STUDENT_FORM;
         }
@@ -107,7 +117,9 @@ public class StudentController {
     @PostMapping("/login")
     public String login(@ModelAttribute("student") StudentDto studentDto, Model model) {
         try {
-            model.addAttribute("student", studentService.login(studentDto.getEmail(), studentDto.getPassword()));
+            Student student = studentService.login(studentDto.getEmail(), studentDto.getPassword());
+            model.addAttribute("student", student);
+            model.addAttribute("photoURL", photoService.createPhoto(student.getPhoto()));
             return "studentprofile";
         } catch (EntityNotExistException e) {
             return STUDENT_FORM;

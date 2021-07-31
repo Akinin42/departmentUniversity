@@ -55,6 +55,8 @@ public class TeacherController {
         if (teacherService.findNumberOfUsers(5, number).isEmpty()) {
             number -= (page * 5);
         }
+        int numberUsers = (int) model.getAttribute("numberUsers") + 5;
+        model.addAttribute("numberUsers",  numberUsers);
         model.addAttribute("teachers", teacherService.findNumberOfUsers(5, number));
         return "teachers";
     }

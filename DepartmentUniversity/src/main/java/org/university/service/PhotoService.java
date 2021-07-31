@@ -6,5 +6,5 @@ public interface PhotoService {
     
     String savePhoto(UserDto user);
     
-    void createPhoto(String fileName);
+    String createPhoto(String fileName);
 }

@@ -134,7 +134,8 @@ public class StudentServiceImpl extends AbstractUserServiceImpl<Student> impleme
                 .withEmail(student.getEmail())
                 .withPhone(student.getPhone())
                 .withPassword(student.getPassword())
-                .withCourses(new HashSet<Course>(courses))               
+                .withCourses(new HashSet<Course>(courses))
+                .withPhoto(student.getPhoto())
                 .build();
     }
 

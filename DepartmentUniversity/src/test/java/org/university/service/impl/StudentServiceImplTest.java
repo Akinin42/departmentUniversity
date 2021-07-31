@@ -138,7 +138,8 @@ class StudentServiceImplTest {
                 .withEmail("Wood@email.ru")
                 .withPhone("test-phone")
                 .withPassword("test-password")
-                .withCourses(new HashSet<Course>(CreatorTestEntities.createCourses()))               
+                .withCourses(new HashSet<Course>(CreatorTestEntities.createCourses()))
+                .withPhoto("default-female-photo")
                 .build();
         assertThat(studentService.findNumberOfUsers(1, 0)).containsExactly(student);
     }
