@@ -145,6 +145,7 @@ public class CreatorTestEntities {
                 .withEmail("Wood@email.ru")
                 .withPhone("test-phone")
                 .withPassword("test-password")
+                .withPhoto("default-female-photo")
                 .build();
         students.add(student);
         student = Student.builder()
@@ -154,6 +155,7 @@ public class CreatorTestEntities {
                 .withEmail("Lee@email.ru")
                 .withPhone("test-phone")
                 .withPassword("test-password")
+                .withPhoto("default-female-photo")
                 .build();
         students.add(student);
         student = Student.builder()
@@ -163,6 +165,7 @@ public class CreatorTestEntities {
                 .withEmail("Born@email.ru")
                 .withPhone("test-phone")
                 .withPassword("test-password")
+                .withPhoto("default-female-photo")
                 .build();
         students.add(student);
         student = Student.builder()
@@ -172,6 +175,7 @@ public class CreatorTestEntities {
                 .withEmail("Melon@email.ru")
                 .withPhone("test-phone")
                 .withPassword("test-password")
+                .withPhoto("default-male-photo")
                 .build();
         students.add(student);
         student = Student.builder()
@@ -181,6 +185,7 @@ public class CreatorTestEntities {
                 .withEmail("Brown@email.ru")
                 .withPhone("test-phone")
                 .withPassword("test-password")
+                .withPhoto("default-male-photo")
                 .build();
         students.add(student);
         student = Student.builder()
@@ -190,6 +195,7 @@ public class CreatorTestEntities {
                 .withEmail("Hardy@email.ru")
                 .withPhone("test-phone")
                 .withPassword("test-password")
+                .withPhoto("default-male-photo")
                 .build();
         students.add(student);
         return students;

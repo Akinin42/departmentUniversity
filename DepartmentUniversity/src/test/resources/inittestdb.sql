@@ -37,7 +37,8 @@ student_sex VARCHAR(10) NOT NULL,
 student_name VARCHAR(100) NOT NULL, 
 student_email VARCHAR(40) NOT NULL, 
 student_phone VARCHAR(20) NOT NULL, 
-student_password VARCHAR(100) NOT NULL 
+student_password VARCHAR(100) NOT NULL,
+student_photo VARCHAR(250)
 );
 
 DROP TABLE IF EXISTS students_to_courses CASCADE;
@@ -83,12 +84,12 @@ INSERT INTO classrooms VALUES(1, 1, 'Test-address', 10);
 INSERT INTO classrooms VALUES(2, 2, 'Test-address', 15);
 INSERT INTO teachers VALUES(1, 'Male', 'Bob Moren', 'Bob@mail.ru', '89758657788', 'test-password', 'professor');
 INSERT INTO teachers VALUES(2, 'Female', 'Ann Moren', 'Ann@mail.ru', '89758651122', 'test-password','doctor');
-INSERT INTO students VALUES(1, 'Female', 'Jane Wood', 'Wood@email.ru', 'test-phone', 'test-password');
-INSERT INTO students VALUES(2, 'Female', 'Ann Lee', 'Lee@email.ru', 'test-phone', 'test-password');
-INSERT INTO students VALUES(3, 'Female', 'Mary Born', 'Born@email.ru', 'test-phone', 'test-password');
-INSERT INTO students VALUES(4, 'Male', 'Rob Melon', 'Melon@email.ru', 'test-phone','test-password');
-INSERT INTO students VALUES(5, 'Male', 'John Brown', 'Brown@email.ru', 'test-phone', 'test-password');
-INSERT INTO students VALUES(6, 'Male', 'Pol Hardy', 'Hardy@email.ru', 'test-phone', 'test-password');
+INSERT INTO students VALUES(1, 'Female', 'Jane Wood', 'Wood@email.ru', 'test-phone', 'test-password', 'default-female-photo');
+INSERT INTO students VALUES(2, 'Female', 'Ann Lee', 'Lee@email.ru', 'test-phone', 'test-password', 'default-female-photo');
+INSERT INTO students VALUES(3, 'Female', 'Mary Born', 'Born@email.ru', 'test-phone', 'test-password', 'default-female-photo');
+INSERT INTO students VALUES(4, 'Male', 'Rob Melon', 'Melon@email.ru', 'test-phone','test-password', 'default-male-photo');
+INSERT INTO students VALUES(5, 'Male', 'John Brown', 'Brown@email.ru', 'test-phone', 'test-password', 'default-male-photo');
+INSERT INTO students VALUES(6, 'Male', 'Pol Hardy', 'Hardy@email.ru', 'test-phone', 'test-password', 'default-male-photo');
 INSERT INTO students_to_courses (student_id, course_id) VALUES(1,1);
 INSERT INTO students_to_courses (student_id, course_id) VALUES(1,2);
 INSERT INTO students_to_courses (student_id, course_id) VALUES(1,3);

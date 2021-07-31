@@ -15,8 +15,8 @@ import org.university.entity.Student;
 @Component
 public class StudentDaoImpl extends AbstractCrudImpl<Student> implements StudentDao {
 
-    private static final String SAVE_QUERY = "INSERT INTO students (student_sex, student_name, student_email, student_phone, student_password)"
-            + " VALUES(?,?,?,?,?);";
+    private static final String SAVE_QUERY = "INSERT INTO students (student_sex, student_name, student_email, student_phone, student_password, student_photo)"
+            + " VALUES(?,?,?,?,?,?);";
     private static final String FIND_BY_ID_QUERY = "SELECT  * FROM students WHERE student_id =  ?;";
     private static final String FIND_ALL_QUERY = "SELECT * FROM students ORDER BY student_id;";
     private static final String FIND_ALL_PAGINATION_QUERY = "SELECT * FROM students ORDER BY student_id LIMIT ? OFFSET ?;";
@@ -35,7 +35,7 @@ public class StudentDaoImpl extends AbstractCrudImpl<Student> implements Student
     private static final String DELETE_STUDENT_FROM_COURSE_QUERY = "DELETE FROM students_to_courses "
             + "WHERE student_id = ? AND course_id = ?";
     private static final String UPDATE_QUERY = "UPDATE students "
-            + "SET student_sex = ?, student_name = ?, student_email = ?, student_phone = ?, student_password = ? WHERE student_id = ?;";
+            + "SET student_sex = ?, student_name = ?, student_email = ?, student_phone = ?, student_password = ?, student_photo = ? WHERE student_id = ?;";
 
     public StudentDaoImpl(JdbcTemplate jdbcTemplate) {
         super(jdbcTemplate, SAVE_QUERY, FIND_BY_ID_QUERY, FIND_ALL_QUERY, FIND_ALL_PAGINATION_QUERY,
@@ -44,12 +44,13 @@ public class StudentDaoImpl extends AbstractCrudImpl<Student> implements Student
 
     @Override
     protected Object[] insert(Student student) {
-        Object[] arguments = new Object[5];
+        Object[] arguments = new Object[6];
         arguments[0] = student.getSex();
         arguments[1] = student.getName();
         arguments[2] = student.getEmail();
         arguments[3] = student.getPhone();
         arguments[4] = student.getPassword();
+        arguments[5] = student.getPhoto();
         return arguments;
     }
 
@@ -101,13 +102,14 @@ public class StudentDaoImpl extends AbstractCrudImpl<Student> implements Student
 
     @Override
     protected Object[] updateArgs(Student student) {
-        Object[] arguments = new Object[6];
+        Object[] arguments = new Object[7];
         arguments[0] = student.getSex();
         arguments[1] = student.getName();
         arguments[2] = student.getEmail();
         arguments[3] = student.getPhone();
         arguments[4] = student.getPassword();
-        arguments[5] = student.getId();
+        arguments[5] = student.getPhoto();
+        arguments[6] = student.getId();
         return arguments;
     }
 }

@@ -16,6 +16,7 @@ public class StudentMapper implements RowMapper<Student> {
                 .withEmail(resultSet.getString("student_email"))
                 .withPhone(resultSet.getString("student_phone"))
                 .withPassword(resultSet.getString("student_password"))
+                .withPhoto(resultSet.getString("student_photo"))
                 .build();
     }
 }
