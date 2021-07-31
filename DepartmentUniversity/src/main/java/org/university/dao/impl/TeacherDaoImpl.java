@@ -13,30 +13,32 @@ import org.university.entity.Teacher;
 public class TeacherDaoImpl extends AbstractCrudImpl<Teacher> implements TeacherDao {
 
     private static final String SAVE_QUERY = "INSERT INTO teachers "
-            + "(teacher_sex, teacher_name, teacher_email, teacher_phone, teacher_password, teacher_degree)"
-            + " VALUES(?,?,?,?,?,?);";
+            + "(teacher_sex, teacher_name, teacher_email, teacher_phone, teacher_password, teacher_degree, teacher_photo)"
+            + " VALUES(?,?,?,?,?,?,?);";
     private static final String FIND_BY_ID_QUERY = "SELECT  * FROM teachers WHERE teacher_id =  ?;";
     private static final String FIND_ALL_QUERY = "SELECT * FROM teachers ORDER BY teacher_id;";
     private static final String FIND_ALL_PAGINATION_QUERY = "SELECT * FROM teachers ORDER BY teacher_id LIMIT ? OFFSET ?;";
     private static final String DELETE_BY_ID_QUERY = "DELETE FROM teachers WHERE teacher_id = ?;";
     private static final String FIND_BY_EMAIL_QUERY = "SELECT  * FROM teachers WHERE teacher_email =  ?;";
     private static final String UPDATE_QUERY = "UPDATE teachers "
-            + "SET teacher_sex = ?, teacher_name = ?, teacher_email = ?, teacher_phone = ?, teacher_password = ?, teacher_degree = ? WHERE teacher_id = ?;";
+            + "SET teacher_sex = ?, teacher_name = ?, teacher_email = ?, teacher_phone = ?, teacher_password = ?, teacher_degree = ? , teacher_photo = ? "
+            + "WHERE teacher_id = ?;";
 
     public TeacherDaoImpl(JdbcTemplate jdbcTemplate) {
-        super(jdbcTemplate, SAVE_QUERY, FIND_BY_ID_QUERY, FIND_ALL_QUERY, FIND_ALL_PAGINATION_QUERY,
-                DELETE_BY_ID_QUERY,UPDATE_QUERY);
+        super(jdbcTemplate, SAVE_QUERY, FIND_BY_ID_QUERY, FIND_ALL_QUERY, FIND_ALL_PAGINATION_QUERY, DELETE_BY_ID_QUERY,
+                UPDATE_QUERY);
     }
 
     @Override
     protected Object[] insert(Teacher teacher) {
-        Object[] arguments = new Object[6];
+        Object[] arguments = new Object[7];
         arguments[0] = teacher.getSex();
         arguments[1] = teacher.getName();
         arguments[2] = teacher.getEmail();
         arguments[3] = teacher.getPhone();
         arguments[4] = teacher.getPassword();
         arguments[5] = teacher.getScientificDegree();
+        arguments[6] = teacher.getPhoto();
         return arguments;
     }
 
@@ -53,17 +55,18 @@ public class TeacherDaoImpl extends AbstractCrudImpl<Teacher> implements Teacher
             return Optional.empty();
         }
     }
-    
+
     @Override
     protected Object[] updateArgs(Teacher teacher) {
-        Object[] arguments = new Object[7];
+        Object[] arguments = new Object[8];
         arguments[0] = teacher.getSex();
         arguments[1] = teacher.getName();
         arguments[2] = teacher.getEmail();
         arguments[3] = teacher.getPhone();
         arguments[4] = teacher.getPassword();
         arguments[5] = teacher.getScientificDegree();
-        arguments[6] = teacher.getId();
+        arguments[6] = teacher.getPhoto();
+        arguments[7] = teacher.getId();
         return arguments;
     }
 }

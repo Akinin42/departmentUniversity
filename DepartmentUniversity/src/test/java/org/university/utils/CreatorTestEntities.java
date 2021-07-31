@@ -80,6 +80,7 @@ public class CreatorTestEntities {
                 .withPhone("89758657788")
                 .withPassword("test-password")
                 .withScientificDegree("professor")
+                .withPhoto("default-male-teacher-photo")
                 .build();
         teachers.add(teacher);
         teacher = Teacher.builder()
@@ -90,6 +91,7 @@ public class CreatorTestEntities {
                 .withPhone("89758651122")
                 .withPassword("test-password")
                 .withScientificDegree("doctor")
+                .withPhoto("default-female-teacher-photo")
                 .build();
         teachers.add(teacher);
         return teachers;

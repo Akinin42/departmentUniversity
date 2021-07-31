@@ -27,7 +27,8 @@ teacher_name VARCHAR(100) NOT NULL,
 teacher_email VARCHAR(40) NOT NULL, 
 teacher_phone VARCHAR(20) NOT NULL, 
 teacher_password VARCHAR(100) NOT NULL, 
-teacher_degree VARCHAR(50) NOT NULL 
+teacher_degree VARCHAR(50) NOT NULL,
+teacher_photo VARCHAR(250)
 );
 
 DROP TABLE IF EXISTS students CASCADE;
@@ -82,8 +83,8 @@ INSERT INTO courses VALUES(2, 'Math','test-courses');
 INSERT INTO courses VALUES(3, 'Art','test-courses');
 INSERT INTO classrooms VALUES(1, 1, 'Test-address', 10);
 INSERT INTO classrooms VALUES(2, 2, 'Test-address', 15);
-INSERT INTO teachers VALUES(1, 'Male', 'Bob Moren', 'Bob@mail.ru', '89758657788', 'test-password', 'professor');
-INSERT INTO teachers VALUES(2, 'Female', 'Ann Moren', 'Ann@mail.ru', '89758651122', 'test-password','doctor');
+INSERT INTO teachers VALUES(1, 'Male', 'Bob Moren', 'Bob@mail.ru', '89758657788', 'test-password', 'professor', 'default-male-teacher-photo');
+INSERT INTO teachers VALUES(2, 'Female', 'Ann Moren', 'Ann@mail.ru', '89758651122', 'test-password','doctor', 'default-female-teacher-photo');
 INSERT INTO students VALUES(1, 'Female', 'Jane Wood', 'Wood@email.ru', 'test-phone', 'test-password', 'default-female-photo');
 INSERT INTO students VALUES(2, 'Female', 'Ann Lee', 'Lee@email.ru', 'test-phone', 'test-password', 'default-female-photo');
 INSERT INTO students VALUES(3, 'Female', 'Mary Born', 'Born@email.ru', 'test-phone', 'test-password', 'default-female-photo');
