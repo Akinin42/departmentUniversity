@@ -28,13 +28,14 @@ import lombok.experimental.FieldDefaults;
 
 @Controller
 @RequestMapping("/students")
-@SessionAttributes("numberUsers")
+@SessionAttributes("pagesNumber")
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class StudentController {
 
     private static final String REDIRECT = "redirect:/students";
     private static final String STUDENT_FORM = "studentform";
+    private static final int NUMBER_STUDENTS_ON_PAGE = 5;
 
     StudentService studentService;
     CourseService courseService;
@@ -45,7 +46,7 @@ public class StudentController {
         model.addAttribute("students", studentService.findNumberOfUsers(5, 0));
         model.addAttribute("courses", courseService.findAllCourses());
         model.addAttribute("student", new StudentDto());
-        model.addAttribute("numberUsers", Integer.valueOf(0));
+        model.addAttribute("pagesNumber", Integer.valueOf(0));
         return "students";
     }
 
@@ -54,22 +55,15 @@ public class StudentController {
         model.addAttribute("students", null);
         model.addAttribute("courses", courseService.findAllCourses());
         model.addAttribute("student", new StudentDto());
-        int number = (int) model.getAttribute("numberUsers") + (page * 5);
-        if (number < 0) {
-            number = 0;
+        int pagesNumber = (int) model.getAttribute("pagesNumber") + page;
+        if (pagesNumber < 0) {
+            pagesNumber = 0;
         }
-        if (studentService.findNumberOfUsers(5, number).isEmpty()) {
-            number -= (page * 5);
+        if (studentService.findNumberOfUsers(5, (pagesNumber * NUMBER_STUDENTS_ON_PAGE)).isEmpty()) {
+            pagesNumber -= page;
         }
-        int numberUsers = 0;
-        if (page == 1 && !studentService.findNumberOfUsers(5, number).isEmpty()) {
-            numberUsers = (int) model.getAttribute("numberUsers") + 5;
-        }
-        if (page == -1 && number != 0) {
-            numberUsers = (int) model.getAttribute("numberUsers") - 5;
-        }
-        model.addAttribute("numberUsers", numberUsers);
-        model.addAttribute("students", studentService.findNumberOfUsers(5, number));
+        model.addAttribute("pagesNumber", pagesNumber);
+        model.addAttribute("students", studentService.findNumberOfUsers(5, pagesNumber * NUMBER_STUDENTS_ON_PAGE));
         return "students";
     }
 
