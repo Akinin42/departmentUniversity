@@ -31,8 +31,9 @@ public class PhotoValidator implements Validator<MultipartFile> {
                 log.error("Input file has invalid extension, it's not photo!");
                 throw new InvalidPhotoException("photoextension");
             }
-        } catch (IOException | MagicParseException | MagicMatchNotFoundException | MagicException e) {
+        } catch (IOException | MagicParseException | MagicMatchNotFoundException | MagicException e) {            
             log.error("Inputing fail failed!");
+            throw new InvalidPhotoException("fail");
         } 
     }
 }

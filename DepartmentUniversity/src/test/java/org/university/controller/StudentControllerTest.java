@@ -72,60 +72,57 @@ class StudentControllerTest {
                 .andExpect(MockMvcResultMatchers.model().attribute("courses", courses));
     }
 
-//    @Test
-//    void testAddStudent() throws Exception {
-//        StudentDto student = new StudentDto();        
-//        MultipartFile mockFile = mock(MultipartFile.class);
-//        student.setPhoto(mockFile);
-//        student.setSex("male");
-//        when(mockFile.isEmpty()).thenReturn(true);
-//        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/students/").flashAttr("student", student);
-//        ResultActions result = mockMvc.perform(request);
-//        result.andExpect(MockMvcResultMatchers.view().name("redirect:/students"));
-//        verify(studentServiceMock).register(student);
-//    }
-//
-//    @Test
-//    void testAddStudentWhenInputInvalidName() throws Exception {
-//        StudentDto student = new StudentDto();
-//        student.setName("invalid name");
-//        MultipartFile mockFile = mock(MultipartFile.class);
-//        student.setPhoto(mockFile);
-//        when(mockFile.isEmpty()).thenReturn(true);
-//        doThrow(new InvalidUserNameException("Input name isn't valid!")).when(studentServiceMock).register(student);
-//        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/students/").flashAttr("student", student);
-//        ResultActions result = mockMvc.perform(request);
-//        result.andExpect(MockMvcResultMatchers.view().name("studentform"))
-//                .andExpect(MockMvcResultMatchers.model().attribute("message", "Input name isn't valid!"));
-//    }
-//    
-//    @Test
-//    void testAddStudentWhenInputInvalidEmail() throws Exception {
-//        StudentDto student = new StudentDto();
-//        student.setEmail("invalid email");
-//        MultipartFile mockFile = mock(MultipartFile.class);
-//        student.setPhoto(mockFile);
-//        when(mockFile.isEmpty()).thenReturn(true);
-//        doThrow(new InvalidEmailException("Input email isn't valid!")).when(studentServiceMock).register(student);
-//        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/students/").flashAttr("student", student);
-//        ResultActions result = mockMvc.perform(request);
-//        result.andExpect(MockMvcResultMatchers.view().name("studentform"))
-//        .andExpect(MockMvcResultMatchers.model().attribute("message", "Input email isn't valid!"));
-//    }
-//    
-//    @Test
-//    void testAddStudentWhenInputInvalidPhone() throws Exception {
-//        StudentDto student = new StudentDto();
-//        student.setEmail("invalid email");
-//        MultipartFile mockFile = mock(MultipartFile.class);
-//        student.setPhoto(mockFile);
-//        when(mockFile.isEmpty()).thenReturn(true);
-//        doThrow(new InvalidPhoneException("Input phone isn't valid!")).when(studentServiceMock).register(student);
-//        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/students/").flashAttr("student", student);
-//        ResultActions result = mockMvc.perform(request);
-//        result.andExpect(MockMvcResultMatchers.view().name("studentform"))
-//        .andExpect(MockMvcResultMatchers.model().attribute("message", "Input phone isn't valid!"));
-//    }
+    @Test
+    void testAddStudent() throws Exception {
+        StudentDto student = new StudentDto();        
+        MultipartFile mockFile = mock(MultipartFile.class);
+        student.setPhoto(mockFile);
+        student.setSex("male");
+        when(photoServiceMock.savePhoto(student)).thenReturn("");
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/students/").flashAttr("student", student);
+        ResultActions result = mockMvc.perform(request);
+        result.andExpect(MockMvcResultMatchers.view().name("redirect:/students"));
+        verify(studentServiceMock).register(student);
+    }
+
+    @Test
+    void testAddStudentWhenInputInvalidName() throws Exception {
+        StudentDto student = new StudentDto();
+        student.setName("invalid name");
+        MultipartFile mockFile = mock(MultipartFile.class);
+        student.setPhoto(mockFile);        
+        doThrow(new InvalidUserNameException("Input name isn't valid!")).when(studentServiceMock).register(student);
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/students/").flashAttr("student", student);
+        ResultActions result = mockMvc.perform(request);
+        result.andExpect(MockMvcResultMatchers.view().name("studentform"))
+                .andExpect(MockMvcResultMatchers.model().attribute("message", "Input name isn't valid!"));
+    }
+    
+    @Test
+    void testAddStudentWhenInputInvalidEmail() throws Exception {
+        StudentDto student = new StudentDto();
+        student.setEmail("invalid email");
+        MultipartFile mockFile = mock(MultipartFile.class);
+        student.setPhoto(mockFile);        
+        doThrow(new InvalidEmailException("Input email isn't valid!")).when(studentServiceMock).register(student);
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/students/").flashAttr("student", student);
+        ResultActions result = mockMvc.perform(request);
+        result.andExpect(MockMvcResultMatchers.view().name("studentform"))
+        .andExpect(MockMvcResultMatchers.model().attribute("message", "Input email isn't valid!"));
+    }
+    
+    @Test
+    void testAddStudentWhenInputInvalidPhone() throws Exception {
+        StudentDto student = new StudentDto();
+        student.setEmail("invalid email");
+        MultipartFile mockFile = mock(MultipartFile.class);
+        student.setPhoto(mockFile);        
+        doThrow(new InvalidPhoneException("Input phone isn't valid!")).when(studentServiceMock).register(student);
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/students/").flashAttr("student", student);
+        ResultActions result = mockMvc.perform(request);
+        result.andExpect(MockMvcResultMatchers.view().name("studentform"))
+        .andExpect(MockMvcResultMatchers.model().attribute("message", "Input phone isn't valid!"));
+    }
 
     @Test
     void testDelete() throws Exception {

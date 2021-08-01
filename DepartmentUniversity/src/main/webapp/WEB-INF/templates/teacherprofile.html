@@ -11,6 +11,11 @@
 <link rel="stylesheet" th:href="@{/static/profile.css}" />
 <script src="https://use.fontawesome.com/fec1def459.js"></script>
 <title th:text="#{label.teacherprofile}"></title>
+<style>
+   .round {
+    border-radius: 50%;
+   }
+</style>
 </head>
 <body>
 <div class="container">
@@ -39,7 +44,7 @@
                         <div class="col-sm-4 bg-c-lite-green user-profile">
                             <div class="card-block text-center text-white">                                
                                 <h6 class="f-w-600" th:text="${teacher.name}"></h6>
-                                <img th:src="@{${teacher.photo}}" alt="Avatar">
+                                <img class="round" th:src="@{${teacher.photo}}" alt="Avatar">
                                 <p th:text="${teacher.scientificDegree}"></p> 
                             </div>
                         </div>

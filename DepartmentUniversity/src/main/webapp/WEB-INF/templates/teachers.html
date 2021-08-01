@@ -11,6 +11,11 @@
 <link rel="stylesheet" th:href="@{/static/table.css}" />
 <script src="https://use.fontawesome.com/fec1def459.js"></script>
 <title th:text="#{label.teachers}"></title>
+<style>
+   .round {
+    border-radius: 50%;
+   }
+</style>
 </head>
 <body>
 	<div th:replace="header :: navbar"></div>
@@ -59,7 +64,7 @@
 									<td th:text="${teacher.id}" />
 									<td th:text="${teacher.sex}" />
 									<td>
-                                       <img th:src="@{${teacher.photo}}" alt="Avatar">    
+                                       <img class="round" th:src="@{${teacher.photo}}" alt="Avatar" >    
                                     </td>
 									<td th:text="${teacher.name}" />
 									<td th:text="${teacher.email}" />
