@@ -5,7 +5,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -127,7 +126,7 @@ public class StudentController {
         return "updateforms/student";
     }
 
-    @PatchMapping()
+    @PostMapping("/update")
     public String edit(@ModelAttribute("student") StudentDto student, Model model) {
         try {
             String photoName = photoService.savePhoto(student);

@@ -26,6 +26,7 @@ import org.university.exceptions.EntityNotExistException;
 import org.university.exceptions.InvalidEmailException;
 import org.university.exceptions.InvalidPhoneException;
 import org.university.exceptions.InvalidUserNameException;
+import org.university.service.PhotoService;
 import org.university.service.TeacherService;
 import org.university.utils.CreatorTestEntities;
 
@@ -38,11 +39,14 @@ class TeacherControllerTest {
     @Mock
     private TeacherService teacherServiceMock;
     
+    @Mock
+    private PhotoService photoServiceMock;
+    
     private TeacherController teacherController;
 
     @BeforeEach
     public void setUpBeforeClass() throws Exception {
-        teacherController = new TeacherController(teacherServiceMock);
+        teacherController = new TeacherController(teacherServiceMock, photoServiceMock);
         mockMvc = MockMvcBuilders.standaloneSetup(teacherController).build();
     }
 
@@ -211,7 +215,7 @@ class TeacherControllerTest {
     @Test
     void testEdit() throws Exception {
         TeacherDto teacher = new TeacherDto();
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.patch("/teachers/")
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/teachers/update/")
                 .flashAttr("teacher", teacher);
         ResultActions result = mockMvc.perform(request);
         result.andExpect(MockMvcResultMatchers.view().name("redirect:/teachers"));
@@ -223,7 +227,7 @@ class TeacherControllerTest {
         TeacherDto teacher = new TeacherDto();
         teacher.setName("invalid name");
         doThrow(new InvalidUserNameException("Input name isn't valid!")).when(teacherServiceMock).edit(teacher);
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.patch("/teachers/")
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/teachers/update/")
                 .flashAttr("teacher", teacher);
         ResultActions result = mockMvc.perform(request);
         result.andExpect(MockMvcResultMatchers.view().name("updateforms/teacher"))
@@ -235,7 +239,7 @@ class TeacherControllerTest {
         TeacherDto teacher = new TeacherDto();
         teacher.setEmail("invalid email");
         doThrow(new InvalidEmailException("Input email isn't valid!")).when(teacherServiceMock).edit(teacher);
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.patch("/teachers/")
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/teachers/update/")
                 .flashAttr("teacher", teacher);
         ResultActions result = mockMvc.perform(request);
         result.andExpect(MockMvcResultMatchers.view().name("updateforms/teacher"))
@@ -247,7 +251,7 @@ class TeacherControllerTest {
         TeacherDto teacher = new TeacherDto();
         teacher.setEmail("invalid email");
         doThrow(new InvalidPhoneException("Input phone isn't valid!")).when(teacherServiceMock).edit(teacher);
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.patch("/teachers/")
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/teachers/update/")
                 .flashAttr("teacher", teacher);
         ResultActions result = mockMvc.perform(request);
         result.andExpect(MockMvcResultMatchers.view().name("updateforms/teacher"))

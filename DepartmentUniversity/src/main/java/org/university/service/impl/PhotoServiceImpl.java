@@ -17,6 +17,8 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 public class PhotoServiceImpl implements PhotoService {
 
+    private static final String DEFAULT_PATH = "~/DepartmentUniversity/static/images/";
+
     AwsS3Service awsS3Service;
     PhotoValidator validator;
 
@@ -28,11 +30,11 @@ public class PhotoServiceImpl implements PhotoService {
             photoName = awsS3Service.uploadFile(user.getPhoto());
         } else {
             if (user.getClass() == StudentDto.class) {
-                photoName = user.getSex().equals("Male") ? "~/DepartmentUniversity/static/images/malestudent.png"
-                        : "~/DepartmentUniversity/static/images/femalestudent.png";
+                photoName = user.getSex().equals("Male") ? String.format("%smalestudent.png", DEFAULT_PATH)
+                        : String.format("%sfemalestudent.png", DEFAULT_PATH);
             } else {
-                photoName = user.getSex().equals("Male") ? "~/DepartmentUniversity/static/images/maleteacher.png"
-                        : "~/DepartmentUniversity/static/images/femaleteacher.png";
+                photoName = user.getSex().equals("Male") ? String.format("%smaleteacher.png", DEFAULT_PATH)
+                        : String.format("%sfemaleteacher.png", DEFAULT_PATH);
             }
         }
         return photoName;

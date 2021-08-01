@@ -79,7 +79,7 @@
 <body>
 	<div class="container">
 		<div class="row main-form">
-			<form class="" th:action="@{/teachers}" th:object="${teacher}" th:method="patch">
+			<form class="" th:action="@{/teachers/update}" th:object="${teacher}" th:method="post" enctype="multipart/form-data">
 				<div class="form-group">
 					<label for="name" class="cols-sm-2 control-label" th:text="#{label.name}"></label>
 					<div class="cols-sm-10">
@@ -104,6 +104,15 @@
                                 <option th:value="Male" th:text="#{label.male}" ></option>
                                 <option th:value="Female" th:text="#{label.female}"></option>
                             </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="photo" class="cols-sm-2 control-label" th:text="#{label.photo}"></label>
+                    <div class="cols-sm-10">
+                        <div class="input-group">
+                            <input type="file" th:value="${teacher.photo}" name="photo" />
                         </div>
                     </div>
                 </div>
