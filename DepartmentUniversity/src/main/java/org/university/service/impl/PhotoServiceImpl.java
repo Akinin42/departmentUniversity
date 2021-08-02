@@ -1,6 +1,5 @@
 package org.university.service.impl;
 
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.university.dto.StudentDto;
 import org.university.dto.UserDto;
@@ -11,7 +10,6 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
-@Component
 @Service
 @AllArgsConstructor
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)

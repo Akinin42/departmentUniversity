@@ -83,6 +83,7 @@ class StudentControllerTest {
         ResultActions result = mockMvc.perform(request);
         result.andExpect(MockMvcResultMatchers.view().name("redirect:/students"));
         verify(studentServiceMock).register(student);
+        verify(photoServiceMock).savePhoto(student);
     }
 
     @Test
@@ -266,6 +267,7 @@ class StudentControllerTest {
         ResultActions result = mockMvc.perform(request);
         result.andExpect(MockMvcResultMatchers.view().name("redirect:/students"));
         verify(studentServiceMock).edit(student);
+        verify(photoServiceMock).savePhoto(student);
     }
     
     @Test

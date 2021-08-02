@@ -117,6 +117,20 @@ class PhotoServiceImplTest {
         verify(awsS3ServiceMock).uploadFile(multipartFile);
     }
     
+//    @Test
+//    void savePhotoShouldReturnFileURLWhenInputValidImage() throws IOException {
+//        UserDto user = new TeacherDto();
+//        File file = new File("src/test/resources/validimage.png");
+//        FileInputStream input = new FileInputStream(file);
+//        MultipartFile multipartFile = new MockMultipartFile("validimage", file.getName(), "image/png",
+//                IOUtils.toByteArray(input));
+//        user.setPhoto(multipartFile);
+//        photoService.savePhoto(user);
+//        AwsS3ServiceImpl s3Service = new AwsS3ServiceImpl();
+//        verify(awsS3ServiceMock).uploadFile(multipartFile);
+//    }
+
+    
     @Test
     void savePhotoShouldThrowInvalidPhotoExceptionWhenInpupFileCantReading() throws IOException {
         UserDto user = new StudentDto();
