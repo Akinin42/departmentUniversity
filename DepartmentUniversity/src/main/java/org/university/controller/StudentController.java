@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.university.dto.StudentDto;
 import org.university.entity.Course;
-import org.university.exceptions.AuthorisationFailException;
 import org.university.exceptions.EmailExistException;
 import org.university.exceptions.EntityNotExistException;
 import org.university.exceptions.InvalidEmailException;
@@ -21,6 +20,7 @@ import org.university.exceptions.InvalidUserNameException;
 import org.university.service.CourseService;
 import org.university.service.PhotoService;
 import org.university.service.StudentService;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -113,9 +113,6 @@ public class StudentController {
             return "studentprofile";
         } catch (EntityNotExistException e) {
             return STUDENT_FORM;
-        } catch (AuthorisationFailException e) {
-            model.addAttribute("message", "passworddontcorrect");
-            return REDIRECT;
         }
     }
 

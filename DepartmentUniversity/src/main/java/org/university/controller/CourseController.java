@@ -13,6 +13,7 @@ import org.university.exceptions.EntityAlreadyExistException;
 import org.university.exceptions.InvalidCourseNameException;
 import org.university.exceptions.InvalidDescriptionException;
 import org.university.service.CourseService;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -35,13 +36,8 @@ public class CourseController {
 
     @PostMapping()
     public String add(@ModelAttribute("course") CourseDto course, Model model) {
-        try {
-            courseService.addCourse(course);
-            return REDIRECT;
-        } catch (InvalidCourseNameException | InvalidDescriptionException | EntityAlreadyExistException e) {
-            model.addAttribute("message", e.getMessage());
-            return REDIRECT;
-        }
+        courseService.addCourse(course);
+        return REDIRECT;
     }
 
     @DeleteMapping()
@@ -49,13 +45,14 @@ public class CourseController {
         courseService.delete(course);
         return REDIRECT;
     }
-    
+
     @PostMapping("/edit")
-    public String getEditForm(@ModelAttribute("course") CourseDto course, @ModelAttribute("message") String message, Model model) {
+    public String getEditForm(@ModelAttribute("course") CourseDto course, @ModelAttribute("message") String message,
+            Model model) {
         model.addAttribute("course", course);
-        return "updateforms/course";        
+        return "updateforms/course";
     }
-    
+
     @PatchMapping()
     public String edit(@ModelAttribute("course") CourseDto course, Model model) {
         try {

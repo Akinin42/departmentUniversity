@@ -1,0 +1,261 @@
+
+
+    <!doctype html>
+    <html xmlns:th="http://www.thymeleaf.org" lang="en">
+    <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+      <title th:text="#{label.500error}"></title>
+      <style type="text/css">
+        html {
+            font-family: sans-serif;
+            -ms-text-size-adjust: 100%;
+            -webkit-text-size-adjust: 100%;
+        }
+        body {
+            margin: 0;
+        }
+        a {
+            background-color: transparent;
+        }
+        a:active,
+        a:hover {
+            outline: 0;
+        }
+        h1 {
+            font-size: 2em;
+            margin: 0.67em 0;
+        }
+        img {
+            border: 0;
+        }
+        svg:not(:root) {
+            overflow: hidden;
+        } 
+        body {
+            color: #333;
+        }
+        a {
+            color: #07e;
+        }
+        html {
+            box-sizing: border-box;
+        }
+        *,
+        *:before,
+        *:after {
+            -moz-box-sizing: inherit;
+            box-sizing: inherit;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+        html {
+            font-size: 16px;
+            font-family: "Proxima Nova", Helvetica, Arial, sans-serif;
+        }
+        body {
+            font-size: 1rem;
+            line-height: 1.5rem;
+        }
+        h1 {
+            font-size: 2.25rem;
+            line-height: 2.5rem;
+        }
+        h2 {
+            font-size: 1.375rem;
+            line-height: 1.625rem;
+        }
+        a {
+            text-decoration: none;
+            color: #07e;
+        }
+        a:hover {
+            color: #004488;
+            transition: color .15s ease 0s;
+        }
+        .text-red {
+            color: #e32 !important;
+        }
+        .button {
+            cursor: pointer !important;
+            padding: 0 !important;
+            background-color: transparent !important;
+            background-image: none !important;
+            border: 0 !important;
+            white-space: nowrap !important;
+            -webkit-appearance: none;
+            appearance: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            -o-user-select: none;
+            user-select: none;
+            font-family: inherit !important;
+            padding: .5rem .875rem !important;
+            font-size: 1rem !important;
+            line-height: 1.5rem !important;
+            border-radius: 3px !important;
+            text-decoration: none !important;
+            cursor: pointer !important;
+            display: inline-block !important;
+            border: 1px solid transparent !important;
+            text-align: center !important;
+        }
+        .button,
+        .button:active:focus {
+            outline: 0 !important;
+        }
+        .button:hover {
+            transition: background-color .15s ease 0s !important;
+        }
+        .button--primary {
+            background-color: #07e !important;
+            color: #fff !important;
+        }
+        .button--primary:not(.button--disabled):hover {
+            background-color: #004488 !important;
+            color: #fff !important;
+        }
+        .button--primary:not(.button--disabled):active {
+            background-color: #001e3c !important;
+        }
+        .col {
+            float: left !important;
+        }
+        .xs-col-12 {
+            width: 100% !important;
+        }
+        
+        .bold {
+            font-weight: 600 !important;
+        }
+        .xs-text-left {
+            text-align: left !important;
+        }
+        .xs-text-center {
+            text-align: center !important;
+        }
+        @media (min-width: 40rem) {
+            .sm-text-left {
+                text-align: left !important;
+            }
+        }
+        .xs-hide {
+            display: none !important;
+        }
+        .xs-block {
+            display: block !important;
+        }
+        @media (min-width: 40rem) {
+            .sm-hide {
+                display: none !important;
+            }
+            .sm-block {
+                display: block !important;
+            }
+            .sm-inline-block {
+                display: inline-block !important;
+            }
+        }
+        .xs-mb1 {
+            margin-bottom: 0.5rem !important;
+        }
+        .xs-mb2 {
+            margin-bottom: 1rem !important;
+        }
+        .xs-mb3 {
+            margin-bottom: 1.5rem !important;
+        }
+        .xs-mb4 {
+            margin-bottom: 2rem !important;
+        }
+        @media (min-width: 52rem) {
+            .md-mt5 {
+                margin-top: 3rem !important;
+            }
+        }
+        .xs-p3 {
+            padding: 1.5rem !important;
+        }
+        .xs-px4 {
+            padding-left: 2rem !important;
+            padding-right: 2rem !important;
+        }
+        .xs-px5 {
+            padding-left: 3rem !important;
+            padding-right: 3rem !important;
+        }
+        @media (min-width: 40rem) {
+            .sm-px2 {
+                padding-left: 1rem !important;
+                padding-right: 1rem !important;
+            }
+            .sm-p4 {
+                padding: 2rem !important;
+            }
+        }
+        @media (min-width: 52rem) {
+            .md-px2 {
+                padding-left: 1rem !important;
+                padding-right: 1rem !important;
+            }
+            .md-pb4 {
+                padding-bottom: 2rem !important;
+            }
+            .md-pl4 {
+                padding-left: 2rem !important;
+            }
+        }
+        .clearfix:before,
+        .clearfix:after {
+            content: " " !important;
+            display: table !important;
+        }
+        .clearfix:after {
+            clear: both !important;
+        }
+        .page-header__logo-bf svg {
+            height: 20px;
+            width: 112px;
+            display: block;
+        }
+        .header-text {
+            font-size: 3.5rem;
+            line-height: 3.6rem;
+            font-weight: 700;
+        }
+        .subhead-text {
+            font-size: 1.2rem;
+        }
+        .body-text {
+            font-size: 1rem;
+            line-height: 1.25rem;
+        }
+        @media (min-width: 52rem) {
+            .header-text {
+                font-size: 4rem;
+                line-height: 4.15rem;
+            }
+            .subhead-text {
+                font-size: 1.375rem;
+                line-height: 1.6rem;
+            }
+            .body-text {
+                font-size: 1.125rem;
+                line-height: 1.5rem;
+            }
+        }
+      </style>
+    </head>
+      <body>
+        <div class="clearfix lg-col-10 lg-offset-1 xs-px4 sm-p4">
+          <div class="xs-text-left col xs-col-12 sm-col-6 md-col-7 md-pl4 md-mt5">
+                <h1 class="header-text xs-mb1 text-red xs-text-center sm-text-left" th:text="#{label.500error}"></h1>
+                <h2 class="subhead-text xs-mb2 bold text-red xs-text-center sm-text-left" th:text="#{label.500description}"></h2>                
+                <a th:href="@{~/DepartmentUniversity/}" class="button button--primary xs-mb4 xs-block sm-inline-block" th:text="#{label.linktomainmenu}"></a>
+          </div>
+        </div>       
+      </body>
+    </html>
+  

@@ -5,6 +5,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -40,7 +41,9 @@ class ClassroomControllerTest {
     @BeforeEach
     public void setUpBeforeClass() throws Exception {
         classroomController = new ClassroomController(classroomServiceMock);
-        mockMvc = MockMvcBuilders.standaloneSetup(classroomController).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(classroomController)
+                .setControllerAdvice(new GlobalExceptionHandler())
+                .build();
     }
 
     @Test
@@ -70,7 +73,7 @@ class ClassroomControllerTest {
         classroom.setNumber(-5);
         doThrow(new InvalidClassroomNumberException("Input classroom number can't be negative or zero!"))
             .when(classroomServiceMock).addClassroom(classroom);
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/classrooms/")
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/classrooms").servletPath("/classrooms")
                 .flashAttr("classroom", classroom);
         ResultActions result = mockMvc.perform(request);
         result.andExpect(MockMvcResultMatchers.view().name("redirect:/classrooms"))
@@ -83,7 +86,7 @@ class ClassroomControllerTest {
         classroom.setCapacity(-5);
         doThrow(new InvalidClassroomCapacityException("Input classroom capacity can't be negative or zero!"))
             .when(classroomServiceMock).addClassroom(classroom);
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/classrooms/")
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/classrooms").servletPath("/classrooms")
                 .flashAttr("classroom", classroom);
         ResultActions result = mockMvc.perform(request);
         result.andExpect(MockMvcResultMatchers.view().name("redirect:/classrooms"))
@@ -96,7 +99,7 @@ class ClassroomControllerTest {
         classroom.setAddress("fff");
         doThrow(new InvalidAddressException("Input address isn't valid!"))
             .when(classroomServiceMock).addClassroom(classroom);
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/classrooms/")
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/classrooms").servletPath("/classrooms")
                 .flashAttr("classroom", classroom);
         ResultActions result = mockMvc.perform(request);
         result.andExpect(MockMvcResultMatchers.view().name("redirect:/classrooms"))

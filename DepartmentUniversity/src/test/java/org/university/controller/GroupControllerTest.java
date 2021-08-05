@@ -5,6 +5,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -45,7 +46,9 @@ class GroupControllerTest {
     @BeforeEach
     public void setUpBeforeClass() throws Exception {
         groupController = new GroupController(groupServiceMock, studentServiceMock);
-        mockMvc = MockMvcBuilders.standaloneSetup(groupController).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(groupController)
+                .setControllerAdvice(new GlobalExceptionHandler())
+                .build();
     }
 
     @Test
@@ -78,7 +81,8 @@ class GroupControllerTest {
         group.setName("invalid name");
         doThrow(new InvalidGroupNameException("Input course name isn't valid! You should input f.e. 'AA-11'"))
             .when(groupServiceMock).addGroup(group);
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/groups/").flashAttr("group", group);
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/groups")
+                .servletPath("/groups").flashAttr("group", group);
         ResultActions result = mockMvc.perform(request);
         result.andExpect(MockMvcResultMatchers.view().name("redirect:/groups"))
                 .andExpect(MockMvcResultMatchers.model().attribute("message", "Input course name isn't valid! You should input f.e. 'AA-11'"));

@@ -5,9 +5,12 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.TestInstance.Lifecycle;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.MockMvc;
@@ -22,8 +25,6 @@ import org.university.exceptions.InvalidCourseNameException;
 import org.university.exceptions.InvalidDescriptionException;
 import org.university.service.CourseService;
 import org.university.utils.CreatorTestEntities;
-import org.junit.jupiter.api.TestInstance.Lifecycle;
-import org.junit.jupiter.api.extension.ExtendWith;
 
 @ExtendWith(MockitoExtension.class)
 @TestInstance(Lifecycle.PER_CLASS)
@@ -39,7 +40,9 @@ class CourseControllerTest {
     @BeforeEach
     public void setUpBeforeClass() throws Exception {
         courseController = new CourseController(courseServiceMock);
-        mockMvc = MockMvcBuilders.standaloneSetup(courseController).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(courseController)
+                .setControllerAdvice(new GlobalExceptionHandler())
+                .build();
     }
 
     @Test
@@ -68,7 +71,8 @@ class CourseControllerTest {
         course.setName("");
         doThrow(new InvalidCourseNameException("Input course name isn't valid!"))
             .when(courseServiceMock).addCourse(course);
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/courses/").flashAttr("course", course);
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/courses")
+                .servletPath("/courses").flashAttr("course", course);
         ResultActions result = mockMvc.perform(request);
         result.andExpect(MockMvcResultMatchers.view().name("redirect:/courses"))
                 .andExpect(MockMvcResultMatchers.model().attribute("message", "Input course name isn't valid!"));
@@ -80,7 +84,8 @@ class CourseControllerTest {
         course.setDescription("");
         doThrow(new InvalidDescriptionException("Input course description isn't valid!"))
             .when(courseServiceMock).addCourse(course);
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/courses/").flashAttr("course", course);
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/courses")
+                .servletPath("/courses").flashAttr("course", course);
         ResultActions result = mockMvc.perform(request);
         result.andExpect(MockMvcResultMatchers.view().name("redirect:/courses"))
                 .andExpect(MockMvcResultMatchers.model().attribute("message", "Input course description isn't valid!"));

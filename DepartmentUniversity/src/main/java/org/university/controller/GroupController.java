@@ -16,6 +16,7 @@ import org.university.exceptions.EntityAlreadyExistException;
 import org.university.exceptions.InvalidGroupNameException;
 import org.university.service.GroupService;
 import org.university.service.StudentService;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -42,13 +43,8 @@ public class GroupController {
 
     @PostMapping()
     public String add(@ModelAttribute("group") GroupDto group, Model model) {
-        try {
-            groupService.addGroup(group);
-            return REDIRECT;
-        } catch (InvalidGroupNameException | EntityAlreadyExistException e) {
-            model.addAttribute("message", e.getMessage());
-            return REDIRECT;
-        }
+        groupService.addGroup(group);
+        return REDIRECT;
     }
 
     @PostMapping("/student")
