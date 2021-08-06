@@ -42,7 +42,13 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(NoHandlerFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public String handleException(Exception e, HttpServletRequest request) {
+    public String handleNotFoundException(Exception e, HttpServletRequest request) {
         return "error404";
+    }
+    
+    @ExceptionHandler(Exception.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public String handleServerException(Exception e, HttpServletRequest request) {
+        return "error500";
     }
 }
