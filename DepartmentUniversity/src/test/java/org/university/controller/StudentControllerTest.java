@@ -46,7 +46,7 @@ class StudentControllerTest {
 
     @Mock
     private CourseService courseServiceMock;
-    
+
     @Mock
     private PhotoService photoServiceMock;
 
@@ -55,8 +55,7 @@ class StudentControllerTest {
     @BeforeEach
     public void setUpBeforeClass() throws Exception {
         studentController = new StudentController(studentServiceMock, courseServiceMock, photoServiceMock);
-        mockMvc = MockMvcBuilders.standaloneSetup(studentController)
-                .setControllerAdvice(new GlobalExceptionHandler())                
+        mockMvc = MockMvcBuilders.standaloneSetup(studentController).setControllerAdvice(new GlobalExceptionHandler())
                 .build();
     }
 
@@ -74,10 +73,25 @@ class StudentControllerTest {
                 .andExpect(MockMvcResultMatchers.model().attributeExists("courses"))
                 .andExpect(MockMvcResultMatchers.model().attribute("courses", courses));
     }
+    
+    @Test
+    void testGetStudentsWhenNumberUsersNotNull() throws Exception {
+        List<Student> students = CreatorTestEntities.createStudents();
+        List<Course> courses = CreatorTestEntities.createCourses();
+        when(studentServiceMock.findNumberOfUsers(10, 0)).thenReturn(students);
+        when(courseServiceMock.findAllCourses()).thenReturn(courses);
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/students/").sessionAttr("numberUsers", 10);
+        ResultActions result = mockMvc.perform(request);
+        result.andExpect(MockMvcResultMatchers.view().name("students"))
+                .andExpect(MockMvcResultMatchers.model().attributeExists("students"))
+                .andExpect(MockMvcResultMatchers.model().attribute("students", students))
+                .andExpect(MockMvcResultMatchers.model().attributeExists("courses"))
+                .andExpect(MockMvcResultMatchers.model().attribute("courses", courses));
+    }
 
     @Test
     void testAddStudent() throws Exception {
-        StudentDto student = new StudentDto();        
+        StudentDto student = new StudentDto();
         MultipartFile mockFile = mock(MultipartFile.class);
         student.setPhoto(mockFile);
         student.setSex("male");
@@ -94,38 +108,41 @@ class StudentControllerTest {
         StudentDto student = new StudentDto();
         student.setName("invalid name");
         MultipartFile mockFile = mock(MultipartFile.class);
-        student.setPhoto(mockFile);        
+        student.setPhoto(mockFile);
         doThrow(new InvalidUserNameException("Input name isn't valid!")).when(studentServiceMock).register(student);
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/students").servletPath("/students").flashAttr("student", student);
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/students").servletPath("/students")
+                .flashAttr("student", student);
         ResultActions result = mockMvc.perform(request);
         result.andExpect(MockMvcResultMatchers.view().name("studentform"))
                 .andExpect(MockMvcResultMatchers.model().attribute("message", "Input name isn't valid!"));
     }
-    
+
     @Test
     void testAddStudentWhenInputInvalidEmail() throws Exception {
         StudentDto student = new StudentDto();
         student.setEmail("invalid email");
         MultipartFile mockFile = mock(MultipartFile.class);
-        student.setPhoto(mockFile);        
+        student.setPhoto(mockFile);
         doThrow(new InvalidEmailException("Input email isn't valid!")).when(studentServiceMock).register(student);
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/students").servletPath("/students").flashAttr("student", student);
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/students").servletPath("/students")
+                .flashAttr("student", student);
         ResultActions result = mockMvc.perform(request);
         result.andExpect(MockMvcResultMatchers.view().name("studentform"))
-        .andExpect(MockMvcResultMatchers.model().attribute("message", "Input email isn't valid!"));
+                .andExpect(MockMvcResultMatchers.model().attribute("message", "Input email isn't valid!"));
     }
-    
+
     @Test
     void testAddStudentWhenInputInvalidPhone() throws Exception {
         StudentDto student = new StudentDto();
         student.setEmail("invalid email");
         MultipartFile mockFile = mock(MultipartFile.class);
-        student.setPhoto(mockFile);        
+        student.setPhoto(mockFile);
         doThrow(new InvalidPhoneException("Input phone isn't valid!")).when(studentServiceMock).register(student);
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/students").servletPath("/students").flashAttr("student", student);
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/students").servletPath("/students")
+                .flashAttr("student", student);
         ResultActions result = mockMvc.perform(request);
         result.andExpect(MockMvcResultMatchers.view().name("studentform"))
-        .andExpect(MockMvcResultMatchers.model().attribute("message", "Input phone isn't valid!"));
+                .andExpect(MockMvcResultMatchers.model().attribute("message", "Input phone isn't valid!"));
     }
 
     @Test
@@ -152,8 +169,8 @@ class StudentControllerTest {
     void testOtherStudentsWhenInputNumberNegativeAndShowFirstStudentsYet() throws Exception {
         List<Student> students = CreatorTestEntities.createStudents();
         when(studentServiceMock.findNumberOfUsers(5, 0)).thenReturn(students);
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/students/-1").sessionAttr("pagesNumber",
-                0);
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/students/-1").sessionAttr("pagesNumber", 0)
+                .sessionAttr("numberUsers", 5);
         ResultActions result = mockMvc.perform(request);
         result.andExpect(MockMvcResultMatchers.view().name("students"))
                 .andExpect(MockMvcResultMatchers.model().attributeExists("students"))
@@ -165,7 +182,8 @@ class StudentControllerTest {
         List<Student> nextStudents = CreatorTestEntities.createStudents();
         nextStudents.remove(1);
         when(studentServiceMock.findNumberOfUsers(5, 5)).thenReturn(nextStudents);
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/students/1").sessionAttr("pagesNumber", 0);
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/students/1").sessionAttr("pagesNumber", 0)
+                .sessionAttr("numberUsers", 5);
         ResultActions result = mockMvc.perform(request);
         result.andExpect(MockMvcResultMatchers.view().name("students"))
                 .andExpect(MockMvcResultMatchers.model().attributeExists("students"))
@@ -177,11 +195,21 @@ class StudentControllerTest {
         List<Student> students = CreatorTestEntities.createStudents();
         when(studentServiceMock.findNumberOfUsers(5, 5)).thenReturn(students);
         when(studentServiceMock.findNumberOfUsers(5, 10)).thenReturn(new ArrayList<Student>());
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/students/1").sessionAttr("pagesNumber", 1);
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/students/1").sessionAttr("pagesNumber", 1)
+                .sessionAttr("numberUsers", 5);
         ResultActions result = mockMvc.perform(request);
         result.andExpect(MockMvcResultMatchers.view().name("students"))
                 .andExpect(MockMvcResultMatchers.model().attributeExists("students"))
                 .andExpect(MockMvcResultMatchers.model().attribute("students", students));
+    }
+
+    @Test
+    void testSetNumberUsers() throws Exception {
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/students/numbers/10");
+        ResultActions result = mockMvc.perform(request);
+        result.andExpect(MockMvcResultMatchers.view().name("redirect:/students"))
+                .andExpect(MockMvcResultMatchers.model().attributeExists("numberUsers"))
+                .andExpect(MockMvcResultMatchers.model().attribute("numberUsers", 10));
     }
 
     @Test
@@ -232,8 +260,8 @@ class StudentControllerTest {
         student.setPassword("test");
         when(studentServiceMock.login(student.getEmail(), student.getPassword()))
                 .thenThrow(EntityNotExistException.class);
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/students/login").servletPath("/students/login").flashAttr("student",
-                student);
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/students/login")
+                .servletPath("/students/login").flashAttr("student", student);
         ResultActions result = mockMvc.perform(request);
         result.andExpect(MockMvcResultMatchers.view().name("studentform"));
     }
@@ -245,64 +273,74 @@ class StudentControllerTest {
         student.setPassword("incorrect password");
         when(studentServiceMock.login(student.getEmail(), student.getPassword()))
                 .thenThrow(AuthorisationFailException.class);
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/students/login").servletPath("/students/login").flashAttr("student",
-                student);
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/students/login")
+                .servletPath("/students/login").flashAttr("student", student);
         ResultActions result = mockMvc.perform(request);
         result.andExpect(MockMvcResultMatchers.view().name("redirect:/students"));
     }
-    
+
     @Test
     void testGetEditForm() throws Exception {
         StudentDto student = new StudentDto();
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/students/edit/")
-                .flashAttr("student", student);
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/students/edit/").flashAttr("student",
+                student);
         ResultActions result = mockMvc.perform(request);
         result.andExpect(MockMvcResultMatchers.view().name("updateforms/student"))
                 .andExpect(MockMvcResultMatchers.model().attributeExists("student"))
                 .andExpect(MockMvcResultMatchers.model().attribute("student", student));
     }
-    
+
     @Test
     void testEdit() throws Exception {
         StudentDto student = new StudentDto();
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/students/update/")
-                .flashAttr("student", student);
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/students/update/").flashAttr("student",
+                student);
         ResultActions result = mockMvc.perform(request);
         result.andExpect(MockMvcResultMatchers.view().name("redirect:/students"));
         verify(studentServiceMock).edit(student);
         verify(photoServiceMock).savePhoto(student);
     }
-    
+
     @Test
     void testEditWhenInputInvalidName() throws Exception {
         StudentDto student = new StudentDto();
         student.setName("invalid name");
         doThrow(new InvalidUserNameException("Input name isn't valid!")).when(studentServiceMock).edit(student);
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/students/update/").flashAttr("student", student);
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/students/update/").flashAttr("student",
+                student);
         ResultActions result = mockMvc.perform(request);
         result.andExpect(MockMvcResultMatchers.view().name("updateforms/student"))
                 .andExpect(MockMvcResultMatchers.model().attribute("message", "Input name isn't valid!"));
     }
-    
+
     @Test
     void testEditWhenInputInvalidEmail() throws Exception {
         StudentDto student = new StudentDto();
         student.setEmail("invalid email");
         doThrow(new InvalidEmailException("Input email isn't valid!")).when(studentServiceMock).edit(student);
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/students/update/").flashAttr("student", student);
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/students/update/").flashAttr("student",
+                student);
         ResultActions result = mockMvc.perform(request);
         result.andExpect(MockMvcResultMatchers.view().name("updateforms/student"))
-        .andExpect(MockMvcResultMatchers.model().attribute("message", "Input email isn't valid!"));
+                .andExpect(MockMvcResultMatchers.model().attribute("message", "Input email isn't valid!"));
     }
-    
+
     @Test
     void testEditWhenInputInvalidPhone() throws Exception {
         StudentDto student = new StudentDto();
         student.setEmail("invalid email");
         doThrow(new InvalidPhoneException("Input phone isn't valid!")).when(studentServiceMock).edit(student);
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/students/update/").flashAttr("student", student);
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/students/update/").flashAttr("student",
+                student);
         ResultActions result = mockMvc.perform(request);
         result.andExpect(MockMvcResultMatchers.view().name("updateforms/student"))
-        .andExpect(MockMvcResultMatchers.model().attribute("message", "Input phone isn't valid!"));
+                .andExpect(MockMvcResultMatchers.model().attribute("message", "Input phone isn't valid!"));
+    }
+
+    @Test
+    void testShouldReturnNotFoundedErrorViewWhenPageNotMapping() throws Exception {
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/notexistpage");
+        ResultActions result = mockMvc.perform(request);
+        result.andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 }

@@ -77,7 +77,7 @@ public class TeacherController {
     }
     
     @GetMapping("/numbers/{numbers}")
-    public String numberStudents(@PathVariable("numbers") int numbers, Model model) {
+    public String setNumberUsers(@PathVariable("numbers") int numbers, Model model) {
         model.addAttribute("numberUsers", numbers);
         return REDIRECT;
     }
