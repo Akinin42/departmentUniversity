@@ -26,21 +26,25 @@ import lombok.experimental.FieldDefaults;
 
 @Controller
 @RequestMapping("/teachers")
-@SessionAttributes("pagesNumber")
+@SessionAttributes({ "pagesNumber", "numberUsers" })
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class TeacherController {
 
     private static final String REDIRECT = "redirect:/teachers";
     private static final String TEACHER_FORM = "teacherform";
-    private static final int NUMBER_TEACHERS_ON_PAGE = 5;
 
     private TeacherService teacherService;
     PhotoService photoService;
 
     @GetMapping()
     public String getTeachers(@ModelAttribute("message") String message, Model model) {
-        model.addAttribute("teachers", teacherService.findNumberOfUsers(5, 0));
+        if (model.getAttribute("numberUsers") == null) {
+            model.addAttribute("teachers", teacherService.findNumberOfUsers(5, 0));
+        } else {
+            model.addAttribute("teachers",
+                    teacherService.findNumberOfUsers((int) model.getAttribute("numberUsers"), 0));
+        }
         model.addAttribute("teacher", new TeacherDto());
         model.addAttribute("timetable", new DayTimetableDto());
         model.addAttribute("pagesNumber", Integer.valueOf(0));
@@ -53,14 +57,16 @@ public class TeacherController {
         model.addAttribute("teacher", new TeacherDto());
         model.addAttribute("timetable", new DayTimetableDto());
         int pagesNumber = (int) model.getAttribute("pagesNumber") + page;
+        int numberTeachersOnPage = (int) model.getAttribute("numberUsers");
         if (pagesNumber < 0) {
             pagesNumber = 0;
         }
-        if (teacherService.findNumberOfUsers(5, (pagesNumber * NUMBER_TEACHERS_ON_PAGE)).isEmpty()) {
+        if (teacherService.findNumberOfUsers(numberTeachersOnPage, (pagesNumber * numberTeachersOnPage)).isEmpty()) {
             pagesNumber -= page;
         }
         model.addAttribute("numberUsers", pagesNumber);
-        model.addAttribute("teachers", teacherService.findNumberOfUsers(5, pagesNumber * NUMBER_TEACHERS_ON_PAGE));
+        model.addAttribute("teachers",
+                teacherService.findNumberOfUsers(numberTeachersOnPage, pagesNumber * numberTeachersOnPage));
         return "teachers";
     }
 
@@ -68,6 +74,12 @@ public class TeacherController {
     public String newTeacher(Model model) {
         model.addAttribute("teacher", new TeacherDto());
         return TEACHER_FORM;
+    }
+    
+    @GetMapping("/numbers/{numbers}")
+    public String numberStudents(@PathVariable("numbers") int numbers, Model model) {
+        model.addAttribute("numberUsers", numbers);
+        return REDIRECT;
     }
 
     @PostMapping()
