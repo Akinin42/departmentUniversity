@@ -339,8 +339,10 @@ class StudentControllerTest {
 
     @Test
     void testShouldReturnNotFoundedErrorViewWhenPageNotMapping() throws Exception {
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/notexistpage");
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/notexistpage");        
+        mockMvc.getDispatcherServlet().setThrowExceptionIfNoHandlerFound(true);
         ResultActions result = mockMvc.perform(request);
-        result.andExpect(MockMvcResultMatchers.status().isNotFound());
+        result.andExpect(MockMvcResultMatchers.status().isNotFound())
+            .andExpect(MockMvcResultMatchers.view().name("error404"));
     }
 }
