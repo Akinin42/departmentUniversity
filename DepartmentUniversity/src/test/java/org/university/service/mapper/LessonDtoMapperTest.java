@@ -5,9 +5,10 @@ import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
 import java.time.Month;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -60,7 +61,7 @@ class LessonDtoMapperTest {
     }
     
     private Group createGroupWithStudents() {        
-        List<Student> students = new ArrayList<>();
+        Set<Student> students = new HashSet<>();
         students.add(CreatorTestEntities.createStudents().get(0));
         students.add(CreatorTestEntities.createStudents().get(1));
         students.add(CreatorTestEntities.createStudents().get(2));

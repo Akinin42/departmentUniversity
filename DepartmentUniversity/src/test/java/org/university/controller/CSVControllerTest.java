@@ -62,9 +62,9 @@ class CSVControllerTest {
         String[] fileRows = fileContent.split("\n");
         assertThat(fileRows[0]).isEqualTo(
                 "\"Date\",\"Start lesson\",\"End lesson\",\"Teacher\",\"Course\",\"Classroom\",\"Lesson link\"");
-        assertThat(fileRows[1]).isEqualTo("\"2020-10-20\",\"10:00\",\"10:00\",\"Bob Moren\",\"Law\",\"1\",");
-        assertThat(fileRows[2]).isEqualTo("\"\",\"15:00\",\"15:00\",\"Ann Moren\",\"Math\",\"2\",\"test-link\"");
-        assertThat(fileRows[3]).isEqualTo("\"\",\"21:00\",\"21:00\",\"Ann Moren\",\"Math\",\"2\",\"test-link\"");
+        assertThat(fileRows[1]).isEqualTo("\"2020-10-20\",\"10:00\",\"12:00\",\"Bob Moren\",\"Law\",\"1\",");
+        assertThat(fileRows[2]).isEqualTo("\"\",\"15:00\",\"17:00\",\"Ann Moren\",\"Math\",\"2\",\"test-link\"");
+        assertThat(fileRows[3]).isEqualTo("\"\",\"21:00\",\"22:00\",\"Ann Moren\",\"Math\",\"2\",\"test-link\"");
     }
 
     @Test
@@ -85,8 +85,8 @@ class CSVControllerTest {
         String[] fileRows = fileContent.split("\n");
         assertThat(fileRows[0]).isEqualTo(
                 "\"Date\",\"Start lesson\",\"End lesson\",\"Teacher\",\"Course\",\"Classroom\",\"Lesson link\"");
-        assertThat(fileRows[1]).isEqualTo("\"2020-10-20\",\"10:00\",\"10:00\",\"Bob Moren\",\"Law\",\"1\",");
-        assertThat(fileRows[2]).isEqualTo("\"\",\"15:00\",\"15:00\",\"Ann Moren\",\"Math\",\"2\",\"test-link\"");
+        assertThat(fileRows[1]).isEqualTo("\"2020-10-20\",\"10:00\",\"12:00\",\"Bob Moren\",\"Law\",\"1\",");
+        assertThat(fileRows[2]).isEqualTo("\"\",\"15:00\",\"17:00\",\"Ann Moren\",\"Math\",\"2\",\"test-link\"");
     }
 
     @Test
@@ -108,9 +108,9 @@ class CSVControllerTest {
         String[] fileRows = fileContent.split("\n");
         assertThat(fileRows[0]).isEqualTo(
                 "\"Date\",\"Start lesson\",\"End lesson\",\"Group\",\"Course\",\"Classroom\",\"Lesson link\"");
-        assertThat(fileRows[1]).isEqualTo("\"2020-10-20\",\"10:00\",\"10:00\",\"AB-22\",\"Law\",\"1\",");
-        assertThat(fileRows[2]).isEqualTo("\"\",\"15:00\",\"15:00\",\"FR-33\",\"Math\",\"2\",\"test-link\"");
-        assertThat(fileRows[3]).isEqualTo("\"\",\"21:00\",\"21:00\",\"FR-33\",\"Math\",\"2\",\"test-link\"");
+        assertThat(fileRows[1]).isEqualTo("\"2020-10-20\",\"10:00\",\"12:00\",\"AB-22\",\"Law\",\"1\",");
+        assertThat(fileRows[2]).isEqualTo("\"\",\"15:00\",\"17:00\",\"FR-33\",\"Math\",\"2\",\"test-link\"");
+        assertThat(fileRows[3]).isEqualTo("\"\",\"21:00\",\"22:00\",\"FR-33\",\"Math\",\"2\",\"test-link\"");
     }
 
     @Test
@@ -133,7 +133,7 @@ class CSVControllerTest {
         String[] fileRows = fileContent.split("\n");
         assertThat(fileRows[0]).isEqualTo(
                 "\"Date\",\"Start lesson\",\"End lesson\",\"Group\",\"Course\",\"Classroom\",\"Lesson link\"");
-        assertThat(fileRows[1]).isEqualTo("\"2020-10-20\",\"10:00\",\"10:00\",\"AB-22\",\"Law\",\"1\",");
-        assertThat(fileRows[2]).isEqualTo("\"\",\"15:00\",\"15:00\",\"FR-33\",\"Math\",\"2\",\"test-link\"");
+        assertThat(fileRows[1]).isEqualTo("\"2020-10-20\",\"10:00\",\"12:00\",\"AB-22\",\"Law\",\"1\",");
+        assertThat(fileRows[2]).isEqualTo("\"\",\"15:00\",\"17:00\",\"FR-33\",\"Math\",\"2\",\"test-link\"");
     }
 }

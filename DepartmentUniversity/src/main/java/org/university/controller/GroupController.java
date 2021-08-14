@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.university.dto.DayTimetableDto;
 import org.university.dto.GroupDto;
 import org.university.dto.StudentDto;
-import org.university.entity.Group;
 import org.university.exceptions.EntityAlreadyExistException;
 import org.university.exceptions.InvalidGroupNameException;
 import org.university.service.GroupService;
@@ -49,15 +48,13 @@ public class GroupController {
 
     @PostMapping("/student")
     public String addStudent(@ModelAttribute("student") StudentDto student) {
-        Group group = groupService.createGroup(student.getGroupName());
-        studentService.addStudentToGroup(student, group);
+        groupService.addStudentToGroup(student);
         return REDIRECT;
     }
 
     @DeleteMapping("/student")
     public String deleteStudent(@ModelAttribute("student") StudentDto student) {
-        Group group = groupService.createGroup(student.getGroupName());
-        studentService.deleteStudentFromGroup(student, group);
+        groupService.deleteStudentFromGroup(student);
         return REDIRECT;
     }
 

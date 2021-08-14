@@ -8,17 +8,22 @@ import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
-import javax.sql.DataSource;
+
+import javax.transaction.Transactional;
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.university.dao.ScriptExecutor;
 import org.university.entity.Lesson;
-import org.university.io.FileReader;
-import org.university.utils.CreatorDataSource;
 import org.university.utils.CreatorTestEntities;
+import org.university.utils.TestConfig;
 
+@SpringJUnitConfig(TestConfig.class)
+@Transactional
 class LessonDaoImplTest {
 
     private static LessonDaoImpl lessonDao;
@@ -26,9 +31,9 @@ class LessonDaoImplTest {
 
     @BeforeAll
     static void init() {
-        DataSource dataSource = CreatorDataSource.createTestDataSource();
-        lessonDao = new LessonDaoImpl(new JdbcTemplate(dataSource));
-        executor = new ScriptExecutor(dataSource, new FileReader());
+        ApplicationContext context = new AnnotationConfigApplicationContext(TestConfig.class);
+        lessonDao = context.getBean(LessonDaoImpl.class);
+        executor = context.getBean(ScriptExecutor.class);
     }
 
     @BeforeEach
@@ -38,19 +43,14 @@ class LessonDaoImplTest {
 
     @Test
     void saveShouldSaveLessonWhenInputValidLesson() {
-        Lesson lesson = Lesson.builder().withId(4).withStartLesson(LocalDateTime.of(2021, Month.JULY, 9, 11, 00, 00))
-                .withEndLesson(LocalDateTime.of(2021, Month.JULY, 9, 13, 00, 00)).withOnlineLesson(false)
-                .withLessonLink(null).withCourse(CreatorTestEntities.createCourses().get(0))
-                .withGroup(CreatorTestEntities.createGroups().get(0))
-                .withClassroom(CreatorTestEntities.createClassrooms().get(0))
-                .withTeacher(CreatorTestEntities.createTeachers().get(0)).build();
+        Lesson lesson = CreatorTestEntities.createTestLesson();
         lessonDao.save(lesson);
         assertThat(lessonDao.findAll()).contains(lesson);
     }
 
     @Test
-    void saveShouldThrowNullPointerExceptionWhenInputNull() {
-        assertThatThrownBy(() -> lessonDao.save(null)).isInstanceOf(NullPointerException.class);
+    void saveShouldThrowIllegalArgumentExceptionWhenInputNull() {
+        assertThatThrownBy(() -> lessonDao.save(null)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
@@ -69,15 +69,6 @@ class LessonDaoImplTest {
     }
 
     @Test
-    void findAllShouldReturnEmptyListWhenLessonsTableEmpty() {
-        int numberRow = lessonDao.findAll().size() + 1;
-        for (int i = 1; i < numberRow; i++) {
-            lessonDao.deleteById(i);
-        }
-        assertThat(lessonDao.findAll()).isEmpty();
-    }
-
-    @Test
     void findAllShouldReturnExpectedLessonsWhenInputLimitAndOffset() {
         assertThat(lessonDao.findAll(1, 0)).containsExactly(CreatorTestEntities.createLessons().get(0));
     }
@@ -91,7 +82,7 @@ class LessonDaoImplTest {
     void deleteByIdShouldDeleteLessonWithInputIdWhenThisLessonExists() {
         int id = CreatorTestEntities.createLessons().get(0).getId();
         lessonDao.deleteById(id);
-        assertThat(lessonDao.findAll()).doesNotContain(CreatorTestEntities.createLessons().get(0));
+        assertThat(lessonDao.findById(id)).isEmpty();
     }
 
     @Test
@@ -129,25 +120,25 @@ class LessonDaoImplTest {
     @Test
     void findByDateAndTeacherAndGroupShouldReturnEmptyOptionalWhenInputTeacherEmailNotExists() {
         assertThat(lessonDao.findByTimeAndTeacherAndGroup(LocalDateTime.of(2021, Month.OCTOBER, 19, 10, 00, 00),
-                "notexistemail", "AB-22")).isEmpty();
+                45, 1)).isEmpty();
     }
 
     @Test
     void findByDateAndTeacherAndGroupShouldReturnEmptyOptionalWhenInputGroupNameNotExists() {
-        assertThat(lessonDao.findByTimeAndTeacherAndGroup(LocalDateTime.of(2021, Month.OCTOBER, 19, 10, 00, 00), "Bob@mail.ru",
-                "notexistegroup")).isEmpty();
+        assertThat(lessonDao.findByTimeAndTeacherAndGroup(LocalDateTime.of(2021, Month.OCTOBER, 19, 10, 00, 00), 1,
+                45)).isEmpty();
     }
 
     @Test
     void findByDateAndTeacherAndGroupShouldReturnEmptyOptionalWhenInputDateNotExists() {
         assertThat(
-                lessonDao.findByTimeAndTeacherAndGroup(LocalDateTime.of(2021, Month.OCTOBER, 26, 10, 00, 00), "Bob@mail.ru", "AB-22"))
+                lessonDao.findByTimeAndTeacherAndGroup(LocalDateTime.of(2021, Month.OCTOBER, 26, 10, 00, 00), 1, 1))
                         .isEmpty();
     }
 
     @Test
     void findByIdShouldReturnExpectedLessonWhenInputExistentArguments() {
-        assertThat(lessonDao.findByTimeAndTeacherAndGroup(LocalDateTime.of(2021, Month.OCTOBER, 19, 10, 00, 00), "Bob@mail.ru", "AB-22").get())
+        assertThat(lessonDao.findByTimeAndTeacherAndGroup(LocalDateTime.of(2021, Month.OCTOBER, 19, 10, 00, 00), 1, 1).get())
                 .isEqualTo(CreatorTestEntities.createLessons().get(0));
     }
 
@@ -232,19 +223,29 @@ class LessonDaoImplTest {
 
     private List<Lesson> createTestWeekLessons() {
         List<Lesson> weekLessons = new ArrayList<>();
-        Lesson lesson = Lesson.builder().withId(7).withStartLesson(LocalDateTime.of(2021, Month.JULY, 12, 21, 00, 00))
-                .withEndLesson(LocalDateTime.of(2021, Month.JULY, 12, 22, 00, 00)).withOnlineLesson(false)
-                .withLessonLink(null).withClassroom(CreatorTestEntities.createClassrooms().get(0))
+        Lesson lesson = Lesson.builder()
+                .withId(7)
+                .withStartLesson(LocalDateTime.of(2021, Month.JULY, 12, 21, 00, 00))
+                .withEndLesson(LocalDateTime.of(2021, Month.JULY, 12, 22, 00, 00))
+                .withOnlineLesson(false)
+                .withLessonLink(null)
+                .withClassroom(CreatorTestEntities.createClassrooms().get(0))
                 .withCourse(CreatorTestEntities.createCourses().get(0))
                 .withTeacher(CreatorTestEntities.createTeachers().get(0))
-                .withGroup(CreatorTestEntities.createGroups().get(0)).build();
+                .withGroup(CreatorTestEntities.createGroups().get(0))
+                .build();
         weekLessons.add(lesson);
-        lesson = Lesson.builder().withId(9).withStartLesson(LocalDateTime.of(2021, Month.JULY, 15, 21, 00, 00))
-                .withEndLesson(LocalDateTime.of(2021, Month.JULY, 15, 22, 00, 00)).withOnlineLesson(false)
-                .withLessonLink(null).withClassroom(CreatorTestEntities.createClassrooms().get(0))
+        lesson = Lesson.builder()
+                .withId(9)
+                .withStartLesson(LocalDateTime.of(2021, Month.JULY, 15, 21, 00, 00))
+                .withEndLesson(LocalDateTime.of(2021, Month.JULY, 15, 22, 00, 00))
+                .withOnlineLesson(false)
+                .withLessonLink(null)
+                .withClassroom(CreatorTestEntities.createClassrooms().get(0))
                 .withCourse(CreatorTestEntities.createCourses().get(0))
                 .withTeacher(CreatorTestEntities.createTeachers().get(1))
-                .withGroup(CreatorTestEntities.createGroups().get(0)).build();
+                .withGroup(CreatorTestEntities.createGroups().get(0))
+                .build();
         weekLessons.add(lesson);
         return weekLessons;
     }

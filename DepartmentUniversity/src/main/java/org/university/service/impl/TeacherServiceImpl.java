@@ -1,8 +1,10 @@
 package org.university.service.impl;
 
 import java.util.List;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.university.dao.TeacherDao;
 import org.university.dto.TeacherDto;
 import org.university.dto.UserDto;
@@ -11,13 +13,15 @@ import org.university.exceptions.AuthorisationFailException;
 import org.university.exceptions.EntityNotExistException;
 import org.university.service.TeacherService;
 import org.university.service.validator.Validator;
+
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 
-@Component
+@Service
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 @Slf4j
+@Transactional
 public class TeacherServiceImpl extends AbstractUserServiceImpl<Teacher> implements TeacherService {
 
     TeacherDao teacherDao;

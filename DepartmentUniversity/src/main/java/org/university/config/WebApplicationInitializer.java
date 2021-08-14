@@ -27,14 +27,14 @@ public class WebApplicationInitializer extends AbstractAnnotationConfigDispatche
     @Override
     public void onStartup(ServletContext aServletContext) throws ServletException {
         super.onStartup(aServletContext);
-        registerHiddenFieldFilter(aServletContext);        
+        registerHiddenFieldFilter(aServletContext);
     }
 
     private void registerHiddenFieldFilter(ServletContext aContext) {
         aContext.addFilter("hiddenHttpMethodFilter", new HiddenHttpMethodFilter()).addMappingForUrlPatterns(null, true,
                 "/*");
     }
-    
+
     @Override
     public void customizeRegistration(ServletRegistration.Dynamic registration) {
         registration.setInitParameter("throwExceptionIfNoHandlerFound", "true");

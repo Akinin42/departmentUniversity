@@ -2,6 +2,7 @@ package org.university.utils;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.springframework.stereotype.Component;
 import org.university.entity.DayTimetable;
 import org.university.entity.Lesson;
@@ -21,7 +22,7 @@ public class CSVDataGenerator {
                     date = "";
                 }
                 String startLesson = lessons.get(i).getStartLesson().toLocalTime().toString();
-                String endLesson = lessons.get(i).getStartLesson().toLocalTime().toString();
+                String endLesson = lessons.get(i).getEndLesson().toLocalTime().toString();
                 String teacherName = lessons.get(i).getTeacher().getName();
                 String courseName = lessons.get(i).getCourse().getName();
                 int classroomNumber = lessons.get(i).getClassroom().getNumber();
@@ -46,7 +47,7 @@ public class CSVDataGenerator {
                     date = "";
                 }
                 String startLesson = lessons.get(i).getStartLesson().toLocalTime().toString();
-                String endLesson = lessons.get(i).getStartLesson().toLocalTime().toString();
+                String endLesson = lessons.get(i).getEndLesson().toLocalTime().toString();
                 String groupName = lessons.get(i).getGroup().getName();
                 String courseName = lessons.get(i).getCourse().getName();
                 int classroomNumber = lessons.get(i).getClassroom().getNumber();

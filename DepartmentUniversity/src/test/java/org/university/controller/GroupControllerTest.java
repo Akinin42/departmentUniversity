@@ -102,28 +102,22 @@ class GroupControllerTest {
     void testAddStudent() throws Exception {
         StudentDto student = new StudentDto();
         student.setGroupName("test");
-        Group group = Group.builder()
-                .withName("test")
-                .build();
-        when(groupServiceMock.createGroup("test")).thenReturn(group);
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/groups/student/")
                 .flashAttr("student", student);
         ResultActions result = mockMvc.perform(request);
         result.andExpect(MockMvcResultMatchers.view().name("redirect:/groups"));
-        verify(studentServiceMock).addStudentToGroup(student, group);
+        verify(groupServiceMock).addStudentToGroup(student);
     }
 
     @Test
     void testDeleteStudent() throws Exception {
         StudentDto student = new StudentDto();
         student.setGroupName("test");
-        Group group = Group.builder().withName("test").build();
-        when(groupServiceMock.createGroup("test")).thenReturn(group);
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders.delete("/groups/student/")
                 .flashAttr("student", student);
         ResultActions result = mockMvc.perform(request);
         result.andExpect(MockMvcResultMatchers.view().name("redirect:/groups"));
-        verify(studentServiceMock).deleteStudentFromGroup(student, group);
+        verify(groupServiceMock).deleteStudentFromGroup(student);
     }
     
     @Test

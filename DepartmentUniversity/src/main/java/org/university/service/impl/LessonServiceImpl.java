@@ -5,7 +5,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import org.springframework.stereotype.Component;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.university.dao.LessonDao;
 import org.university.dto.LessonDto;
 import org.university.entity.Lesson;
@@ -16,16 +18,18 @@ import org.university.exceptions.InvalidLessonTimeException;
 import org.university.service.LessonService;
 import org.university.service.mapper.LessonDtoMapper;
 import org.university.service.validator.LessonValidator;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 
-@Component
+@Service
 @AllArgsConstructor
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 @Slf4j
+@Transactional
 public class LessonServiceImpl implements LessonService {
 
     LessonDao lessonDao;
@@ -33,18 +37,18 @@ public class LessonServiceImpl implements LessonService {
     LessonDtoMapper mapper;
 
     @Override
-    public Lesson createLesson(LocalDateTime startLesson, String teacherEmail, String groupName) {
-        if (!lessonDao.findByTimeAndTeacherAndGroup(startLesson, teacherEmail, groupName).isPresent()) {
+    public Lesson createLesson(LocalDateTime startLesson, int teacherId, int groupId) {
+        if (!lessonDao.findByTimeAndTeacherAndGroup(startLesson, teacherId, groupId).isPresent()) {
             throw new EntityNotExistException();
         }
-        return lessonDao.findByTimeAndTeacherAndGroup(startLesson, teacherEmail, groupName).get();
+        return lessonDao.findByTimeAndTeacherAndGroup(startLesson, teacherId, groupId).get();
     }
 
     @Override
     public void addLesson(@NonNull LessonDto lessonDto) {
         Lesson lesson = mapper.mapDtoToEntity(lessonDto);
         validator.validate(lesson);
-        if (existLesson(lesson)) {
+        if (lesson.getId() != null && existLesson(lesson)) {
             throw new EntityAlreadyExistException("Lesson already exist!");
         }
         LocalDate lessonDate = lesson.getStartLesson().toLocalDate();
@@ -79,8 +83,10 @@ public class LessonServiceImpl implements LessonService {
     }
 
     @Override
-    public void delete(@NonNull LessonDto lessonDto) {
-        lessonDao.deleteById(lessonDto.getId());
+    public void delete(@NonNull LessonDto lessonDto) {        
+        Lesson lesson = deleteChainedEntities(lessonDao.findById(lessonDto.getId()).get());
+        lessonDao.update(lesson);
+        lessonDao.deleteById(lesson.getId());        
         log.info("Lesson deleted succesfull!");
     }
 
@@ -137,5 +143,19 @@ public class LessonServiceImpl implements LessonService {
             }
         }
         return checkFreeTime(inputLesson, classroomLessons);
+    }
+    
+    private Lesson deleteChainedEntities(Lesson lesson) {
+        return Lesson.builder()
+                .withId(lesson.getId())
+                .withCourse(null)
+                .withGroup(null)
+                .withTeacher(null)
+                .withClassroom(null)
+                .withStartLesson(lesson.getStartLesson())
+                .withEndLesson(lesson.getEndLesson())
+                .withOnlineLesson(lesson.getOnlineLesson())
+                .withLessonLink(lesson.getLessonLink())
+                .build();
     }
 }

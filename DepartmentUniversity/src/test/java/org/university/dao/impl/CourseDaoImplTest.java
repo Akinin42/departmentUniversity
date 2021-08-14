@@ -3,18 +3,22 @@ package org.university.dao.impl;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import javax.sql.DataSource;
+import javax.persistence.PersistenceException;
+import javax.transaction.Transactional;
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.university.dao.ScriptExecutor;
 import org.university.entity.Course;
-import org.university.io.FileReader;
-import org.university.utils.CreatorDataSource;
 import org.university.utils.CreatorTestEntities;
+import org.university.utils.TestConfig;
 
+@SpringJUnitConfig(TestConfig.class)
+@Transactional
 class CourseDaoImplTest {
 
     private static CourseDaoImpl courseDao;
@@ -22,9 +26,9 @@ class CourseDaoImplTest {
 
     @BeforeAll
     static void init() {
-        DataSource dataSource = CreatorDataSource.createTestDataSource();
-        courseDao = new CourseDaoImpl(new JdbcTemplate(dataSource));
-        executor = new ScriptExecutor(dataSource, new FileReader());
+        ApplicationContext context = new AnnotationConfigApplicationContext(TestConfig.class);
+        courseDao = context.getBean(CourseDaoImpl.class);
+        executor = context.getBean(ScriptExecutor.class);
     }
 
     @BeforeEach
@@ -35,7 +39,6 @@ class CourseDaoImplTest {
     @Test
     void saveShouldSaveCourseWhenInputValidCourse() {
         Course course = Course.builder()
-                .withId(4)
                 .withName("Test course")
                 .withDescription("Test description")
                 .build();
@@ -44,16 +47,16 @@ class CourseDaoImplTest {
     }
 
     @Test
-    void saveShouldThrowDataIntegrityViolationExceptionWhenInputInvalidCourse() {
+    void saveShouldThrowPersistenceExceptionWhenInputInvalidCourse() {
         Course invalidCourse = Course.builder()
                 .withName(null)
                 .build();
-        assertThatThrownBy(() -> courseDao.save(invalidCourse)).isInstanceOf(DataIntegrityViolationException.class);
+        assertThatThrownBy(() -> courseDao.save(invalidCourse)).isInstanceOf(PersistenceException.class);
     }
 
     @Test
-    void saveShouldThrowNullPointerExceptionWhenInputNull() {
-        assertThatThrownBy(() -> courseDao.save(null)).isInstanceOf(NullPointerException.class);
+    void saveShouldThrowIllegalArgumentExceptionWhenInputNull() {
+        assertThatThrownBy(() -> courseDao.save(null)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
@@ -72,15 +75,6 @@ class CourseDaoImplTest {
     }
 
     @Test
-    void findAllShouldReturnEmptyListWhenCoursesTableEmpty() {
-        int numberRow = courseDao.findAll().size() + 1;
-        for (int i = 1; i < numberRow; i++) {
-            courseDao.deleteById(i);
-        }
-        assertThat(courseDao.findAll()).isEmpty();
-    }
-
-    @Test
     void findAllShouldReturnExpectedCoursesWhenInputLimitAndOffset() {
         assertThat(courseDao.findAll(2, 0)).containsExactly(CreatorTestEntities.createCourses().get(0),
                 CreatorTestEntities.createCourses().get(1));
@@ -95,7 +89,7 @@ class CourseDaoImplTest {
     void deleteByIdShouldDeleteCourseWithInputIdWhenThisCourseExists() {
         int id = CreatorTestEntities.createCourses().get(0).getId();
         courseDao.deleteById(id);
-        assertThat(courseDao.findAll()).doesNotContain(CreatorTestEntities.createCourses().get(0));
+        assertThat(courseDao.findById(id)).isEmpty();
     }
     
     @Test
@@ -106,16 +100,6 @@ class CourseDaoImplTest {
     @Test
     void findByNameShouldReturnExpectedCourseWhenInputExistentName() {
         assertThat(courseDao.findByName("Law").get()).isEqualTo(CreatorTestEntities.createCourses().get(0));
-    }
-    
-    @Test
-    void findAllByStudentShouldReturnExpectedCoursesWhenStudentHasIt() {
-        assertThat(courseDao.findAllByStudent(2)).containsExactly(CreatorTestEntities.createCourses().get(0));
-    }
-    
-    @Test
-    void findAllByStudentShouldReturnEmptyListWhenStudentHasNotIt() {
-        assertThat(courseDao.findAllByStudent(5)).isEmpty();
     }
     
     @Test

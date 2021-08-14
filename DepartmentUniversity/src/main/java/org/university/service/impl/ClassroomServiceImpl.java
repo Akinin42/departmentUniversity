@@ -2,7 +2,9 @@ package org.university.service.impl;
 
 import java.util.List;
 import java.util.Optional;
-import org.springframework.stereotype.Component;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.university.dao.ClassroomDao;
 import org.university.dto.ClassroomDto;
 import org.university.entity.Classroom;
@@ -10,13 +12,14 @@ import org.university.exceptions.EntityAlreadyExistException;
 import org.university.exceptions.EntityNotExistException;
 import org.university.service.ClassroomService;
 import org.university.service.validator.Validator;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 
-@Component
+@Service
 @AllArgsConstructor
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 @Slf4j
@@ -26,6 +29,7 @@ public class ClassroomServiceImpl implements ClassroomService {
     Validator<Classroom> validator;
 
     @Override
+    @Transactional
     public Classroom createClassroom(int classroomNumber) {
         if (!classroomDao.findByNumber(classroomNumber).isPresent()) {
             throw new EntityNotExistException();
@@ -34,6 +38,7 @@ public class ClassroomServiceImpl implements ClassroomService {
     }
 
     @Override
+    @Transactional
     public void addClassroom(@NonNull ClassroomDto classroomDto) {
         Classroom classroom = mapDtoToEntity(classroomDto);
         if (classroom.getId() != null && existClassroom(classroom)) {
@@ -45,11 +50,13 @@ public class ClassroomServiceImpl implements ClassroomService {
     }
 
     @Override
+    @Transactional
     public List<Classroom> findAllClassrooms() {
         return classroomDao.findAll();
     }
 
     @Override
+    @Transactional
     public void delete(@NonNull ClassroomDto classroomDto) {
         Classroom classroom = mapDtoToEntity(classroomDto);
         if (existClassroom(classroom)) {
@@ -59,6 +66,7 @@ public class ClassroomServiceImpl implements ClassroomService {
     }
     
     @Override
+    @Transactional
     public void edit(@NonNull ClassroomDto classroomDto) {
         Classroom classroom = mapDtoToEntity(classroomDto);
         validator.validate(classroom);

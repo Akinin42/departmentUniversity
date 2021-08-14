@@ -2,10 +2,10 @@ package org.university.dao.impl;
 
 import java.util.List;
 import java.util.Optional;
-import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
+
+import org.hibernate.SessionFactory;
 import org.university.dao.CrudDao;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -14,51 +14,41 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 public abstract class AbstractCrudImpl<E> implements CrudDao<E, Integer> {
 
-    protected JdbcTemplate jdbcTemplate;
-    String saveQuery;
-    String findByIdQuery;
-    String findAllQuery;
-    String findAllPaginationQuery;
-    String deleteByIdQuery;
-    String updateQuery;
+    protected SessionFactory sessionFactory;
+    private Class<E> type;
 
     @Override
     public void save(E entity) {
-        jdbcTemplate.update(saveQuery, insert(entity));
+        sessionFactory.getCurrentSession().persist(entity);
     }
 
     @Override
     public Optional<E> findById(Integer id) {
-        try {
-            return Optional.ofNullable(jdbcTemplate.queryForObject(findByIdQuery, getMapper(), id));
-        } catch (EmptyResultDataAccessException e) {
-            return Optional.empty();
-        }
+        return Optional.ofNullable(sessionFactory.getCurrentSession().get(type, id));
     }
 
     @Override
     public List<E> findAll() {
-        return jdbcTemplate.query(findAllQuery, getMapper());
+        return sessionFactory.getCurrentSession().createQuery("from " + type.getSimpleName() + " order by id", type)
+                .getResultList();
     }
 
     @Override
     public List<E> findAll(int limit, int offset) {
-        return jdbcTemplate.query(findAllPaginationQuery, getMapper(), limit, offset);
+        return sessionFactory.getCurrentSession().createQuery("from " + type.getSimpleName() + " order by id", type)
+                .setFirstResult(offset).setMaxResults(limit).getResultList();
     }
 
     @Override
     public void deleteById(Integer id) {
-        jdbcTemplate.update(deleteByIdQuery, id);
+        Object persistentInstance = sessionFactory.getCurrentSession().load(type, id);
+        if (persistentInstance != null) {
+            sessionFactory.getCurrentSession().delete(persistentInstance);
+        }
     }
-    
+
     @Override
     public void update(E entity) {
-        jdbcTemplate.update(updateQuery, updateArgs(entity));
+        sessionFactory.getCurrentSession().merge(entity);
     }
-
-    protected abstract Object[] insert(E entity);
-
-    protected abstract RowMapper<E> getMapper();
-    
-    protected abstract Object[] updateArgs(E entity);
 }

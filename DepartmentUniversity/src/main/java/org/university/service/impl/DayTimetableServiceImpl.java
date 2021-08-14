@@ -4,7 +4,9 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
-import org.springframework.stereotype.Component;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.university.dao.GroupDao;
 import org.university.dao.LessonDao;
 import org.university.dao.TeacherDao;
@@ -14,13 +16,15 @@ import org.university.entity.Lesson;
 import org.university.entity.Teacher;
 import org.university.exceptions.EntityNotExistException;
 import org.university.service.DayTimetableService;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
-@Component
+@Service
 @AllArgsConstructor
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
+@Transactional
 public class DayTimetableServiceImpl implements DayTimetableService {
 
     LessonDao lessonDao;

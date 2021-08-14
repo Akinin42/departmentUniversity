@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+
 import org.university.entity.Lesson;
 
 public interface LessonDao extends CrudDao<Lesson, Integer> {
@@ -16,7 +17,7 @@ public interface LessonDao extends CrudDao<Lesson, Integer> {
 
     List<Lesson> findAllByMonthAndGroup(int month, int groupId);
 
-    Optional<Lesson> findByTimeAndTeacherAndGroup(LocalDateTime date, String teacherEmail, String groupName);
+    Optional<Lesson> findByTimeAndTeacherAndGroup(LocalDateTime date, int teacherId, int groupId);
 
     List<Lesson> findAllByDate(LocalDate date);
 

@@ -34,6 +34,11 @@
         <commonsfileupload.version>1.4</commonsfileupload.version>
         <awssdks3.version>1.12.35</awssdks3.version>
         <jmimemagic.version>0.1.5</jmimemagic.version>
+        <hibernate.version>5.4.2.Final</hibernate.version>
+        <spring.orm.version>5.1.6.RELEASE</spring.orm.version>
+        <tomcat.dbcp.version>9.0.39</tomcat.dbcp.version>
+        <log4j.core.version>2.14.1</log4j.core.version>
+        <hamcrest.version>1.3</hamcrest.version>
     </properties>
 
     <dependencies>
@@ -181,6 +186,48 @@
             <groupId>net.sf.jmimemagic</groupId>
             <artifactId>jmimemagic</artifactId>
             <version>${jmimemagic.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>${hibernate.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-java8</artifactId>
+            <version>${hibernate.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-orm</artifactId>
+            <version>${spring.orm.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>tomcat-dbcp</artifactId>
+            <version>${tomcat.dbcp.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>${log4j.core.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-core</artifactId>
+            <version>${hamcrest.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-library</artifactId>
+            <version>${hamcrest.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

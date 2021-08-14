@@ -3,18 +3,22 @@ package org.university.dao.impl;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import javax.sql.DataSource;
+import javax.persistence.PersistenceException;
+import javax.transaction.Transactional;
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.university.dao.ScriptExecutor;
 import org.university.entity.Teacher;
-import org.university.io.FileReader;
-import org.university.utils.CreatorDataSource;
 import org.university.utils.CreatorTestEntities;
+import org.university.utils.TestConfig;
 
+@SpringJUnitConfig(TestConfig.class)
+@Transactional
 class TeacherDaoImplTest {
 
     private static TeacherDaoImpl teacherDao;
@@ -22,9 +26,9 @@ class TeacherDaoImplTest {
 
     @BeforeAll
     static void init() {
-        DataSource dataSource = CreatorDataSource.createTestDataSource();
-        teacherDao = new TeacherDaoImpl(new JdbcTemplate(dataSource));
-        executor = new ScriptExecutor(dataSource, new FileReader());
+        ApplicationContext context = new AnnotationConfigApplicationContext(TestConfig.class);
+        teacherDao = context.getBean(TeacherDaoImpl.class);
+        executor = context.getBean(ScriptExecutor.class);
     }
 
     @BeforeEach
@@ -34,8 +38,7 @@ class TeacherDaoImplTest {
 
     @Test
     void saveShouldSaveTeacherWhenInputValidTeacher() {        
-        Teacher teacher = Teacher.builder()
-                .withId(3)
+        Teacher teacher = Teacher.builder()                
                 .withSex("Test")
                 .withName("Test")
                 .withEmail("Test")
@@ -48,16 +51,16 @@ class TeacherDaoImplTest {
     }
 
     @Test
-    void saveShouldThrowDataIntegrityViolationExceptionWhenInputInvalidTeacher() {
+    void saveShouldThrowPersistenceExceptionWhenInputInvalidTeacher() {
         Teacher invalidTeacher = Teacher.builder()
-                .withName(null)
+                .withScientificDegree(null)
                 .build();
-        assertThatThrownBy(() -> teacherDao.save(invalidTeacher)).isInstanceOf(DataIntegrityViolationException.class);
+        assertThatThrownBy(() -> teacherDao.save(invalidTeacher)).isInstanceOf(PersistenceException.class);
     }
 
     @Test
-    void saveShouldThrowNullPointerExceptionWhenInputNull() {
-        assertThatThrownBy(() -> teacherDao.save(null)).isInstanceOf(NullPointerException.class);
+    void saveShouldThrowIllegalArgumentExceptionWhenInputNull() {
+        assertThatThrownBy(() -> teacherDao.save(null)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
@@ -76,15 +79,6 @@ class TeacherDaoImplTest {
     }
 
     @Test
-    void findAllShouldReturnEmptyListWhenTeachersTableEmpty() {
-        int numberRow = teacherDao.findAll().size() + 1;
-        for (int i = 1; i < numberRow; i++) {
-            teacherDao.deleteById(i);
-        }
-        assertThat(teacherDao.findAll()).isEmpty();
-    }
-
-    @Test
     void findAllShouldReturnExpectedTeachersWhenInputLimitAndOffset() {
         assertThat(teacherDao.findAll(1, 0)).containsExactly(CreatorTestEntities.createTeachers().get(0));
     }
@@ -98,7 +92,7 @@ class TeacherDaoImplTest {
     void deleteByIdShouldDeleteTeacherWithInputIdWhenThisTeacherExists() {
         int id = CreatorTestEntities.createTeachers().get(0).getId();
         teacherDao.deleteById(id);
-        assertThat(teacherDao.findAll()).doesNotContain(CreatorTestEntities.createTeachers().get(0));
+        assertThat(teacherDao.findById(id)).isEmpty();        
     }
 
     @Test

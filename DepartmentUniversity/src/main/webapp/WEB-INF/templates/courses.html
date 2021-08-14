@@ -71,6 +71,7 @@
 											<li>
 												<form action="#" th:action="@{/courses}" th:object="${course}" th:method="delete">
 													<input class="form-control" type="hidden" th:value="${course.id}" id="id" name="id" />
+													<input class="form-control" type="hidden" th:value="${course.name}" id="name" name="name"/>
 													<button type="submit" class="btn btn-danger" th:value="course">
 														<i class="fa fa-trash"></i>
 													</button>

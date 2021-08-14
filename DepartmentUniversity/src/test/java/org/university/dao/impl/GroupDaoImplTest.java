@@ -3,18 +3,23 @@ package org.university.dao.impl;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import javax.sql.DataSource;
+import javax.persistence.PersistenceException;
+import javax.transaction.Transactional;
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.university.dao.ScriptExecutor;
 import org.university.entity.Group;
-import org.university.io.FileReader;
-import org.university.utils.CreatorDataSource;
+import org.university.entity.Student;
 import org.university.utils.CreatorTestEntities;
+import org.university.utils.TestConfig;
 
+@SpringJUnitConfig(TestConfig.class)
+@Transactional
 class GroupDaoImplTest {
 
     private static GroupDaoImpl groupDao;
@@ -22,9 +27,9 @@ class GroupDaoImplTest {
 
     @BeforeAll
     static void init() {
-        DataSource dataSource = CreatorDataSource.createTestDataSource();
-        groupDao = new GroupDaoImpl(new JdbcTemplate(dataSource));
-        executor = new ScriptExecutor(dataSource, new FileReader());
+        ApplicationContext context = new AnnotationConfigApplicationContext(TestConfig.class);
+        groupDao = context.getBean(GroupDaoImpl.class);
+        executor = context.getBean(ScriptExecutor.class);        
     }
 
     @BeforeEach
@@ -32,10 +37,9 @@ class GroupDaoImplTest {
         executor.executeScript("inittestdb.sql");
     }
 
-    @Test
+    @Test    
     void saveShouldSaveGroupWhenInputValidGroup() {
         Group group = Group.builder()
-                .withId(3)
                 .withName("DS-45")
                 .build();
         groupDao.save(group);
@@ -43,16 +47,14 @@ class GroupDaoImplTest {
     }
 
     @Test
-    void saveShouldThrowDataIntegrityViolationExceptionWhenInputInvalidGroup() {
-        Group invalidGroup = Group.builder()
-                .withName(null)
-                .build();
-        assertThatThrownBy(() -> groupDao.save(invalidGroup)).isInstanceOf(DataIntegrityViolationException.class);
+    void saveShouldThrowPersistenceExceptionWhenInputInvalidGroup() {
+        Group invalidGroup = Group.builder().withName(null).build();
+        assertThatThrownBy(() -> groupDao.save(invalidGroup)).isInstanceOf(PersistenceException.class);
     }
 
     @Test
-    void saveShouldThrowNullPointerExceptionWhenInputNull() {
-        assertThatThrownBy(() -> groupDao.save(null)).isInstanceOf(NullPointerException.class);
+    void saveShouldThrowIllegalArgumentExceptionWhenInputNull() {
+        assertThatThrownBy(() -> groupDao.save(null)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
@@ -71,15 +73,6 @@ class GroupDaoImplTest {
     }
 
     @Test
-    void findAllShouldReturnEmptyListWhenCoursesTableEmpty() {
-        int numberRow = groupDao.findAll().size() + 1;
-        for (int i = 1; i < numberRow; i++) {
-            groupDao.deleteById(i);
-        }
-        assertThat(groupDao.findAll()).isEmpty();
-    }
-
-    @Test
     void findAllShouldReturnExpectedGroupsWhenInputLimitAndOffset() {
         assertThat(groupDao.findAll(1, 0)).containsExactly(CreatorTestEntities.createGroups().get(0));
     }
@@ -90,12 +83,12 @@ class GroupDaoImplTest {
     }
 
     @Test
-    void deleteByIdShouldDeleteGroupWithInputIdWhenThisCourseExists() {
+    void deleteByIdShouldDeleteGroupWithInputIdWhenThisExists() {
         int id = CreatorTestEntities.createGroups().get(0).getId();
         groupDao.deleteById(id);
-        assertThat(groupDao.findAll()).doesNotContain(CreatorTestEntities.createGroups().get(0));
+        assertThat(groupDao.findById(id)).isEmpty();
     }
-    
+
     @Test
     void findByNameShouldReturnEmptyOptionalWhenInputNameNotExists() {
         assertThat(groupDao.findByName("notexistname")).isEmpty();
@@ -105,15 +98,21 @@ class GroupDaoImplTest {
     void findByNameShouldReturnExpectedGroupWhenInputExistentName() {
         assertThat(groupDao.findByName("AB-22").get()).isEqualTo(CreatorTestEntities.createGroups().get(0));
     }
-    
+
     @Test
     void updateShouldUpdateGroupWithInputData() {
         Group existGroup = CreatorTestEntities.createGroups().get(0);
-        Group updatedGroup = Group.builder()
-                .withId(existGroup.getId())
-                .withName("new")
-                .build();
+        Group updatedGroup = Group.builder().withId(existGroup.getId()).withName("new").build();
         groupDao.update(updatedGroup);
         assertThat(groupDao.findById(1).get()).isEqualTo(updatedGroup);
+    }
+
+    @Test    
+    void updateStudentsShouldUpdateStudentsInInputGroup() {
+        Group groupWithoutStudent = CreatorTestEntities.createGroups().get(1);        
+        Student student = CreatorTestEntities.createStudents().get(5);
+        groupWithoutStudent.removeStudent(student);
+        groupDao.updateStudents(groupWithoutStudent);        
+        assertThat(groupDao.findById(2).get()).isEqualTo(groupWithoutStudent);
     }
 }

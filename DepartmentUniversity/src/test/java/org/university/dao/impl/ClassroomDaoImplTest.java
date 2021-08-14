@@ -3,58 +3,58 @@ package org.university.dao.impl;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import javax.sql.DataSource;
+import javax.persistence.PersistenceException;
+import javax.transaction.Transactional;
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.university.dao.ScriptExecutor;
 import org.university.entity.Classroom;
-import org.university.io.FileReader;
-import org.university.utils.CreatorDataSource;
 import org.university.utils.CreatorTestEntities;
+import org.university.utils.TestConfig;
 
-class ClassroomDaoImplTest {    
-    private static ClassroomDaoImpl classroomDao;   
+@SpringJUnitConfig(TestConfig.class)
+@Transactional
+class ClassroomDaoImplTest {
+
+    private static ClassroomDaoImpl classroomDao;
     private static ScriptExecutor executor;
 
     @BeforeAll
-    static void init(){
-        DataSource dataSource = CreatorDataSource.createTestDataSource();
-        classroomDao = new ClassroomDaoImpl(new JdbcTemplate(dataSource));
-        executor = new ScriptExecutor(dataSource, new FileReader());
+    static void init() {
+        ApplicationContext context = new AnnotationConfigApplicationContext(TestConfig.class);
+        classroomDao = context.getBean(ClassroomDaoImpl.class);
+        executor = context.getBean(ScriptExecutor.class);
     }
 
     @BeforeEach
     void createTablesAndData() {
         executor.executeScript("inittestdb.sql");
-    }
-
+    }    
+    
     @Test
+    @Rollback(true)
     void saveShouldSaveClassroomWhenInputValidClassroom() {
-        Classroom classroom = Classroom.builder()
-                .withId(3)
-                .withNumber(3)
-                .withAddress("test")
-                .withCapacity(20)
-                .build();
-        classroomDao.save(classroom);        
-        assertThat(classroomDao.findAll()).contains(classroom);        
+        Classroom classroom = Classroom.builder().withNumber(3).withAddress("test").withCapacity(20).build();
+        classroomDao.save(classroom);
+        assertThat(classroomDao.findAll()).contains(classroom);
     }
 
     @Test
-    void saveShouldThrowDataIntegrityViolationExceptionWhenInputInvalidClassroom() {
-        Classroom invalidClassroom = Classroom.builder()
-                .withAddress(null)
-                .build();
+    void saveShouldThrowPersistenceExceptionWhenInputInvalidClassroom() {
+        Classroom invalidClassroom = Classroom.builder().withAddress(null).build();
         assertThatThrownBy(() -> classroomDao.save(invalidClassroom))
-                .isInstanceOf(DataIntegrityViolationException.class);
+                .isInstanceOf(PersistenceException.class);
     }
 
     @Test
-    void saveShouldThrowNullPointerExceptionWhenInputNull() {
-        assertThatThrownBy(() -> classroomDao.save(null)).isInstanceOf(NullPointerException.class);
+    void saveShouldThrowIllegalArgumentExceptionWhenInputNull() {
+        assertThatThrownBy(() -> classroomDao.save(null)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
@@ -73,15 +73,6 @@ class ClassroomDaoImplTest {
     }
 
     @Test
-    void findAllShouldReturnEmptyListWhenClassroomsTableEmpty() {
-        int numberRow = classroomDao.findAll().size() + 1;
-        for (int i = 1; i < numberRow; i++) {
-            classroomDao.deleteById(i);
-        }
-        assertThat(classroomDao.findAll()).isEmpty();
-    }
-
-    @Test
     void findAllShouldReturnExpectedClassroomsWhenInputLimitAndOffset() {
         assertThat(classroomDao.findAll(1, 0)).containsExactly(CreatorTestEntities.createClassrooms().get(0));
     }
@@ -92,12 +83,13 @@ class ClassroomDaoImplTest {
     }
 
     @Test
+    @Rollback(true)
     void deleteByIdShouldDeleteClassroomWithInputIdWhenThisClassroomExists() {
         int id = CreatorTestEntities.createClassrooms().get(0).getId();
         classroomDao.deleteById(id);
-        assertThat(classroomDao.findAll()).doesNotContain(CreatorTestEntities.createClassrooms().get(0));
+        assertThat(classroomDao.findById(id)).isEmpty();
     }
-    
+
     @Test
     void findByNumberShouldReturnEmptyOptionalWhenInputNumberNotExists() {
         assertThat(classroomDao.findByNumber(10)).isEmpty();
@@ -107,16 +99,13 @@ class ClassroomDaoImplTest {
     void findByNumberShouldReturnExpectedClassroomWhenInputExistentNumber() {
         assertThat(classroomDao.findByNumber(1).get()).isEqualTo(CreatorTestEntities.createClassrooms().get(0));
     }
-    
+
     @Test
+    @Rollback(true)
     void updateShouldUpdateClassroomWithInputData() {
         Classroom existClassroom = CreatorTestEntities.createClassrooms().get(0);
-        Classroom updatedClassroom = Classroom.builder()
-                .withId(existClassroom.getId())
-                .withNumber(17)
-                .withAddress("new address")
-                .withCapacity(25)
-                .build();
+        Classroom updatedClassroom = Classroom.builder().withId(existClassroom.getId()).withNumber(17)
+                .withAddress("new address").withCapacity(25).build();
         classroomDao.update(updatedClassroom);
         assertThat(classroomDao.findById(1).get()).isEqualTo(updatedClassroom);
     }

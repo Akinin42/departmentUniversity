@@ -3,15 +3,18 @@ package org.university.service.impl;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.university.dao.impl.LessonDaoImpl;
@@ -48,12 +51,12 @@ class LessonServiceImplTest {
     @Test
     void createLessonShouldReturnExpectedLessonWhenItExistsInDatabase() {
         Lesson lesson = CreatorTestEntities.createLessons().get(0);
-        assertThat(lessonService.createLesson(LocalDateTime.of(2021, Month.OCTOBER, 19, 10, 00, 00), "Bob@mail.ru", "AB-22")).isEqualTo(lesson);
+        assertThat(lessonService.createLesson(LocalDateTime.of(2021, Month.OCTOBER, 19, 10, 00, 00), 1, 1)).isEqualTo(lesson);
     }
 
     @Test
     void createLessonShouldThrowEntityNotExistExceptionWhenLessonWithInputDataNotExist() {
-        assertThatThrownBy(() -> lessonService.createLesson(LocalDateTime.of(2021, Month.OCTOBER, 30, 10, 00, 00), "notexistemail", "notexistgroup"))
+        assertThatThrownBy(() -> lessonService.createLesson(LocalDateTime.of(2021, Month.OCTOBER, 30, 10, 00, 00), 25, 25))
                 .isInstanceOf(EntityNotExistException.class);
     }
 
@@ -67,7 +70,7 @@ class LessonServiceImplTest {
         Lesson lessonMock = mock(Lesson.class);
         Group groupMock = mock(Group.class);
         Classroom classroomMock = mock(Classroom.class);
-        List students = mock(List.class);
+        Set students = mock(Set.class);
         when(lessonMock.getGroup()).thenReturn(groupMock);
         when(groupMock.getStudents()).thenReturn(students);
         when(students.size()).thenReturn(10);
@@ -258,7 +261,7 @@ class LessonServiceImplTest {
         Lesson lessonMock = mock(Lesson.class);
         Group groupMock = mock(Group.class);
         Classroom classroomMock = mock(Classroom.class);
-        List students = mock(List.class);
+        Set students = mock(Set.class);
         when(lessonMock.getGroup()).thenReturn(groupMock);
         when(groupMock.getStudents()).thenReturn(students);
         when(students.size()).thenReturn(10);
@@ -326,7 +329,7 @@ class LessonServiceImplTest {
         Group group = Group.builder()
                 .withId(2)
                 .withName("FR-33")
-                .withStudents(CreatorTestEntities.createStudents())
+                .withStudents(new HashSet<>(CreatorTestEntities.createStudents()))
                 .build();
         when(lessonMock.getGroup()).thenReturn(group);
         when(lessonMock.getTeacher()).thenReturn(CreatorTestEntities.createTeachers().get(1)); 
@@ -354,7 +357,7 @@ class LessonServiceImplTest {
         Group group = Group.builder()
                 .withId(2)
                 .withName("FR-33")
-                .withStudents(CreatorTestEntities.createStudents())
+                .withStudents(new HashSet<>(CreatorTestEntities.createStudents()))
                 .build();
         Lesson lessonMock = createLessonMock();
         when(lessonMock.getId()).thenReturn(1);
@@ -380,7 +383,7 @@ class LessonServiceImplTest {
         Group group = Group.builder()
                 .withId(2)
                 .withName("FR-33")
-                .withStudents(CreatorTestEntities.createStudents())
+                .withStudents(new HashSet<>(CreatorTestEntities.createStudents()))
                 .build();
         Lesson lessonMock = createLessonMock();
         when(lessonMock.getGroup()).thenReturn(group);
@@ -410,7 +413,7 @@ class LessonServiceImplTest {
         Group group = Group.builder()
                 .withId(2)
                 .withName("FR-33")
-                .withStudents(CreatorTestEntities.createStudents())
+                .withStudents(new HashSet<>(CreatorTestEntities.createStudents()))
                 .build();
         Lesson lessonMock = createLessonMock();
         when(lessonMock.getGroup()).thenReturn(group);
@@ -454,7 +457,7 @@ class LessonServiceImplTest {
         Lesson lessonMock = mock(Lesson.class);
         Group groupMock = mock(Group.class);
         Teacher teacherMock = mock(Teacher.class);
-        List students = mock(List.class);
+        Set students = mock(Set.class);
         when(lessonMock.getGroup()).thenReturn(groupMock);
         when(lessonMock.getTeacher()).thenReturn(teacherMock);
         when(lessonMock.getClassroom()).thenReturn(CreatorTestEntities.createClassrooms().get(1));
@@ -469,7 +472,7 @@ class LessonServiceImplTest {
 
     private static LessonDaoImpl createLessonDaoMock() {
         LessonDaoImpl lessonDaoMock = mock(LessonDaoImpl.class);
-        when(lessonDaoMock.findByTimeAndTeacherAndGroup(LocalDateTime.of(2021, Month.OCTOBER, 19, 10, 00, 00), "Bob@mail.ru", "AB-22"))
+        when(lessonDaoMock.findByTimeAndTeacherAndGroup(LocalDateTime.of(2021, Month.OCTOBER, 19, 10, 00, 00), 1, 1))
                 .thenReturn(Optional.ofNullable(CreatorTestEntities.createLessons().get(0)));
         when(lessonDaoMock.findById(1)).thenReturn(Optional.ofNullable(CreatorTestEntities.createLessons().get(0)));
         when(lessonDaoMock.findById(10)).thenReturn(Optional.empty());

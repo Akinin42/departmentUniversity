@@ -3,17 +3,21 @@ package org.university.service.impl;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.university.dao.impl.GroupDaoImpl;
 import org.university.dao.impl.StudentDaoImpl;
 import org.university.dto.GroupDto;
+import org.university.dto.StudentDto;
 import org.university.entity.Group;
 import org.university.entity.Student;
 import org.university.exceptions.EntityAlreadyExistException;
@@ -26,11 +30,13 @@ class GroupServiceImplTest {
 
     private static GroupServiceImpl groupService;
     private static GroupDaoImpl groupDaoMock;
+    private static StudentDaoImpl studentDaoMock;
 
     @BeforeAll
     static void init() {
         groupDaoMock = createGroupDaoMock();
-        groupService = new GroupServiceImpl(groupDaoMock, createStudentDaoMock(), new GroupValidator());
+        studentDaoMock = mock(StudentDaoImpl.class);
+        groupService = new GroupServiceImpl(groupDaoMock, studentDaoMock, new GroupValidator());
     }
 
     @Test
@@ -79,7 +85,7 @@ class GroupServiceImplTest {
 
     @Test
     void addGroupShouldSaveGroupAndStudentsInDatabasesWhenInputValidGroup() {
-        List<Student> students = CreatorTestEntities.createStudents();
+        Set<Student> students = new HashSet<>();
         GroupDto group = new GroupDto();
         group.setId(3);
         group.setName("FF-55");
@@ -106,6 +112,8 @@ class GroupServiceImplTest {
 
     @Test
     void findAllGroupsShouldReturnGroupsWithStudentsWhenTheyExist() {
+        List<Group> expected = createGroupsWithStudents();
+        List<Group> actual = groupService.findAllGroups();
         assertThat(groupService.findAllGroups()).isEqualTo(createGroupsWithStudents());
     }
 
@@ -130,7 +138,7 @@ class GroupServiceImplTest {
 
     private List<Group> createGroupsWithStudents() {
         List<Group> groups = new ArrayList<>();
-        List<Student> students = new ArrayList<>();
+        Set<Student> students = new HashSet<>();
         students.add(CreatorTestEntities.createStudents().get(0));
         students.add(CreatorTestEntities.createStudents().get(1));
         students.add(CreatorTestEntities.createStudents().get(2));
@@ -141,7 +149,7 @@ class GroupServiceImplTest {
                 .withStudents(students)
                 .build();
         groups.add(group);
-        students = new ArrayList<>();
+        students = new HashSet<>();
         students.add(CreatorTestEntities.createStudents().get(4));
         students.add(CreatorTestEntities.createStudents().get(5));
         group = Group.builder()
@@ -201,9 +209,86 @@ class GroupServiceImplTest {
         GroupDto group = new GroupDto();        
         group.setId(1);
         group.setName("AB-22");
+        Set<Student> students = new HashSet<>();
+        students.add(CreatorTestEntities.createStudents().get(0));
+        students.add(CreatorTestEntities.createStudents().get(1));
+        students.add(CreatorTestEntities.createStudents().get(2));
+        students.add(CreatorTestEntities.createStudents().get(3));
+        group.setStudents(students);
         Group groupEntity = CreatorTestEntities.createGroups().get(0);
         groupService.edit(group);
         verify(groupDaoMock).update(groupEntity);
+    }
+    
+    @Test
+    void addStudentToGroupShouldInsertStudentToGroupAndDeleteFromOld() {
+        GroupDaoImpl groupDaoMock = createGroupDaoMock();
+        StudentDaoImpl studentDaoMock = mock(StudentDaoImpl.class);
+        GroupServiceImpl groupService = new GroupServiceImpl(groupDaoMock, studentDaoMock, new GroupValidator());
+        StudentDto studentDto = new StudentDto();
+        studentDto.setId(6);
+        studentDto.setGroupName("AB-22");
+        when(studentDaoMock.findById(6)).thenReturn(Optional.ofNullable(CreatorTestEntities.createStudents().get(5)));
+        Group group = CreatorTestEntities.createGroups().get(0);
+        group.addStudent(CreatorTestEntities.createStudents().get(5));
+        groupService.addStudentToGroup(studentDto);
+        verify(groupDaoMock).updateStudents(group);
+    }
+    
+    @Test
+    void addStudentToGroupShouldThrowEntityNotExistExceptionWhenStudentNotExist() {
+        StudentDto studentDto = new StudentDto();
+        studentDto.setId(42);
+        studentDto.setGroupName("AB-22");
+        when(studentDaoMock.findById(42)).thenReturn(Optional.empty());
+        assertThatThrownBy(() -> groupService.addStudentToGroup(studentDto)).isInstanceOf(EntityNotExistException.class);
+    }
+    
+    @Test
+    void addStudentToGroupShouldThrowEntityNotExistExceptionWhenGroupNotExist() {
+        StudentDto studentDto = new StudentDto();
+        studentDto.setId(6);
+        studentDto.setGroupName("notexistedgroup");
+        when(studentDaoMock.findById(6)).thenReturn(Optional.ofNullable(CreatorTestEntities.createStudents().get(5)));
+        assertThatThrownBy(() -> groupService.addStudentToGroup(studentDto)).isInstanceOf(EntityNotExistException.class);
+    }
+    
+    @Test
+    void deleteStudentFromGroupShouldThrowEntityNotExistExceptionWhenStudentNotExist() {
+        StudentDto studentDto = new StudentDto();
+        studentDto.setId(42);
+        studentDto.setGroupName("AB-22");
+        when(studentDaoMock.findById(42)).thenReturn(Optional.empty());
+        assertThatThrownBy(() -> groupService.deleteStudentFromGroup(studentDto)).isInstanceOf(EntityNotExistException.class);
+    }
+    
+    @Test
+    void deleteStudentFromGroupThrowEntityNotExistExceptionWhenGroupNotExist() {
+        StudentDto studentDto = new StudentDto();
+        studentDto.setId(6);
+        studentDto.setGroupName("notexistedgroup");
+        when(studentDaoMock.findById(6)).thenReturn(Optional.ofNullable(CreatorTestEntities.createStudents().get(5)));
+        assertThatThrownBy(() -> groupService.deleteStudentFromGroup(studentDto)).isInstanceOf(EntityNotExistException.class);
+    }
+    
+    @Test
+    void deleteStudentFromGroupShouldDeleteStudentFromGroup() {
+        GroupDaoImpl groupDaoMock = createGroupDaoMock();
+        StudentDaoImpl studentDaoMock = mock(StudentDaoImpl.class);
+        GroupServiceImpl groupService = new GroupServiceImpl(groupDaoMock, studentDaoMock, new GroupValidator());
+        StudentDto studentDto = new StudentDto();
+        studentDto.setId(1);
+        studentDto.setGroupName("AB-22");
+        when(studentDaoMock.findById(1)).thenReturn(Optional.ofNullable(CreatorTestEntities.createStudents().get(0)));
+        Group group = CreatorTestEntities.createGroups().get(0);
+        group.removeStudent(CreatorTestEntities.createStudents().get(0));
+        groupService.deleteStudentFromGroup(studentDto);
+        verify(groupDaoMock).updateStudents(group);
+    }
+    
+    @Test
+    void deleteStudentFromGroupShouldThrowIllegalArgumentExceptionWhenInputNull() {
+        assertThatThrownBy(() -> groupService.deleteStudentFromGroup(null)).isInstanceOf(IllegalArgumentException.class);
     }
 
     private static GroupDaoImpl createGroupDaoMock() {
@@ -215,21 +300,7 @@ class GroupServiceImplTest {
         when(groupDaoMock.findById(1)).thenReturn(Optional.ofNullable(CreatorTestEntities.createGroups().get(0)));
         when(groupDaoMock.findById(2)).thenReturn(Optional.ofNullable(CreatorTestEntities.createGroups().get(1)));
         when(groupDaoMock.findAll()).thenReturn(CreatorTestEntities.createGroups());
+        when(groupDaoMock.findByName("notexistedgroup")).thenReturn(Optional.empty());
         return groupDaoMock;
-    }
-    
-    private static StudentDaoImpl createStudentDaoMock() {
-        StudentDaoImpl studentDaoMock = mock(StudentDaoImpl.class);
-        List<Student> students = CreatorTestEntities.createStudents();
-        students.remove(0);
-        students.remove(0);
-        students.remove(0);
-        students.remove(0);
-        when(studentDaoMock.findAllByGroup("FR-33")).thenReturn(students);
-        students = CreatorTestEntities.createStudents();
-        students.remove(5);
-        students.remove(4);
-        when(studentDaoMock.findAllByGroup("AB-22")).thenReturn(students);
-        return studentDaoMock;
     }
 }
