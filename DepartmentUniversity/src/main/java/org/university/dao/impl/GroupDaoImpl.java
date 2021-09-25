@@ -2,7 +2,9 @@ package org.university.dao.impl;
 
 import java.util.Optional;
 
-import org.hibernate.SessionFactory;
+import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+
 import org.springframework.stereotype.Repository;
 import org.university.dao.GroupDao;
 import org.university.entity.Group;
@@ -10,20 +12,25 @@ import org.university.entity.Group;
 @Repository
 public class GroupDaoImpl extends AbstractCrudImpl<Group> implements GroupDao {
 
-    public GroupDaoImpl(SessionFactory sessionFactory) {
-        super(sessionFactory, Group.class);
+    public GroupDaoImpl(EntityManager entityManager) {
+        super(entityManager, Group.class);
     }
 
     @Override
     public Optional<Group> findByName(String name) {
-        Group group = (Group) sessionFactory.getCurrentSession().createQuery("from Group where name = :name")
-                .setParameter("name", name).uniqueResult();
-        return Optional.ofNullable(group);
+        try {
+            Group group = (Group) entityManager.createQuery("from Group where name = :name")
+                    .setParameter("name", name)
+                    .getSingleResult();
+            return Optional.ofNullable(group);
+        } catch (NoResultException e) {
+            return Optional.empty();
+        }
     }
 
-    @Override    
+    @Override
     public void updateStudents(Group group) {
-        sessionFactory.getCurrentSession().merge(group);
-        sessionFactory.getCurrentSession().flush();
+        entityManager.merge(group);
+        entityManager.flush();
     }
 }

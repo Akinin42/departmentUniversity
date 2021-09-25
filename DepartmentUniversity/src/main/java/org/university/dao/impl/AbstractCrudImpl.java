@@ -3,7 +3,9 @@ package org.university.dao.impl;
 import java.util.List;
 import java.util.Optional;
 
-import org.hibernate.SessionFactory;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.university.dao.CrudDao;
 
 import lombok.AccessLevel;
@@ -14,41 +16,43 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 public abstract class AbstractCrudImpl<E> implements CrudDao<E, Integer> {
 
-    protected SessionFactory sessionFactory;
+    @PersistenceContext
+    protected EntityManager entityManager;    
+   
     private Class<E> type;
 
     @Override
     public void save(E entity) {
-        sessionFactory.getCurrentSession().persist(entity);
+        entityManager.persist(entity);
     }
 
     @Override
     public Optional<E> findById(Integer id) {
-        return Optional.ofNullable(sessionFactory.getCurrentSession().get(type, id));
+        return Optional.ofNullable(entityManager.find(type, id));
     }
 
     @Override
-    public List<E> findAll() {
-        return sessionFactory.getCurrentSession().createQuery("from " + type.getSimpleName() + " order by id", type)
+    public List<E> findAll() {        
+        return entityManager.createQuery("from " + type.getSimpleName() + " order by id", type)
                 .getResultList();
     }
 
     @Override
     public List<E> findAll(int limit, int offset) {
-        return sessionFactory.getCurrentSession().createQuery("from " + type.getSimpleName() + " order by id", type)
+        return entityManager.createQuery("from " + type.getSimpleName() + " order by id", type)
                 .setFirstResult(offset).setMaxResults(limit).getResultList();
     }
 
     @Override
     public void deleteById(Integer id) {
-        Object persistentInstance = sessionFactory.getCurrentSession().load(type, id);
-        if (persistentInstance != null) {
-            sessionFactory.getCurrentSession().delete(persistentInstance);
+        Object persistentInstance = entityManager.find(type, id);
+        if (persistentInstance != null) {            
+            entityManager.remove(persistentInstance);
         }
     }
 
     @Override
     public void update(E entity) {
-        sessionFactory.getCurrentSession().merge(entity);
+        entityManager.merge(entity);
     }
 }

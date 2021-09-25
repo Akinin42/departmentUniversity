@@ -74,7 +74,7 @@ public class ClassroomServiceImpl implements ClassroomService {
         log.info("Classroom with number {} edited succesfull!", classroom.getNumber());        
     }
 
-    private boolean existClassroom(Classroom classroom) {
+    private boolean existClassroom(Classroom classroom) {        
         return !classroomDao.findById(classroom.getId()).equals(Optional.empty());
     }
     

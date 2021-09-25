@@ -5,9 +5,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 
-import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Repository;
 import org.university.dao.LessonDao;
 import org.university.entity.Lesson;
@@ -15,13 +15,13 @@ import org.university.entity.Lesson;
 @Repository
 public class LessonDaoImpl extends AbstractCrudImpl<Lesson> implements LessonDao {
 
-    public LessonDaoImpl(SessionFactory sessionFactory) {
-        super(sessionFactory, Lesson.class);
+    public LessonDaoImpl(EntityManager entityManager) {
+        super(entityManager, Lesson.class);
     }
 
     @Override
     public List<Lesson> findAllByDateAndTeacher(LocalDate date, int teacherId) {
-        return sessionFactory.getCurrentSession().createQuery(
+        return entityManager.createQuery(
                 "from Lesson where date(startLesson) =: date and lesson_teacher =:teacherId order by startLesson",
                 Lesson.class)
                 .setParameter("date", date)
@@ -31,7 +31,7 @@ public class LessonDaoImpl extends AbstractCrudImpl<Lesson> implements LessonDao
 
     @Override
     public List<Lesson> findAllByDateAndGroup(LocalDate date, int groupId) {
-        return sessionFactory.getCurrentSession()
+        return entityManager
                 .createQuery(
                         "from Lesson where date(startLesson) =:date and lesson_group =:groupId order by startLesson",
                         Lesson.class)
@@ -42,7 +42,7 @@ public class LessonDaoImpl extends AbstractCrudImpl<Lesson> implements LessonDao
 
     @Override
     public List<Lesson> findAllByMonthAndTeacher(int month, int teacherId) {
-        return sessionFactory.getCurrentSession().createQuery(
+        return entityManager.createQuery(
                 "from Lesson where month(startLesson) =:month and lesson_teacher =:teacherId order by startLesson",
                 Lesson.class)
                 .setParameter("month", month)
@@ -52,7 +52,7 @@ public class LessonDaoImpl extends AbstractCrudImpl<Lesson> implements LessonDao
 
     @Override
     public List<Lesson> findAllByMonthAndGroup(int month, int groupId) {
-        return sessionFactory.getCurrentSession()
+        return entityManager
                 .createQuery(
                         "from Lesson where month(startLesson) =:month and lesson_group =:groupId order by startLesson",
                         Lesson.class)
@@ -65,7 +65,7 @@ public class LessonDaoImpl extends AbstractCrudImpl<Lesson> implements LessonDao
     public Optional<Lesson> findByTimeAndTeacherAndGroup(LocalDateTime date, int teacherId, int groupId) {
         Lesson lesson = null;
         try {
-            lesson = sessionFactory.getCurrentSession().createQuery(
+            lesson = entityManager.createQuery(
                     "from Lesson where startLesson =:date and lesson_teacher =:teacherId and lesson_group =:groupId",
                     Lesson.class)
                     .setParameter("date", date)
@@ -80,14 +80,14 @@ public class LessonDaoImpl extends AbstractCrudImpl<Lesson> implements LessonDao
 
     @Override
     public List<Lesson> findAllByDate(LocalDate date) {
-        return sessionFactory.getCurrentSession()
+        return entityManager
                 .createQuery("from Lesson where date(startLesson) =:date order by startLesson", Lesson.class)
                 .setParameter("date", date).getResultList();
     }
 
     @Override
     public List<Lesson> findAllByWeekAndTeacher(LocalDate startWeek, LocalDate endWeek, int teacherId) {
-        return sessionFactory.getCurrentSession().createQuery(
+        return entityManager.createQuery(
                 "from Lesson where date(startLesson) between :start and :end and lesson_teacher =:teacherId order by startLesson",
                 Lesson.class)
                 .setParameter("start", startWeek)
@@ -98,7 +98,7 @@ public class LessonDaoImpl extends AbstractCrudImpl<Lesson> implements LessonDao
 
     @Override
     public List<Lesson> findAllByWeekAndGroup(LocalDate startWeek, LocalDate endWeek, int groupId) {
-        return sessionFactory.getCurrentSession().createQuery(
+        return entityManager.createQuery(
                 "from Lesson where date(startLesson) between :start and :end and lesson_group =:groupId order by startLesson",
                 Lesson.class)
                 .setParameter("start", startWeek)

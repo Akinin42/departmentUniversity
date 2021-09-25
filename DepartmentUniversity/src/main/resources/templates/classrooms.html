@@ -74,13 +74,13 @@
                                                     </button>
                                                 </form>
                                             </li>											
-											<li>
-												<form action="#" th:action="@{/classrooms}" th:object="${classroom}" th:method="delete">
+											<li>											
+										 		<form action="#" th:action="@{/classrooms}" th:object="${classroom}" th:method="delete">												    
 													<input class="form-control" type="hidden" th:value="${classroom.id}" id="id" name="id" />
 													<button type="submit" class="btn btn-danger" th:value="classroom">
 														<i class="fa fa-trash"></i>
 													</button>
-												</form>
+												</form> 												
 											</li>
 										</ul>
 									</td>
