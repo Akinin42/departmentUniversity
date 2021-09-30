@@ -13,7 +13,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 
 @Configuration
-@PropertySource("awss3.properties")
+@PropertySource("classpath:awss3.properties")
 @EnableTransactionManagement
 public class AWSConfiguration {
 

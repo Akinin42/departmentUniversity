@@ -12,12 +12,11 @@ services:
         volumes: 
           - ./docker/postgres-data:/var/lib/postgresql/data
           - ./docker/schema.sql:/docker-entrypoint-initdb.d/schema.sql
-  tomcat:
+  app:
+        build: .
+        environment:
+           - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/departmentuniversity
+        ports:
+          - "8080:8080"
         depends_on:
           - postgres
-        image: tomcat
-        volumes:
-           - ./target/DepartmentUniversity-0.0.1-SNAPSHOT.war:/usr/local/tomcat/webapps/DepartmentUniversity.war
-           - ./docker/context.xml:/usr/local/tomcat/conf/Catalina/localhost/context.xml.default
-        ports:
-          - "8080:8080"        
