@@ -157,7 +157,7 @@ class TeacherControllerTest {
     void testOtherTeachers() throws Exception {
         List<Teacher> nextTeachers = CreatorTestEntities.createTeachers();
         nextTeachers.remove(1);
-        when(teacherServiceMock.findNumberOfUsers(5, 5)).thenReturn(nextTeachers);
+        when(teacherServiceMock.findNumberOfUsers(5, 1)).thenReturn(nextTeachers);
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/teachers/1").sessionAttr("pagesNumber", 0)
                 .sessionAttr("numberUsers", 5);
         ResultActions result = mockMvc.perform(request);
@@ -170,7 +170,7 @@ class TeacherControllerTest {
     void testOtherTeachersWhenNextTeacherNotExist() throws Exception {
         List<Teacher> teachers = CreatorTestEntities.createTeachers();
         when(teacherServiceMock.findNumberOfUsers(5, 0)).thenReturn(teachers);
-        when(teacherServiceMock.findNumberOfUsers(5, 5)).thenReturn(new ArrayList<Teacher>());
+        when(teacherServiceMock.findNumberOfUsers(5, 1)).thenReturn(new ArrayList<Teacher>());
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/teachers/1").sessionAttr("pagesNumber", 0)
                 .sessionAttr("numberUsers", 5);
         ResultActions result = mockMvc.perform(request);

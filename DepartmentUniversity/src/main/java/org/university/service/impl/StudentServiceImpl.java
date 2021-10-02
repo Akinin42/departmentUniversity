@@ -74,7 +74,7 @@ public class StudentServiceImpl extends AbstractUserServiceImpl<Student> impleme
         student = studentDao.findById(studentDto.getId()).get();
         if (!student.getCourses().contains(course)) {
             student.addCourse(course);
-            studentDao.update(student);
+            studentDao.save(student);
             log.info("Student with id {} added to course {}!", student.getId(), course.getName());
         }
     }
@@ -86,14 +86,9 @@ public class StudentServiceImpl extends AbstractUserServiceImpl<Student> impleme
         student = studentDao.findById(studentDto.getId()).get();
         if (student.getCourses().contains(course)) {
             student.removeCourse(course);
-            studentDao.update(student);
+            studentDao.save(student);
             log.info("Student with id {} deleted from course {}!", student.getId(), course.getName());
         }
-    }
-
-    @Override
-    public List<Student> findNumberOfUsers(int quantity, int number) {
-        return studentDao.findAll(quantity, number);
     }
 
     @Override

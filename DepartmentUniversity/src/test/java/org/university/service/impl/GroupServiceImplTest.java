@@ -14,8 +14,8 @@ import java.util.Set;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.university.dao.impl.GroupDaoImpl;
-import org.university.dao.impl.StudentDaoImpl;
+import org.university.dao.GroupDao;
+import org.university.dao.StudentDao;
 import org.university.dto.GroupDto;
 import org.university.dto.StudentDto;
 import org.university.entity.Group;
@@ -29,13 +29,13 @@ import org.university.utils.CreatorTestEntities;
 class GroupServiceImplTest {
 
     private static GroupServiceImpl groupService;
-    private static GroupDaoImpl groupDaoMock;
-    private static StudentDaoImpl studentDaoMock;
+    private static GroupDao groupDaoMock;
+    private static StudentDao studentDaoMock;
 
     @BeforeAll
     static void init() {
         groupDaoMock = createGroupDaoMock();
-        studentDaoMock = mock(StudentDaoImpl.class);
+        studentDaoMock = mock(StudentDao.class);
         groupService = new GroupServiceImpl(groupDaoMock, studentDaoMock, new GroupValidator());
     }
 
@@ -201,7 +201,7 @@ class GroupServiceImplTest {
                 .withStudents(null)
                 .build();
         groupService.edit(group);
-        verify(groupDaoMock).update(groupEntity);
+        verify(groupDaoMock).save(groupEntity);
     }
     
     @Test
@@ -217,13 +217,13 @@ class GroupServiceImplTest {
         group.setStudents(students);
         Group groupEntity = CreatorTestEntities.createGroups().get(0);
         groupService.edit(group);
-        verify(groupDaoMock).update(groupEntity);
+        verify(groupDaoMock).save(groupEntity);
     }
     
     @Test
     void addStudentToGroupShouldInsertStudentToGroupAndDeleteFromOld() {
-        GroupDaoImpl groupDaoMock = createGroupDaoMock();
-        StudentDaoImpl studentDaoMock = mock(StudentDaoImpl.class);
+        GroupDao groupDaoMock = createGroupDaoMock();
+        StudentDao studentDaoMock = mock(StudentDao.class);
         GroupServiceImpl groupService = new GroupServiceImpl(groupDaoMock, studentDaoMock, new GroupValidator());
         StudentDto studentDto = new StudentDto();
         studentDto.setId(6);
@@ -232,7 +232,7 @@ class GroupServiceImplTest {
         Group group = CreatorTestEntities.createGroups().get(0);
         group.addStudent(CreatorTestEntities.createStudents().get(5));
         groupService.addStudentToGroup(studentDto);
-        verify(groupDaoMock).updateStudents(group);
+        verify(groupDaoMock).save(group);
     }
     
     @Test
@@ -273,8 +273,8 @@ class GroupServiceImplTest {
     
     @Test
     void deleteStudentFromGroupShouldDeleteStudentFromGroup() {
-        GroupDaoImpl groupDaoMock = createGroupDaoMock();
-        StudentDaoImpl studentDaoMock = mock(StudentDaoImpl.class);
+        GroupDao groupDaoMock = createGroupDaoMock();
+        StudentDao studentDaoMock = mock(StudentDao.class);
         GroupServiceImpl groupService = new GroupServiceImpl(groupDaoMock, studentDaoMock, new GroupValidator());
         StudentDto studentDto = new StudentDto();
         studentDto.setId(1);
@@ -283,7 +283,7 @@ class GroupServiceImplTest {
         Group group = CreatorTestEntities.createGroups().get(0);
         group.removeStudent(CreatorTestEntities.createStudents().get(0));
         groupService.deleteStudentFromGroup(studentDto);
-        verify(groupDaoMock).updateStudents(group);
+        verify(groupDaoMock).save(group);
     }
     
     @Test
@@ -291,8 +291,8 @@ class GroupServiceImplTest {
         assertThatThrownBy(() -> groupService.deleteStudentFromGroup(null)).isInstanceOf(IllegalArgumentException.class);
     }
 
-    private static GroupDaoImpl createGroupDaoMock() {
-        GroupDaoImpl groupDaoMock = mock(GroupDaoImpl.class);
+    private static GroupDao createGroupDaoMock() {
+        GroupDao groupDaoMock = mock(GroupDao.class);
         when(groupDaoMock.findByName("FR-33"))
             .thenReturn(Optional.ofNullable(CreatorTestEntities.createGroups().get(1)));
         when(groupDaoMock.findByName("AB-22"))

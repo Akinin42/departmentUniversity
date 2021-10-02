@@ -3,16 +3,21 @@ package org.university.service.impl;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.university.dao.impl.TeacherDaoImpl;
+import org.university.dao.TeacherDao;
 import org.university.dto.TeacherDto;
 import org.university.entity.Teacher;
 import org.university.exceptions.AuthorisationFailException;
@@ -28,7 +33,7 @@ import org.university.utils.CreatorTestEntities;
 class TeacherServiceImplTest {
 
     private static TeacherServiceImpl teacherService;
-    private static TeacherDaoImpl teacherDaoMock;
+    private static TeacherDao teacherDaoMock;
 
     @BeforeAll
     static void init() {
@@ -69,6 +74,7 @@ class TeacherServiceImplTest {
         teacher.setPhone("79758657788");
         teacher.setPassword("test-password");
         teacher.setScientificDegree("professor");
+        when(teacherDaoMock.existsById(1)).thenReturn(true);
         assertThatThrownBy(() -> teacherService.register(teacher)).isInstanceOf(EntityAlreadyExistException.class);
     }
     
@@ -127,15 +133,16 @@ class TeacherServiceImplTest {
     void findNumberOfUsersShouldReturnExpectedTeachersWhenInputLimitAndOffset() {
         List<Teacher> teachers = new ArrayList<>();
         teachers.add(CreatorTestEntities.createTeachers().get(0));
-        when(teacherDaoMock.findAll(1, 0)).thenReturn(teachers);
+        Pageable limit = PageRequest.of(0,1);
+        when(teacherDaoMock.findAll(limit)).thenReturn(new PageImpl<>(teachers));
         assertThat(teacherService.findNumberOfUsers(1, 0)).containsExactly(CreatorTestEntities.createTeachers().get(0));
     }
 
     @Test
     void findNumberOfUsersShouldReturnEmptyListWhenInputOffsetMoreTableSize() {
-        List<Teacher> teachers = new ArrayList<>();
-        when(teacherDaoMock.findAll(2, 10)).thenReturn(teachers);
-        assertThat(teacherService.findNumberOfUsers(2, 10)).isEmpty();
+        Pageable limit = PageRequest.of(1,5);
+        when(teacherDaoMock.findAll(limit)).thenReturn(Page.empty());
+        assertThat(teacherService.findNumberOfUsers(5, 1)).isEmpty();
     }
 
     @Test
@@ -225,7 +232,7 @@ class TeacherServiceImplTest {
                 .withPhoto("test-photo")
                 .build();
         teacherService.edit(teacherDto);
-        verify(teacherDaoMock).update(teacher);
+        verify(teacherDaoMock).save(teacher);
     }
     
     @Test
@@ -250,7 +257,7 @@ class TeacherServiceImplTest {
                 .withPhoto("test-photo")
                 .build();
         teacherService.edit(teacherDto);
-        verify(teacherDaoMock).update(teacher);
+        verify(teacherDaoMock).save(teacher);
     }
 
     private TeacherDto getTestTeacherDto() {
@@ -265,8 +272,8 @@ class TeacherServiceImplTest {
         return teacher;
     }
 
-    private static TeacherDaoImpl createTeacherDaoMock() {
-        TeacherDaoImpl teacherDaoMock = mock(TeacherDaoImpl.class);
+    private static TeacherDao createTeacherDaoMock() {
+        TeacherDao teacherDaoMock = mock(TeacherDao.class);
         when(teacherDaoMock.findById(1)).thenReturn(Optional.ofNullable(CreatorTestEntities.createTeachers().get(0)));
         when(teacherDaoMock.findById(3)).thenReturn(Optional.empty());
         Teacher teacherWithEncodePassword = Teacher.builder()

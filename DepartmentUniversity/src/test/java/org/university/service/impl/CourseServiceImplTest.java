@@ -3,15 +3,16 @@ package org.university.service.impl;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Optional;
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.university.dao.impl.CourseDaoImpl;
+import org.university.dao.CourseDao;
 import org.university.dto.CourseDto;
 import org.university.entity.Course;
 import org.university.exceptions.EntityAlreadyExistException;
@@ -24,7 +25,7 @@ import org.university.utils.CreatorTestEntities;
 class CourseServiceImplTest {
 
     private static CourseServiceImpl courseService;
-    private static CourseDaoImpl courseDaoMock;
+    private static CourseDao courseDaoMock;
 
     @BeforeAll
     static void init() {
@@ -168,11 +169,11 @@ class CourseServiceImplTest {
         courseDto.setDescription("test-courses");
         courseService.edit(courseDto);
         Course course = CreatorTestEntities.createCourses().get(0);
-        verify(courseDaoMock).update(course);
+        verify(courseDaoMock).save(course);
     }
 
-    private static CourseDaoImpl createCourseDaoMock() {
-        CourseDaoImpl courseDaoMock = mock(CourseDaoImpl.class);
+    private static CourseDao createCourseDaoMock() {
+        CourseDao courseDaoMock = mock(CourseDao.class);
         when(courseDaoMock.findByName("Law"))
                 .thenReturn(Optional.ofNullable(CreatorTestEntities.createCourses().get(0)));
         when(courseDaoMock.findByName("notexistedname"))

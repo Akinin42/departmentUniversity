@@ -1,6 +1,7 @@
 package org.university.service;
 
 import java.util.List;
+
 import org.university.dto.UserDto;
 
 public interface UserService <E>{

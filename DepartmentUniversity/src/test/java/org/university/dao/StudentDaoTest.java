@@ -1,39 +1,20 @@
-package org.university.dao.impl;
+package org.university.dao;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import javax.transaction.Transactional;
-
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
-import org.university.dao.ScriptExecutor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.university.entity.Student;
 import org.university.utils.CreatorTestEntities;
-import org.university.utils.TestConfig;
 
-@SpringJUnitConfig(TestConfig.class)
-@Transactional
-class StudentDaoImplTest {
-
-    private static StudentDaoImpl studentDao;
-    private static ScriptExecutor executor;
-
-    @BeforeAll
-    static void init() {
-        ApplicationContext context = new AnnotationConfigApplicationContext(TestConfig.class);
-        studentDao = context.getBean(StudentDaoImpl.class);
-        executor = context.getBean(ScriptExecutor.class);
-    }
-
-    @BeforeEach
-    void createTablesAndData() {
-        executor.executeScript("inittestdb.sql");
-    }
+@DataJpaTest
+class StudentDaoTest {
+    
+    @Autowired
+    StudentDao studentDao;
 
     @Test
     void saveShouldSaveStudentWhenInputValidStudent() {
@@ -46,11 +27,6 @@ class StudentDaoImplTest {
                 .build();
         studentDao.save(student);
         assertThat(studentDao.findAll()).contains(student);
-    }
-
-    @Test
-    void saveShouldThrowIllegalArgumentExceptionWhenInputNull() {
-        assertThatThrownBy(() -> studentDao.save(null)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
@@ -81,14 +57,15 @@ class StudentDaoImplTest {
 
     @Test
     void findAllShouldReturnExpectedStudentsWhenInputLimitAndOffset() {
-        assertThat(studentDao.findAll(4, 2)).containsExactly(CreatorTestEntities.createStudents().get(2),
-                CreatorTestEntities.createStudents().get(3), CreatorTestEntities.createStudents().get(4),
-                CreatorTestEntities.createStudents().get(5));
+        Pageable limit = PageRequest.of(0,3);
+        assertThat(studentDao.findAll(limit)).containsExactly(CreatorTestEntities.createStudents().get(0),
+                CreatorTestEntities.createStudents().get(1), CreatorTestEntities.createStudents().get(2));
     }
 
     @Test
     void findAllShouldReturnEmptyListWhenInputOffsetMoreTableSize() {
-        assertThat(studentDao.findAll(2, 10)).isEmpty();
+        Pageable limit = PageRequest.of(3,5);
+        assertThat(studentDao.findAll(limit)).isEmpty();
     }
 
     @Test
@@ -109,7 +86,7 @@ class StudentDaoImplTest {
                 .withPhone("New phone")
                 .withPassword("New password")
                 .build();
-        studentDao.update(updatedStudent);
+        studentDao.save(updatedStudent);
         assertThat(studentDao.findById(1).get()).isEqualTo(updatedStudent);
     }
 }

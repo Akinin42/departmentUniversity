@@ -1,10 +1,11 @@
 package org.university.service.impl;
 
 import java.util.List;
-import java.util.Optional;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
-import org.university.dao.CrudDao;
+import org.university.dao.UserDao;
 import org.university.dto.UserDto;
 import org.university.entity.User;
 import org.university.exceptions.EntityAlreadyExistException;
@@ -21,9 +22,9 @@ import lombok.extern.slf4j.Slf4j;
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 @Slf4j
 @Transactional
-public abstract class AbstractUserServiceImpl<E> implements UserService<E> {
+public abstract class AbstractUserServiceImpl<E extends User> implements UserService<E> {
 
-    CrudDao<E, Integer> userDao;
+    UserDao<E> userDao;
     Validator<E> validator;
 
     @Override    
@@ -39,26 +40,27 @@ public abstract class AbstractUserServiceImpl<E> implements UserService<E> {
 
     @Override    
     public void delete(@NonNull UserDto userDto) {
-        User user = (User) mapDtoToEntity(userDto);
+        User user = mapDtoToEntity(userDto);
         userDao.deleteById(user.getId());
         log.info("User deleted from database!");
     }
 
     @Override    
-    public List<E> findNumberOfUsers(int quantity, int number) {
-        return userDao.findAll(quantity, number);
+    public List<E> findNumberOfUsers(int quantity, int pagesNumber) {
+        Pageable limit = PageRequest.of(pagesNumber,quantity);        
+        return userDao.findAll(limit).toList();
     }
 
     @Override    
     public void edit(@NonNull UserDto userDto) {
         E user = mapDtoToEntity(userDto);
         validator.validate(user);
-        userDao.update(mapUserWithPassword(user));
+        userDao.save(mapUserWithPassword(user));
         log.info("User edited!");
     }
 
     protected boolean existsUser(E user) {
-        return !userDao.findById(((User) user).getId()).equals(Optional.empty());
+        return userDao.existsById(user.getId());
     }
 
     protected abstract E mapUserWithPassword(E user);

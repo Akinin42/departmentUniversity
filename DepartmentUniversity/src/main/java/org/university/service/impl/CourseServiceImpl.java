@@ -29,8 +29,7 @@ public class CourseServiceImpl implements CourseService {
     CourseDao courseDao;
     Validator<Course> validator;
 
-    @Override
-    @Transactional
+    @Override    
     public Course createCourse(String courseName) {
         if (!courseDao.findByName(courseName).isPresent()) {
             throw new EntityNotExistException();
@@ -38,8 +37,7 @@ public class CourseServiceImpl implements CourseService {
         return courseDao.findByName(courseName).get();
     }
 
-    @Override
-    @Transactional
+    @Override    
     public void addCourse(@NonNull CourseDto courseDto) {
         Course course = mapDtoToEntity(courseDto);        
         if (existCourse(course)) {
@@ -50,14 +48,12 @@ public class CourseServiceImpl implements CourseService {
         log.info("Course with name {} added succesfull!", course.getName());
     }
 
-    @Override
-    @Transactional
+    @Override    
     public List<Course> findAllCourses() {
-        return courseDao.findAll();
+        return (List<Course>) courseDao.findAll();
     }
 
-    @Override
-    @Transactional
+    @Override    
     public void delete(@NonNull CourseDto courseDto) {
         Course course = mapDtoToEntity(courseDto);
         if (existCourse(course)) {
@@ -66,15 +62,14 @@ public class CourseServiceImpl implements CourseService {
         }
     }
     
-    @Override
-    @Transactional
+    @Override    
     public void edit(@NonNull CourseDto courseDto) {
         Course course = mapDtoToEntity(courseDto);
         if (!courseDao.findById(course.getId()).get().getName().equals(course.getName())&&existCourse(course)) {
             throw new EntityAlreadyExistException("courseexist");
         }
         validator.validate(course);
-        courseDao.update(course);
+        courseDao.save(course);
         log.info("Course with name {} edited succesfull!", course.getName());
     }
 

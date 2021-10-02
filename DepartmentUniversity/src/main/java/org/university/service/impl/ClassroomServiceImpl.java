@@ -1,7 +1,6 @@
 package org.university.service.impl;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,13 +22,13 @@ import lombok.extern.slf4j.Slf4j;
 @AllArgsConstructor
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 @Slf4j
+@Transactional
 public class ClassroomServiceImpl implements ClassroomService {
 
     ClassroomDao classroomDao;
     Validator<Classroom> validator;
 
     @Override
-    @Transactional
     public Classroom createClassroom(int classroomNumber) {
         if (!classroomDao.findByNumber(classroomNumber).isPresent()) {
             throw new EntityNotExistException();
@@ -38,7 +37,6 @@ public class ClassroomServiceImpl implements ClassroomService {
     }
 
     @Override
-    @Transactional
     public void addClassroom(@NonNull ClassroomDto classroomDto) {
         Classroom classroom = mapDtoToEntity(classroomDto);
         if (classroom.getId() != null && existClassroom(classroom)) {
@@ -50,13 +48,11 @@ public class ClassroomServiceImpl implements ClassroomService {
     }
 
     @Override
-    @Transactional
     public List<Classroom> findAllClassrooms() {
-        return classroomDao.findAll();
+        return (List<Classroom>) classroomDao.findAll();
     }
 
     @Override
-    @Transactional
     public void delete(@NonNull ClassroomDto classroomDto) {
         Classroom classroom = mapDtoToEntity(classroomDto);
         if (existClassroom(classroom)) {
@@ -66,16 +62,15 @@ public class ClassroomServiceImpl implements ClassroomService {
     }
     
     @Override
-    @Transactional
     public void edit(@NonNull ClassroomDto classroomDto) {
         Classroom classroom = mapDtoToEntity(classroomDto);
         validator.validate(classroom);
-        classroomDao.update(classroom);
+        classroomDao.save(classroom);
         log.info("Classroom with number {} edited succesfull!", classroom.getNumber());        
     }
 
-    private boolean existClassroom(Classroom classroom) {        
-        return !classroomDao.findById(classroom.getId()).equals(Optional.empty());
+    private boolean existClassroom(Classroom classroom) {
+        return classroomDao.existsById(classroom.getId());
     }
     
     private Classroom mapDtoToEntity(ClassroomDto classroomDto) {

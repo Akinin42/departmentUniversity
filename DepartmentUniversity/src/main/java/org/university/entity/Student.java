@@ -39,7 +39,7 @@ import lombok.experimental.SuperBuilder;
 @AttributeOverride(name = "photo", column = @Column(name = "student_photo"))
 public class Student extends User {
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(name = "students_to_courses", joinColumns = @JoinColumn(name = "student_id"), inverseJoinColumns = @JoinColumn(name = "course_id"))
     Set<Course> courses;
 

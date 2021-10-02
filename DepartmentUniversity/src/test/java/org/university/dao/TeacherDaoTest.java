@@ -1,40 +1,20 @@
-package org.university.dao.impl;
+package org.university.dao;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import javax.persistence.PersistenceException;
-import javax.transaction.Transactional;
-
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
-import org.university.dao.ScriptExecutor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.university.entity.Teacher;
 import org.university.utils.CreatorTestEntities;
-import org.university.utils.TestConfig;
 
-@SpringJUnitConfig(TestConfig.class)
-@Transactional
-class TeacherDaoImplTest {
-
-    private static TeacherDaoImpl teacherDao;
-    private static ScriptExecutor executor;
-
-    @BeforeAll
-    static void init() {
-        ApplicationContext context = new AnnotationConfigApplicationContext(TestConfig.class);
-        teacherDao = context.getBean(TeacherDaoImpl.class);
-        executor = context.getBean(ScriptExecutor.class);
-    }
-
-    @BeforeEach
-    void createTablesAndData() {
-        executor.executeScript("inittestdb.sql");
-    }
+@DataJpaTest
+class TeacherDaoTest {
+    
+    @Autowired
+    private TeacherDao teacherDao;
 
     @Test
     void saveShouldSaveTeacherWhenInputValidTeacher() {        
@@ -49,20 +29,7 @@ class TeacherDaoImplTest {
         teacherDao.save(teacher);
         assertThat(teacherDao.findAll()).contains(teacher);
     }
-
-    @Test
-    void saveShouldThrowPersistenceExceptionWhenInputInvalidTeacher() {
-        Teacher invalidTeacher = Teacher.builder()
-                .withScientificDegree(null)
-                .build();
-        assertThatThrownBy(() -> teacherDao.save(invalidTeacher)).isInstanceOf(PersistenceException.class);
-    }
-
-    @Test
-    void saveShouldThrowIllegalArgumentExceptionWhenInputNull() {
-        assertThatThrownBy(() -> teacherDao.save(null)).isInstanceOf(IllegalArgumentException.class);
-    }
-
+    
     @Test
     void findByIdShouldReturnEmptyOptionalWhenInputIdNotExists() {
         assertThat(teacherDao.findById(10)).isEmpty();
@@ -80,12 +47,14 @@ class TeacherDaoImplTest {
 
     @Test
     void findAllShouldReturnExpectedTeachersWhenInputLimitAndOffset() {
-        assertThat(teacherDao.findAll(1, 0)).containsExactly(CreatorTestEntities.createTeachers().get(0));
+        Pageable limit = PageRequest.of(0,1);
+        assertThat(teacherDao.findAll(limit)).containsExactly(CreatorTestEntities.createTeachers().get(0));
     }
 
     @Test
     void findAllShouldReturnEmptyListWhenInputOffsetMoreTableSize() {
-        assertThat(teacherDao.findAll(2, 10)).isEmpty();
+        Pageable limit = PageRequest.of(3,5);
+        assertThat(teacherDao.findAll(limit)).isEmpty();
     }
 
     @Test
@@ -117,7 +86,8 @@ class TeacherDaoImplTest {
                 .withPassword("New password")
                 .withScientificDegree("new degree")
                 .build();
-        teacherDao.update(updatedTeacher);
+        teacherDao.save(updatedTeacher);
         assertThat(teacherDao.findById(1).get()).isEqualTo(updatedTeacher);
     }
+
 }

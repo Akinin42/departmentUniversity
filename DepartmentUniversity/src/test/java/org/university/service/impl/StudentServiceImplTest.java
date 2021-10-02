@@ -14,10 +14,14 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.university.dao.impl.CourseDaoImpl;
-import org.university.dao.impl.GroupDaoImpl;
-import org.university.dao.impl.StudentDaoImpl;
+import org.university.dao.CourseDao;
+import org.university.dao.GroupDao;
+import org.university.dao.StudentDao;
 import org.university.dto.StudentDto;
 import org.university.entity.Course;
 import org.university.entity.Student;
@@ -34,7 +38,7 @@ import org.university.utils.CreatorTestEntities;
 class StudentServiceImplTest {
 
     private static StudentServiceImpl studentService;
-    private static StudentDaoImpl studentDaoMock;
+    private static StudentDao studentDaoMock;
 
     @BeforeAll
     static void init() {
@@ -130,7 +134,8 @@ class StudentServiceImplTest {
     void findNumberOfUsersShouldReturnExpectedStudentsWhenInputLimitAndOffset() {
         List<Student> students = new ArrayList<>();        
         students.add(CreatorTestEntities.createStudents().get(0));
-        when(studentDaoMock.findAll(1, 0)).thenReturn(students);        
+        Pageable limit = PageRequest.of(0,1);
+        when(studentDaoMock.findAll(limit)).thenReturn (new PageImpl<>(students));
         Student student = Student.builder()
                 .withId(1)
                 .withSex("Female")
@@ -146,8 +151,9 @@ class StudentServiceImplTest {
 
     @Test
     void findNumberOfUsersShouldReturnEmptyListWhenInputOffsetMoreTableSize() {
-        when(studentDaoMock.findAll(2, 10)).thenReturn(new ArrayList<>());
-        assertThat(studentService.findNumberOfUsers(2, 10)).isEmpty();
+        Pageable limit = PageRequest.of(1,5);
+        when(studentDaoMock.findAll(limit)).thenReturn(Page.empty());
+        assertThat(studentService.findNumberOfUsers(5, 1)).isEmpty();
     }
     
     @Test
@@ -193,23 +199,25 @@ class StudentServiceImplTest {
     void addStudentToCourseShouldAddStudentToCourseWhenInputCourseAndStudentExists() {
         StudentDto studentDto = new StudentDto();
         studentDto.setId(6);
+        when(studentDaoMock.existsById(6)).thenReturn(true);
         Course course = CreatorTestEntities.createCourses().get(0);
         studentService.addStudentToCourse(studentDto, course);
         Student student = CreatorTestEntities.createStudents().get(5);
         student.addCourse(course);
-        verify(studentDaoMock).update(student);
+        verify(studentDaoMock).save(student);
     }
 
     @Test
     void addStudentToCourseShouldNotAddStudentToCourseWhenStudentHasThisCourseYet() {
         StudentDto studentDto = new StudentDto();
-        studentDto.setId(1);        
+        studentDto.setId(1);
+        when(studentDaoMock.existsById(1)).thenReturn(true);
         Course course = CreatorTestEntities.createCourses().get(0);
         List<Course> courses = new ArrayList<>();
         courses.add(course);
         studentService.addStudentToCourse(studentDto, course);
         Student student = CreatorTestEntities.createStudents().get(0);
-        verify(studentDaoMock, never()).update(student);
+        verify(studentDaoMock, never()).save(student);
     }
 
     @Test
@@ -257,7 +265,7 @@ class StudentServiceImplTest {
         Student student = CreatorTestEntities.createStudents().get(0);
         student.removeCourse(course);
         studentService.deleteStudentFromCourse(studentDto, course);
-        verify(studentDaoMock).update(student);
+        verify(studentDaoMock).save(student);
     }
 
     @Test
@@ -319,7 +327,7 @@ class StudentServiceImplTest {
                 .withPassword("encodePassword")                
                 .build();
         studentService.edit(studentDto);
-        verify(studentDaoMock).update(student);
+        verify(studentDaoMock).save(student);
     }
     
     @Test
@@ -342,7 +350,7 @@ class StudentServiceImplTest {
                 .withPhoto("test-photo")
                 .build();
         studentService.edit(studentDto);
-        verify(studentDaoMock).update(student);
+        verify(studentDaoMock).save(student);
     }
 
     private StudentDto getTestStudentDto() {
@@ -356,14 +364,14 @@ class StudentServiceImplTest {
         return student;
     }
 
-    private static CourseDaoImpl createCourseDaoMock() {
-        CourseDaoImpl courseDaoMock = mock(CourseDaoImpl.class);
+    private static CourseDao createCourseDaoMock() {
+        CourseDao courseDaoMock = mock(CourseDao.class);
         when(courseDaoMock.findById(1)).thenReturn(Optional.ofNullable(CreatorTestEntities.createCourses().get(0)));
         return courseDaoMock;
     }
 
-    private static GroupDaoImpl createGroupDaoMock() {
-        GroupDaoImpl groupDaoMock = mock(GroupDaoImpl.class);
+    private static GroupDao createGroupDaoMock() {
+        GroupDao groupDaoMock = mock(GroupDao.class);
         when(groupDaoMock.findById(2)).thenReturn(Optional.ofNullable(CreatorTestEntities.createGroups().get(1)));
         when(groupDaoMock.findById(1)).thenReturn(Optional.ofNullable(CreatorTestEntities.createGroups().get(0)));
         return groupDaoMock;
@@ -376,8 +384,8 @@ class StudentServiceImplTest {
         return encoderMock;
     }
 
-    private static StudentDaoImpl createStudentDaoMock() {
-        StudentDaoImpl studentDaoMock = mock(StudentDaoImpl.class);
+    private static StudentDao createStudentDaoMock() {
+        StudentDao studentDaoMock = mock(StudentDao.class);
         Student student = Student.builder()
                 .withId(7)
                 .withSex("Test")

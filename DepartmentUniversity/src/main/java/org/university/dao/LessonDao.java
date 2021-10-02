@@ -1,27 +1,21 @@
 package org.university.dao;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 import org.university.entity.Lesson;
 
-public interface LessonDao extends CrudDao<Lesson, Integer> {
+@Repository
+public interface LessonDao extends JpaRepository<Lesson, Integer> {
 
-    List<Lesson> findAllByDateAndTeacher(LocalDate date, int teacherId);
+    List<Lesson> findAllByStartLessonBetweenAndTeacherIdOrderByStartLesson(LocalDateTime startLesson, LocalDateTime endLesson, int teacherId);
+    
+    List<Lesson> findAllByStartLessonBetweenAndGroupIdOrderByStartLesson(LocalDateTime startLesson, LocalDateTime endLesson, int groupId);
 
-    List<Lesson> findAllByDateAndGroup(LocalDate date, int groupId);
-
-    List<Lesson> findAllByMonthAndTeacher(int month, int teacherId);
-
-    List<Lesson> findAllByMonthAndGroup(int month, int groupId);
-
-    Optional<Lesson> findByTimeAndTeacherAndGroup(LocalDateTime date, int teacherId, int groupId);
-
-    List<Lesson> findAllByDate(LocalDate date);
-
-    List<Lesson> findAllByWeekAndTeacher(LocalDate startWeek, LocalDate endWeek, int teacherId);
-
-    List<Lesson> findAllByWeekAndGroup(LocalDate startWeek, LocalDate endWeek, int groupId);
+    Optional<Lesson> findByStartLessonAndTeacherIdAndGroupId(LocalDateTime startLesson, int teacherId, int groupId);
+    
+    List<Lesson> findAllByStartLessonBetweenOrderByStartLesson(LocalDateTime startLesson, LocalDateTime endLesson);
 }

@@ -21,22 +21,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 
-//@Getter
-//@EqualsAndHashCode
-//@Builder(setterPrefix = "with")
-//@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
-//public class Lesson {    
-//    Integer id;
-//    Course course;
-//    Teacher teacher;
-//    Group group;
-//    LocalDateTime startLesson;
-//    LocalDateTime endLesson;
-//    Classroom classroom;
-//    Boolean onlineLesson;
-//    String lessonLink;
-//}
-
 @Entity
 @Table(name = "lessons")
 @Builder(setterPrefix = "with")
@@ -65,10 +49,10 @@ public class Lesson {
     @JoinColumn(name = "lesson_group", referencedColumnName = "group_id")
     Group group;
 
-    @Column(name = "lesson_start", nullable = false)
+    @Column(name = "lesson_start", columnDefinition = "TIMESTAMP", nullable = false)    
     LocalDateTime startLesson;
 
-    @Column(name = "lesson_end", nullable = false)
+    @Column(name = "lesson_end", columnDefinition = "TIMESTAMP", nullable = false)    
     LocalDateTime endLesson;
 
     @ManyToOne(cascade = CascadeType.ALL)

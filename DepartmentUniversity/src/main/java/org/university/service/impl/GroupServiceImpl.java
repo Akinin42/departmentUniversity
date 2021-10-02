@@ -54,14 +54,14 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     public List<Group> findAllGroups() {
-        return groupDao.findAll();
+        return (List<Group>) groupDao.findAll();
     }
 
     @Override
     public void delete(@NonNull GroupDto groupDto) {
         Group group = groupDao.findById(groupDto.getId()).get();
         group.getStudents().clear();
-        groupDao.updateStudents(group);
+        groupDao.saveAndFlush(group);
         groupDao.deleteById(group.getId());
     }
 
@@ -72,7 +72,7 @@ public class GroupServiceImpl implements GroupService {
             throw new EntityAlreadyExistException("groupexist");
         }
         validator.validate(group);
-        groupDao.update(group);
+        groupDao.save(group);
         log.info("Group with name {} edited succesfull!", group.getName());
     }
 
@@ -83,12 +83,12 @@ public class GroupServiceImpl implements GroupService {
         for (Group group : findAllGroups()) {
             if (group.getStudents().contains(student)) {
                 group.removeStudent(student);
-                groupDao.updateStudents(group);
+                groupDao.saveAndFlush(group);                
             }
         }
         Group group = groupDao.findByName(studentDto.getGroupName()).get();
         group.addStudent(student);
-        groupDao.updateStudents(group);
+        groupDao.save(group);
         log.info("Student with id {} added to group {}!", student.getId(), group.getName());
     }
 
@@ -98,7 +98,7 @@ public class GroupServiceImpl implements GroupService {
         Student student = studentDao.findById(studentDto.getId()).get();
         Group group = groupDao.findByName(studentDto.getGroupName()).get();
         group.removeStudent(student);
-        groupDao.updateStudents(group);
+        groupDao.save(group);
         log.info("Student with id {} deleted from group {}!", student.getId(), group.getName());
     }
 

@@ -43,6 +43,7 @@ public class StudentController {
     public String getStudents(@ModelAttribute("message") String message, Model model) {
         if (model.getAttribute("numberUsers") == null) {
             model.addAttribute("students", studentService.findNumberOfUsers(5, 0));
+            model.addAttribute("numberUsers", Integer.valueOf(5));
         } else {
             model.addAttribute("students",
                     studentService.findNumberOfUsers((int) model.getAttribute("numberUsers"), 0));
@@ -62,13 +63,13 @@ public class StudentController {
         int numberStudentsOnPage = (int) model.getAttribute("numberUsers");
         if (pagesNumber < 0) {
             pagesNumber = 0;
-        }
-        if (studentService.findNumberOfUsers(numberStudentsOnPage, (pagesNumber * numberStudentsOnPage)).isEmpty()) {
+        }        
+        if (studentService.findNumberOfUsers(numberStudentsOnPage, pagesNumber).isEmpty()) {
             pagesNumber -= page;
         }
         model.addAttribute("pagesNumber", pagesNumber);
         model.addAttribute("students",
-                studentService.findNumberOfUsers(numberStudentsOnPage, pagesNumber * numberStudentsOnPage));
+                studentService.findNumberOfUsers(numberStudentsOnPage, pagesNumber));
         return "students";
     }
 

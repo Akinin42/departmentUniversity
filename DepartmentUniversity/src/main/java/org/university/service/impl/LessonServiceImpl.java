@@ -38,10 +38,10 @@ public class LessonServiceImpl implements LessonService {
 
     @Override
     public Lesson createLesson(LocalDateTime startLesson, int teacherId, int groupId) {
-        if (!lessonDao.findByTimeAndTeacherAndGroup(startLesson, teacherId, groupId).isPresent()) {
+        if (!lessonDao.findByStartLessonAndTeacherIdAndGroupId(startLesson, teacherId, groupId).isPresent()) {
             throw new EntityNotExistException();
         }
-        return lessonDao.findByTimeAndTeacherAndGroup(startLesson, teacherId, groupId).get();
+        return lessonDao.findByStartLessonAndTeacherIdAndGroupId(startLesson, teacherId, groupId).get();
     }
 
     @Override
@@ -51,9 +51,10 @@ public class LessonServiceImpl implements LessonService {
         if (lesson.getId() != null && existLesson(lesson)) {
             throw new EntityAlreadyExistException("Lesson already exist!");
         }
-        LocalDate lessonDate = lesson.getStartLesson().toLocalDate();
-        List<Lesson> teacherLessons = lessonDao.findAllByDateAndTeacher(lessonDate, lesson.getTeacher().getId());
-        List<Lesson> groupLessons = lessonDao.findAllByDateAndGroup(lessonDate, lesson.getGroup().getId());
+        LocalDateTime startLessons = lesson.getStartLesson().toLocalDate().atStartOfDay();
+        LocalDateTime endLessons = startLessons.plusHours(23);
+        List<Lesson> teacherLessons = lessonDao.findAllByStartLessonBetweenAndTeacherIdOrderByStartLesson(startLessons,endLessons, lesson.getTeacher().getId());
+        List<Lesson> groupLessons = lessonDao.findAllByStartLessonBetweenAndGroupIdOrderByStartLesson(startLessons,endLessons, lesson.getGroup().getId());
         if (!checkFreeTime(lesson, teacherLessons) || !checkFreeTime(lesson, groupLessons)) {
             throw new InvalidLessonTimeException("groupteacherbusy");
         }
@@ -68,9 +69,10 @@ public class LessonServiceImpl implements LessonService {
     public void edit(@NonNull LessonDto lessonDto) {
         Lesson lesson = mapper.mapDtoToEntity(lessonDto);
         validator.validate(lesson);
-        LocalDate lessonDate = lesson.getStartLesson().toLocalDate();
-        List<Lesson> teacherLessons = lessonDao.findAllByDateAndTeacher(lessonDate, lesson.getTeacher().getId());
-        List<Lesson> groupLessons = lessonDao.findAllByDateAndGroup(lessonDate, lesson.getGroup().getId());
+        LocalDateTime startLessons = lesson.getStartLesson().toLocalDate().atStartOfDay();
+        LocalDateTime endLessons = startLessons.plusHours(23);
+        List<Lesson> teacherLessons = lessonDao.findAllByStartLessonBetweenAndTeacherIdOrderByStartLesson(startLessons,endLessons, lesson.getTeacher().getId());
+        List<Lesson> groupLessons = lessonDao.findAllByStartLessonBetweenAndGroupIdOrderByStartLesson(startLessons,endLessons, lesson.getGroup().getId());
         if ((!checkTimeNotChange(lessonDto) || !checkGroupAndTeacherNotChange(lessonDto))
                 && (!checkFreeTime(lesson, teacherLessons) || !checkFreeTime(lesson, groupLessons))) {
             throw new InvalidLessonTimeException("groupteacherbusy");
@@ -78,14 +80,14 @@ public class LessonServiceImpl implements LessonService {
         if ((!checkTimeNotChange(lessonDto) || !checkClassroomNotChange(lessonDto)) && !checkFreeClassroom(lesson)) {
             throw new ClassroomBusyException("classroombusy");
         }
-        lessonDao.update(lesson);
+        lessonDao.save(lesson);
         log.info("Lesson edited succesfull!");
     }
 
     @Override
     public void delete(@NonNull LessonDto lessonDto) {        
         Lesson lesson = deleteChainedEntities(lessonDao.findById(lessonDto.getId()).get());
-        lessonDao.update(lesson);
+        lessonDao.save(lesson);
         lessonDao.deleteById(lesson.getId());        
         log.info("Lesson deleted succesfull!");
     }
@@ -135,7 +137,7 @@ public class LessonServiceImpl implements LessonService {
 
     private boolean checkFreeClassroom(Lesson inputLesson) {
         LocalDate lessonDate = inputLesson.getStartLesson().toLocalDate();
-        List<Lesson> dayLessons = lessonDao.findAllByDate(lessonDate);
+        List<Lesson> dayLessons = lessonDao.findAllByStartLessonBetweenOrderByStartLesson(lessonDate.atStartOfDay(), lessonDate.atStartOfDay().plusHours(23));
         List<Lesson> classroomLessons = new ArrayList<>();
         for (Lesson lesson : dayLessons) {
             if (inputLesson.getClassroom().equals(lesson.getClassroom())) {

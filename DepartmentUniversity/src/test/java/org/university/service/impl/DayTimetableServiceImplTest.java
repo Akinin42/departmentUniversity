@@ -14,9 +14,9 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.university.dao.impl.GroupDaoImpl;
-import org.university.dao.impl.LessonDaoImpl;
-import org.university.dao.impl.TeacherDaoImpl;
+import org.university.dao.GroupDao;
+import org.university.dao.LessonDao;
+import org.university.dao.TeacherDao;
 import org.university.entity.DayTimetable;
 import org.university.entity.Lesson;
 import org.university.exceptions.EntityNotExistException;
@@ -177,35 +177,35 @@ class DayTimetableServiceImplTest {
         return weekTimetable;
     }
 
-    private static LessonDaoImpl createLessonDaoMock() {
-        LessonDaoImpl lessonDaoMock = mock(LessonDaoImpl.class);
+    private static LessonDao createLessonDaoMock() {
+        LessonDao lessonDaoMock = mock(LessonDao.class);
         List<Lesson> lessons = CreatorTestEntities.createLessons();        
         lessons.remove(0);
-        when(lessonDaoMock.findAllByDateAndTeacher(LocalDate.of(2021, Month.OCTOBER, 19), 2)).thenReturn(lessons);
+        when(lessonDaoMock.findAllByStartLessonBetweenAndTeacherIdOrderByStartLesson(LocalDateTime.of(2021, Month.OCTOBER, 19,0,0),LocalDateTime.of(2021, Month.OCTOBER, 19,23,0), 2)).thenReturn(lessons);
         lessons = new ArrayList<>();
         lessons.add(createTestLessonWithDay(4,2));
         lessons.add(createTestLessonWithDay(1,19));
         lessons.add(createTestLessonWithDay(5,30));
-        when(lessonDaoMock.findAllByMonthAndTeacher(10, 1)).thenReturn(lessons);
-        when(lessonDaoMock.findAllByMonthAndGroup(10, 1)).thenReturn(lessons);
+        when(lessonDaoMock.findAllByStartLessonBetweenAndTeacherIdOrderByStartLesson(LocalDateTime.of(2021, Month.OCTOBER, 1,0,0),LocalDateTime.of(2021, Month.OCTOBER, 31,23,0), 1)).thenReturn(lessons);
+        when(lessonDaoMock.findAllByStartLessonBetweenAndGroupIdOrderByStartLesson(LocalDateTime.of(2021, Month.OCTOBER, 1,0,0),LocalDateTime.of(2021, Month.OCTOBER, 31,23,0), 1)).thenReturn(lessons);
         lessons = CreatorTestEntities.createLessons();
         lessons.remove(2);
         lessons.remove(1);
-        when(lessonDaoMock.findAllByDateAndGroup(LocalDate.of(2021, Month.OCTOBER, 19), 1)).thenReturn(lessons);
+        when(lessonDaoMock.findAllByStartLessonBetweenAndGroupIdOrderByStartLesson(LocalDateTime.of(2021, Month.OCTOBER, 19,0,0),LocalDateTime.of(2021, Month.OCTOBER, 19,23,0), 1)).thenReturn(lessons);
         lessons = CreatorTestEntities.createLessons();
-        when(lessonDaoMock.findAllByDate(LocalDate.of(2021, Month.OCTOBER, 19))).thenReturn(lessons);
-        when(lessonDaoMock.findAllByDate(LocalDate.of(2021, Month.OCTOBER, 21))).thenReturn(new ArrayList<Lesson>());
+        when(lessonDaoMock.findAllByStartLessonBetweenOrderByStartLesson(LocalDateTime.of(2021, Month.OCTOBER, 19,0,0),LocalDateTime.of(2021, Month.OCTOBER, 19,23,0))).thenReturn(lessons);
+        when(lessonDaoMock.findAllByStartLessonBetweenOrderByStartLesson(LocalDateTime.of(2021, Month.OCTOBER, 21,0,0),LocalDateTime.of(2021, Month.OCTOBER, 21,23,0))).thenReturn(new ArrayList<Lesson>());
         List<Lesson> weekLessons = new ArrayList<>();
         weekLessons.add(createTestLessonWithDay(1,18));
         weekLessons.add(createTestLessonWithDay(2,20));
         weekLessons.add(createTestLessonWithDay(3,22));
-        when(lessonDaoMock.findAllByWeekAndTeacher(LocalDate.of(2021, Month.OCTOBER, 18), LocalDate.of(2021, Month.OCTOBER, 24), 1)).thenReturn(weekLessons);
-        when(lessonDaoMock.findAllByWeekAndGroup(LocalDate.of(2021, Month.OCTOBER, 18), LocalDate.of(2021, Month.OCTOBER, 24), 1)).thenReturn(weekLessons);
+        when(lessonDaoMock.findAllByStartLessonBetweenAndTeacherIdOrderByStartLesson(LocalDateTime.of(2021, Month.OCTOBER, 18,0,0), LocalDateTime.of(2021, Month.OCTOBER, 24,23,0), 1)).thenReturn(weekLessons);
+        when(lessonDaoMock.findAllByStartLessonBetweenAndGroupIdOrderByStartLesson(LocalDateTime.of(2021, Month.OCTOBER, 18,0,0), LocalDateTime.of(2021, Month.OCTOBER, 24,23,0), 1)).thenReturn(weekLessons);
         return lessonDaoMock;
     }
 
-    private static TeacherDaoImpl createTeacherDaoMock() {
-        TeacherDaoImpl teacherDaoMock = mock(TeacherDaoImpl.class);
+    private static TeacherDao createTeacherDaoMock() {
+        TeacherDao teacherDaoMock = mock(TeacherDao.class);
         when(teacherDaoMock.findByEmail("Bob@mail.ru"))
                 .thenReturn(Optional.of(CreatorTestEntities.createTeachers().get(0)));
         when(teacherDaoMock.findByEmail("Ann@mail.ru"))
@@ -213,8 +213,8 @@ class DayTimetableServiceImplTest {
         return teacherDaoMock;
     }
 
-    private static GroupDaoImpl createGroupDaoMock() {
-        GroupDaoImpl groupDaoMock = mock(GroupDaoImpl.class);
+    private static GroupDao createGroupDaoMock() {
+        GroupDao groupDaoMock = mock(GroupDao.class);
         when(groupDaoMock.findByName("FR-33"))
                 .thenReturn(Optional.ofNullable(CreatorTestEntities.createGroups().get(1)));
         when(groupDaoMock.findByName("AB-22"))
