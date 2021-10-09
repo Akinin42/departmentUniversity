@@ -14,7 +14,6 @@ import org.university.entity.Student;
 import org.university.exceptions.EntityAlreadyExistException;
 import org.university.exceptions.EntityNotExistException;
 import org.university.service.GroupService;
-import org.university.service.validator.GroupValidator;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -30,8 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 public class GroupServiceImpl implements GroupService {
 
     GroupDao groupDao;
-    StudentDao studentDao;
-    GroupValidator validator;
+    StudentDao studentDao;    
 
     @Override
     public Group createGroup(String name) {
@@ -44,7 +42,6 @@ public class GroupServiceImpl implements GroupService {
     @Override
     public void addGroup(@NonNull GroupDto groupDto) {
         Group group = mapDtoToEntity(groupDto);
-        validator.validate(group);
         if (existGroup(group)) {
             throw new EntityAlreadyExistException("groupexist");
         }
@@ -71,7 +68,6 @@ public class GroupServiceImpl implements GroupService {
         if (!groupDao.findById(group.getId()).get().getName().equals(group.getName()) && existGroup(group)) {
             throw new EntityAlreadyExistException("groupexist");
         }
-        validator.validate(group);
         groupDao.save(group);
         log.info("Group with name {} edited succesfull!", group.getName());
     }

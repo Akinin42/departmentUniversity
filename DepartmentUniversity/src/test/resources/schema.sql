@@ -28,7 +28,9 @@ teacher_email VARCHAR(40) NOT NULL,
 teacher_phone VARCHAR(20) NOT NULL, 
 teacher_password VARCHAR(100) NOT NULL, 
 teacher_degree VARCHAR(50) NOT NULL,
-teacher_photo VARCHAR(250)
+teacher_photo VARCHAR(250),
+teacher_enabled BOOLEAN,
+role INT REFERENCES roles (role_id) ON DELETE CASCADE
 );
 
 DROP TABLE IF EXISTS students CASCADE;
@@ -39,7 +41,9 @@ student_name VARCHAR(100) NOT NULL,
 student_email VARCHAR(40) NOT NULL, 
 student_phone VARCHAR(20) NOT NULL, 
 student_password VARCHAR(100) NOT NULL,
-student_photo VARCHAR(250)
+student_photo VARCHAR(250),
+student_enabled BOOLEAN,
+role INT REFERENCES roles (role_id) ON DELETE CASCADE
 );
 
 DROP TABLE IF EXISTS students_to_courses CASCADE;
@@ -76,6 +80,13 @@ CONSTRAINT FK_lesson_course FOREIGN KEY (lesson_course) REFERENCES courses (cour
 CONSTRAINT FK_lesson_teacher FOREIGN KEY (lesson_teacher) REFERENCES teachers (teacher_id) ON DELETE CASCADE,
 CONSTRAINT FK_lesson_group FOREIGN KEY (lesson_group) REFERENCES groups (group_id) ON DELETE CASCADE
 );
+
+DROP TABLE IF EXISTS roles CASCADE;
+CREATE TABLE roles(
+role_id IDENTITY PRIMARY KEY,
+name VARCHAR(50) NOT NULL
+);
+
 INSERT INTO groups VALUES(1, 'AB-22');
 INSERT INTO groups VALUES(2, 'FR-33');
 INSERT INTO courses VALUES(1, 'Law', 'test-courses');
@@ -83,14 +94,16 @@ INSERT INTO courses VALUES(2, 'Math','test-courses');
 INSERT INTO courses VALUES(3, 'Art','test-courses');
 INSERT INTO classrooms VALUES(1, 1, 'Test-address', 10);
 INSERT INTO classrooms VALUES(2, 2, 'Test-address', 15);
-INSERT INTO teachers VALUES(1, 'Male', 'Bob Moren', 'Bob@mail.ru', '89758657788', 'test-password', 'professor', 'default-male-teacher-photo');
-INSERT INTO teachers VALUES(2, 'Female', 'Ann Moren', 'Ann@mail.ru', '89758651122', 'test-password','doctor', 'default-female-teacher-photo');
-INSERT INTO students VALUES(1, 'Female', 'Jane Wood', 'Wood@email.ru', 'test-phone', 'test-password', 'default-female-photo');
-INSERT INTO students VALUES(2, 'Female', 'Ann Lee', 'Lee@email.ru', 'test-phone', 'test-password', 'default-female-photo');
-INSERT INTO students VALUES(3, 'Female', 'Mary Born', 'Born@email.ru', 'test-phone', 'test-password', 'default-female-photo');
-INSERT INTO students VALUES(4, 'Male', 'Rob Melon', 'Melon@email.ru', 'test-phone','test-password', 'default-male-photo');
-INSERT INTO students VALUES(5, 'Male', 'John Brown', 'Brown@email.ru', 'test-phone', 'test-password', 'default-male-photo');
-INSERT INTO students VALUES(6, 'Male', 'Pol Hardy', 'Hardy@email.ru', 'test-phone', 'test-password', 'default-male-photo');
+INSERT INTO roles VALUES(1,'STUDENT');
+INSERT INTO roles VALUES(2,'TEACHER');
+INSERT INTO teachers VALUES(1, 'MALE', 'Bob Moren', 'Bob@mail.ru', '89758657788', 'test-password', 'professor', 'default-male-teacher-photo', true, 2);
+INSERT INTO teachers VALUES(2, 'FEMALE', 'Ann Moren', 'Ann@mail.ru', '89758651122', 'test-password','doctor', 'default-female-teacher-photo', true, 2);
+INSERT INTO students VALUES(1, 'FEMALE', 'Jane Wood', 'Wood@email.ru', 'test-phone', 'test-password', 'default-female-photo', true, 1);
+INSERT INTO students VALUES(2, 'FEMALE', 'Ann Lee', 'Lee@email.ru', 'test-phone', 'test-password', 'default-female-photo', true, 1);
+INSERT INTO students VALUES(3, 'FEMALE', 'Mary Born', 'Born@email.ru', 'test-phone', 'test-password', 'default-female-photo', true, 1);
+INSERT INTO students VALUES(4, 'MALE', 'Rob Melon', 'Melon@email.ru', 'test-phone','test-password', 'default-male-photo', true, 1);
+INSERT INTO students VALUES(5, 'MALE', 'John Brown', 'Brown@email.ru', 'test-phone', 'test-password', 'default-male-photo', true, 1);
+INSERT INTO students VALUES(6, 'MALE', 'Pol Hardy', 'Hardy@email.ru', 'test-phone', 'test-password', 'default-male-photo', true, 1);
 INSERT INTO students_to_courses (student_id, course_id) VALUES(1,1);
 INSERT INTO students_to_courses (student_id, course_id) VALUES(1,2);
 INSERT INTO students_to_courses (student_id, course_id) VALUES(1,3);

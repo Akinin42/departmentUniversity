@@ -75,7 +75,7 @@
     </style>
     <title th:text="#{label.editclassroom}"></title>
 </head>
-<body>
+<body>                                            
     <div class="container">
         <div class="row main-form">
             <form class="" th:action="@{/classrooms}" th:object="${classroom}" th:method="patch">
@@ -86,6 +86,7 @@
                             <input class="form-control" type="hidden" th:value="${classroom.id}" id="id" name="id" />
                             <span class="input-group-addon"><i class="fa fa-user fa" aria-hidden="true"></i></span> 
                             <input type="number" class="form-control" th:value="${classroom.number}" id="number" name="number" th:placeholder="#{number}" required />
+                            <div style="color:red" th:if="${#fields.hasErrors('number')}" th:text="#{label.invalidnumber}"></div>
                         </div>
                     </div>
                 </div>                
@@ -97,6 +98,7 @@
                             <span class="input-group-addon">                            
                             </span> 
                             <input type="text" class="form-control" th:value="${classroom.address}" id="address" name="address" th:placeholder="#{address}" required />
+                            <div style="color:red" th:if="${#fields.hasErrors('address')}" th:text="#{label.invalidaddress}"></div>
                         </div>
                     </div>
                 </div>
@@ -107,14 +109,10 @@
                         <div class="input-group">                            
                             <span class="input-group-addon"><i class="fa fa-user fa" aria-hidden="true"></i></span> 
                             <input type="number" class="form-control" th:value="${classroom.capacity}" id="capacity" name="capacity" th:placeholder="#{capacity}" required />
+                            <div style="color:red" th:if="${#fields.hasErrors('capacity')}" th:text="#{label.invalidcapacity}"></div>
                         </div>
                     </div>
                 </div>
-                <div th:switch="${message}">                                        
-                                        <p th:case="'invalidnumber'" th:text="#{label.invalidnumber}"></p>                                       
-                                        <p th:case="'invalidaddress'" th:text="#{label.invalidaddress}"></p>                                       
-                                        <p th:case="'invalidcapacity'" th:text="#{label.invalidcapacity}"></p>                                                                             
-                                    </div>
                 <div class="form-group ">
                     <button type="submit" id="button" class="btn btn-primary btn-lg btn-block login-button" th:value="classroom" th:text="#{label.edit}"></button>
                 </div>

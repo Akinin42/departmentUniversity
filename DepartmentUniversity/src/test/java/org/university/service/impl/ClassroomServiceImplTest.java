@@ -17,10 +17,6 @@ import org.university.dto.ClassroomDto;
 import org.university.entity.Classroom;
 import org.university.exceptions.EntityAlreadyExistException;
 import org.university.exceptions.EntityNotExistException;
-import org.university.exceptions.InvalidAddressException;
-import org.university.exceptions.InvalidClassroomCapacityException;
-import org.university.exceptions.InvalidClassroomNumberException;
-import org.university.service.validator.ClassroomValidator;
 import org.university.utils.CreatorTestEntities;
 
 class ClassroomServiceImplTest {
@@ -31,7 +27,7 @@ class ClassroomServiceImplTest {
     @BeforeAll
     static void init() {
         classroomDaoMock = createClassroomDaoMock();
-        classroomService = new ClassroomServiceImpl(classroomDaoMock, new ClassroomValidator());
+        classroomService = new ClassroomServiceImpl(classroomDaoMock);
     }
 
     @Test
@@ -48,7 +44,7 @@ class ClassroomServiceImplTest {
     @Test
     void addClassroomShouldThrowEntityAlreadyExistExceptionWhenInputClassroomExistInDatabase() {
         ClassroomDto classroom = new ClassroomDto();
-        classroom.setId(1);
+        classroom.setNumber(1);
         assertThatThrownBy(() -> classroomService.addClassroom(classroom))
                 .isInstanceOf(EntityAlreadyExistException.class);
     }
@@ -63,56 +59,6 @@ class ClassroomServiceImplTest {
         classroomService.addClassroom(classroomDto);
         Classroom classroom = createTestClassroomWithCapacity(30);
         verify(classroomDaoMock).save(classroom);
-    }
-
-    @Test
-    void addClassroomShouldThrowInvalidClassroomCapacityExceptionWhenInputClassroomCapacityNegative() {
-        ClassroomDto classroomDto = new ClassroomDto();
-        classroomDto.setNumber(3);
-        classroomDto.setAddress("test address");
-        classroomDto.setCapacity(-5);
-        assertThatThrownBy(() -> classroomService.addClassroom(classroomDto))
-                .isInstanceOf(InvalidClassroomCapacityException.class);
-    }
-
-    @Test
-    void addClassroomShouldThrowInvalidClassroomCapacityExceptionWhenInputClassroomCapacityZero() {
-        ClassroomDto classroomDto = new ClassroomDto();
-        classroomDto.setCapacity(0);
-        classroomDto.setNumber(10);
-        classroomDto.setAddress("test address");
-        assertThatThrownBy(() -> classroomService.addClassroom(classroomDto))
-                .isInstanceOf(InvalidClassroomCapacityException.class);
-    }
-
-    @Test
-    void addClassroomShouldThrowInvalidAddressExceptionWhenInputInvalid() {
-        ClassroomDto classroomDto = new ClassroomDto();
-        classroomDto.setNumber(3);
-        classroomDto.setAddress("fss");
-        classroomDto.setCapacity(25);
-        assertThatThrownBy(() -> classroomService.addClassroom(classroomDto))
-                .isInstanceOf(InvalidAddressException.class);
-    }
-
-    @Test
-    void addClassroomShouldThrowInvalidClassroomNumberExceptionWhenInputNegative() {
-        ClassroomDto classroomDto = new ClassroomDto();
-        classroomDto.setNumber(-5);
-        classroomDto.setAddress("test address");
-        classroomDto.setCapacity(25);
-        assertThatThrownBy(() -> classroomService.addClassroom(classroomDto))
-                .isInstanceOf(InvalidClassroomNumberException.class);
-    }
-
-    @Test
-    void addClassroomShouldThrowInvalidClassroomNumberExceptionWhenInputZero() {
-        ClassroomDto classroomDto = new ClassroomDto();
-        classroomDto.setNumber(0);
-        classroomDto.setAddress("test address");
-        classroomDto.setCapacity(25);
-        assertThatThrownBy(() -> classroomService.addClassroom(classroomDto))
-                .isInstanceOf(InvalidClassroomNumberException.class);
     }
 
     @Test
@@ -153,55 +99,6 @@ class ClassroomServiceImplTest {
     }
 
     @Test
-    void editShouldThrowInvalidClassroomCapacityExceptionWhenInputClassroomCapacityNegative() {
-        ClassroomDto classroomDto = new ClassroomDto();
-        classroomDto.setNumber(3);
-        classroomDto.setAddress("test address");
-        classroomDto.setCapacity(-5);
-        assertThatThrownBy(() -> classroomService.edit(classroomDto))
-                .isInstanceOf(InvalidClassroomCapacityException.class);
-    }
-
-    @Test
-    void editShouldThrowInvalidClassroomCapacityExceptionWhenInputClassroomCapacityZero() {
-        ClassroomDto classroomDto = new ClassroomDto();
-        classroomDto.setCapacity(0);
-        classroomDto.setNumber(10);
-        classroomDto.setAddress("test address");
-        assertThatThrownBy(() -> classroomService.edit(classroomDto))
-                .isInstanceOf(InvalidClassroomCapacityException.class);
-    }
-
-    @Test
-    void editShouldThrowInvalidAddressExceptionWhenInputInvalid() {
-        ClassroomDto classroomDto = new ClassroomDto();
-        classroomDto.setNumber(3);
-        classroomDto.setAddress("fss");
-        classroomDto.setCapacity(25);
-        assertThatThrownBy(() -> classroomService.edit(classroomDto)).isInstanceOf(InvalidAddressException.class);
-    }
-
-    @Test
-    void editShouldThrowInvalidClassroomNumberExceptionWhenInputNegative() {
-        ClassroomDto classroomDto = new ClassroomDto();
-        classroomDto.setNumber(-5);
-        classroomDto.setAddress("test address");
-        classroomDto.setCapacity(25);
-        assertThatThrownBy(() -> classroomService.edit(classroomDto))
-                .isInstanceOf(InvalidClassroomNumberException.class);
-    }
-
-    @Test
-    void editShouldThrowInvalidClassroomNumberExceptionWhenInputZero() {
-        ClassroomDto classroomDto = new ClassroomDto();
-        classroomDto.setNumber(0);
-        classroomDto.setAddress("test address");
-        classroomDto.setCapacity(25);
-        assertThatThrownBy(() -> classroomService.edit(classroomDto))
-                .isInstanceOf(InvalidClassroomNumberException.class);
-    }
-
-    @Test
     void editShouldThrowIllegalArgumentExceptionWhenInputNull() {
         assertThatThrownBy(() -> classroomService.edit(null)).isInstanceOf(IllegalArgumentException.class);
     }
@@ -209,7 +106,7 @@ class ClassroomServiceImplTest {
     @Test
     void editShouldUpdateClassroomInDatabaseWhenInputValidClassroom() {
         ClassroomDao classroomDaoMock = mock(ClassroomDao.class);
-        ClassroomServiceImpl classroomService = new ClassroomServiceImpl(classroomDaoMock, new ClassroomValidator());
+        ClassroomServiceImpl classroomService = new ClassroomServiceImpl(classroomDaoMock);
         ClassroomDto classroomDto = new ClassroomDto();
         classroomDto.setId(3);
         classroomDto.setNumber(3);

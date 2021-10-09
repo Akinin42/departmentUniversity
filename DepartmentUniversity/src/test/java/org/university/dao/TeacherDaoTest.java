@@ -9,22 +9,28 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.university.entity.Teacher;
 import org.university.utils.CreatorTestEntities;
+import org.university.utils.Sex;
 
 @DataJpaTest
 class TeacherDaoTest {
     
     @Autowired
     private TeacherDao teacherDao;
+    
+    @Autowired
+    private RoleDao roleDao;
 
     @Test
-    void saveShouldSaveTeacherWhenInputValidTeacher() {        
+    void saveShouldSaveTeacherWhenInputValidTeacher() {
         Teacher teacher = Teacher.builder()                
-                .withSex("Test")
+                .withSex(Sex.MALE)
                 .withName("Test")
                 .withEmail("Test")
                 .withPhone("Test")
                 .withPassword("Test")
                 .withScientificDegree("Test")
+                .withRole(roleDao.findByName("TEACHER").get())
+                .withEnabled(true)                
                 .build();
         teacherDao.save(teacher);
         assertThat(teacherDao.findAll()).contains(teacher);
@@ -79,7 +85,7 @@ class TeacherDaoTest {
         Teacher existTeacher = CreatorTestEntities.createTeachers().get(0);
         Teacher updatedTeacher = Teacher.builder()
                 .withId(existTeacher.getId())
-                .withSex("New sex")
+                .withSex(Sex.MALE)
                 .withName("New name")
                 .withEmail("New email")
                 .withPhone("New phone")
@@ -89,5 +95,4 @@ class TeacherDaoTest {
         teacherDao.save(updatedTeacher);
         assertThat(teacherDao.findById(1).get()).isEqualTo(updatedTeacher);
     }
-
 }

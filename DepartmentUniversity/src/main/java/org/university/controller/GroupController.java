@@ -1,7 +1,10 @@
 package org.university.controller;
 
+import javax.validation.Valid;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -11,8 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.university.dto.DayTimetableDto;
 import org.university.dto.GroupDto;
 import org.university.dto.StudentDto;
-import org.university.exceptions.EntityAlreadyExistException;
-import org.university.exceptions.InvalidGroupNameException;
 import org.university.service.GroupService;
 import org.university.service.StudentService;
 
@@ -41,7 +42,14 @@ public class GroupController {
     }
 
     @PostMapping()
-    public String add(@ModelAttribute("group") GroupDto group, Model model) {
+    public String add(@ModelAttribute("group") @Valid GroupDto group, BindingResult bindingResult, Model model) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("student", new StudentDto());
+            model.addAttribute("groups", groupService.findAllGroups());
+            model.addAttribute("students", studentService.findAll());
+            model.addAttribute("timetable", new DayTimetableDto());
+            return "groups";
+        }
         groupService.addGroup(group);
         return REDIRECT;
     }
@@ -72,13 +80,11 @@ public class GroupController {
     }
 
     @PatchMapping()
-    public String edit(@ModelAttribute("group") GroupDto group, Model model) {
-        try {
-            groupService.edit(group);
-            return REDIRECT;
-        } catch (InvalidGroupNameException | EntityAlreadyExistException e) {
-            model.addAttribute("message", e.getMessage());
+    public String edit(@ModelAttribute("group") @Valid GroupDto group, BindingResult bindingResult, Model model) {
+        if (bindingResult.hasErrors()) {
             return "updateforms/group";
         }
+        groupService.edit(group);
+        return REDIRECT;
     }
 }

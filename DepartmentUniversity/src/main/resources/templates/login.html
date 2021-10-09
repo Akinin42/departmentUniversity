@@ -1,0 +1,50 @@
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+<meta content="text/html; charset=utf-8">
+<title th:text="#{label.login}"></title>
+<style type="text/css">
+body div {
+	text-align: center;
+}
+
+label, input[type=text], input[type=password] {
+	display: inline-block;
+	width: 150px;
+	margin: 5px;
+}
+
+input[type=submit] {
+	width: 60px;
+	margin: 10px;
+	padding: 10px;
+	text-align: center;
+}
+</style>
+</head>
+<body>
+	<div>
+		<div>
+			<h2 th:text="#{label.login}"></h2>
+		</div>
+		<div th:if="${param.error}">
+			<h3 th:text="#{label.invalidlogin}"></h3>
+		</div>
+		<div th:if="${param.logout}">
+			<h3 th:text="#{label.youlogout}"></h3>
+		</div>
+		<div>
+			<form th:action="@{/login}" method="post">
+				<div>
+					<label th:text="#{label.email}"></label> <input type="text" name="email" >
+				</div>
+				<div>
+					<label th:text="#{label.password}"></label><input type="password" name="password"/>
+				</div>
+				<div>
+					<input type="submit" value="Login" />
+				</div>
+			</form>
+		</div>
+	</div>
+</body>
+</html>

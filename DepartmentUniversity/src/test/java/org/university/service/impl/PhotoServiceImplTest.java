@@ -9,6 +9,7 @@ import static org.mockito.Mockito.when;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -20,6 +21,7 @@ import org.university.dto.UserDto;
 import org.university.exceptions.InvalidPhotoException;
 import org.university.service.AwsS3Service;
 import org.university.service.validator.PhotoValidator;
+import org.university.utils.Sex;
 
 class PhotoServiceImplTest {
 
@@ -38,7 +40,7 @@ class PhotoServiceImplTest {
         MultipartFile photoMock = mock(MultipartFile.class);
         when(photoMock.isEmpty()).thenReturn(true);
         user.setPhoto(photoMock);
-        user.setSex("Male");
+        user.setSex(Sex.MALE);
         assertThat(photoService.savePhoto(user)).isEqualTo("~/DepartmentUniversity/static/images/malestudent.png");
     }
 
@@ -48,7 +50,7 @@ class PhotoServiceImplTest {
         MultipartFile photoMock = mock(MultipartFile.class);
         when(photoMock.isEmpty()).thenReturn(true);
         user.setPhoto(photoMock);
-        user.setSex("Female");
+        user.setSex(Sex.FEMALE);
         assertThat(photoService.savePhoto(user)).isEqualTo("~/DepartmentUniversity/static/images/femalestudent.png");
     }
 
@@ -58,7 +60,7 @@ class PhotoServiceImplTest {
         MultipartFile photoMock = mock(MultipartFile.class);
         when(photoMock.isEmpty()).thenReturn(true);
         user.setPhoto(photoMock);
-        user.setSex("Male");
+        user.setSex(Sex.MALE);
         assertThat(photoService.savePhoto(user)).isEqualTo("~/DepartmentUniversity/static/images/maleteacher.png");
     }
 
@@ -68,7 +70,7 @@ class PhotoServiceImplTest {
         MultipartFile photoMock = mock(MultipartFile.class);
         when(photoMock.isEmpty()).thenReturn(true);
         user.setPhoto(photoMock);
-        user.setSex("Female");
+        user.setSex(Sex.FEMALE);
         assertThat(photoService.savePhoto(user)).isEqualTo("~/DepartmentUniversity/static/images/femaleteacher.png");
     }
 
@@ -116,20 +118,6 @@ class PhotoServiceImplTest {
         photoService.savePhoto(user);
         verify(awsS3ServiceMock).uploadFile(multipartFile);
     }
-    
-//    @Test
-//    void savePhotoShouldReturnFileURLWhenInputValidImage() throws IOException {
-//        UserDto user = new TeacherDto();
-//        File file = new File("src/test/resources/validimage.png");
-//        FileInputStream input = new FileInputStream(file);
-//        MultipartFile multipartFile = new MockMultipartFile("validimage", file.getName(), "image/png",
-//                IOUtils.toByteArray(input));
-//        user.setPhoto(multipartFile);
-//        photoService.savePhoto(user);
-//        AwsS3ServiceImpl s3Service = new AwsS3ServiceImpl();
-//        verify(awsS3ServiceMock).uploadFile(multipartFile);
-//    }
-
     
     @Test
     void savePhotoShouldThrowInvalidPhotoExceptionWhenInpupFileCantReading() throws IOException {

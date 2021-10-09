@@ -17,9 +17,7 @@ import org.university.dto.CourseDto;
 import org.university.entity.Course;
 import org.university.exceptions.EntityAlreadyExistException;
 import org.university.exceptions.EntityNotExistException;
-import org.university.exceptions.InvalidCourseNameException;
-import org.university.exceptions.InvalidDescriptionException;
-import org.university.service.validator.CourseValidator;
+import org.university.service.CourseService;
 import org.university.utils.CreatorTestEntities;
 
 class CourseServiceImplTest {
@@ -30,7 +28,7 @@ class CourseServiceImplTest {
     @BeforeAll
     static void init() {
         courseDaoMock = createCourseDaoMock();
-        courseService = new CourseServiceImpl(courseDaoMock, new CourseValidator());
+        courseService = new CourseServiceImpl(courseDaoMock);
     }
 
     @Test
@@ -50,25 +48,8 @@ class CourseServiceImplTest {
         CourseDto course = new CourseDto();
         course.setName("Law");
         assertThatThrownBy(() -> courseService.addCourse(course)).isInstanceOf(EntityAlreadyExistException.class);
-    }
-    
-    @Test
-    void addCourseShouldThrowInvalidCourseNameExceptionWhenInputInvalidName() {
-        CourseDto course = new CourseDto();
-        course.setId(5);
-        course.setName("");
-        assertThatThrownBy(() -> courseService.addCourse(course)).isInstanceOf(InvalidCourseNameException.class);
-    }
-    
-    @Test
-    void addCourseShouldThrowInvalidDescriptionExceptionWhenInputInvalidDescription() {
-        CourseDto course = new CourseDto();
-        course.setId(5);
-        course.setName("valid");
-        course.setDescription("");
-        assertThatThrownBy(() -> courseService.addCourse(course)).isInstanceOf(InvalidDescriptionException.class);
-    }
-    
+    }    
+ 
     @Test
     void addCourseShouldThrowIllegalArgumentExceptionWhenInputNull() {        
         assertThatThrownBy(() -> courseService.addCourse(null)).isInstanceOf(IllegalArgumentException.class);
@@ -140,22 +121,19 @@ class CourseServiceImplTest {
     }
     
     @Test
-    void editShouldThrowInvalidCourseNameExceptionWhenInputInvalidName() {
-        CourseDto course = new CourseDto();
-        course.setId(1);
-        course.setName("");
-        assertThatThrownBy(() -> courseService.edit(course)).isInstanceOf(InvalidCourseNameException.class);
-    }
-    
-    @Test
-    void editShouldThrowInvalidDescriptionExceptionWhenInputInvalidDescription() {
-        CourseDto course = new CourseDto();
-        course.setId(1);
-        course.setName("Law");
-        course.setDescription("");
-        assertThatThrownBy(() -> courseService.edit(course)).isInstanceOf(InvalidDescriptionException.class);
-    }
-    
+    void editShouldNotThrowEntityAlreadyExistWhenCourseWithNameNotExist() {
+        CourseDao courseDaoMock = createCourseDaoMock();
+        CourseService courseService = new CourseServiceImpl(courseDaoMock);
+        CourseDto courseDto = new CourseDto();
+        courseDto.setId(2);
+        courseDto.setName("Law");
+        when(courseDaoMock.findByName("Law"))
+        .thenReturn(Optional.empty());
+        Course course = Course.builder().withId(2).withName("Law").build();
+        courseService.edit(courseDto);
+        verify(courseDaoMock).save(course);
+    }    
+  
     @Test
     void editShouldThrowIllegalArgumentExceptionWhenInputNull() {        
         assertThatThrownBy(() -> courseService.edit(null)).isInstanceOf(IllegalArgumentException.class);

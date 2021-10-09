@@ -6,6 +6,8 @@ import org.university.dto.UserDto;
 import org.university.service.AwsS3Service;
 import org.university.service.PhotoService;
 import org.university.service.validator.PhotoValidator;
+import org.university.utils.Sex;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -28,10 +30,10 @@ public class PhotoServiceImpl implements PhotoService {
             photoName = awsS3Service.uploadFile(user.getPhoto());
         } else {
             if (user.getClass() == StudentDto.class) {
-                photoName = user.getSex().equals("Male") ? String.format("%smalestudent.png", DEFAULT_PATH)
+                photoName = user.getSex() == Sex.MALE ? String.format("%smalestudent.png", DEFAULT_PATH)
                         : String.format("%sfemalestudent.png", DEFAULT_PATH);
             } else {
-                photoName = user.getSex().equals("Male") ? String.format("%smaleteacher.png", DEFAULT_PATH)
+                photoName = user.getSex() == Sex.MALE ? String.format("%smaleteacher.png", DEFAULT_PATH)
                         : String.format("%sfemaleteacher.png", DEFAULT_PATH);
             }
         }

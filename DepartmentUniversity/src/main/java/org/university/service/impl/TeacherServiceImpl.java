@@ -5,10 +5,12 @@ import java.util.List;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.university.dao.RoleDao;
 import org.university.dao.TeacherDao;
 import org.university.dto.TeacherDto;
 import org.university.dto.UserDto;
 import org.university.entity.Teacher;
+import org.university.entity.User;
 import org.university.exceptions.AuthorisationFailException;
 import org.university.exceptions.EntityNotExistException;
 import org.university.service.TeacherService;
@@ -26,15 +28,17 @@ public class TeacherServiceImpl extends AbstractUserServiceImpl<Teacher> impleme
 
     TeacherDao teacherDao;
     PasswordEncoder encoder;
+    RoleDao roleDao;
 
-    public TeacherServiceImpl(TeacherDao teacherDao, Validator<Teacher> validator, PasswordEncoder encoder) {
+    public TeacherServiceImpl(TeacherDao teacherDao, Validator<User> validator, PasswordEncoder encoder, RoleDao roleDao) {
         super(teacherDao, validator);
         this.teacherDao = teacherDao;
         this.encoder = encoder;
+        this.roleDao = roleDao;
     }
 
     @Override
-    protected Teacher mapUserWithPassword(Teacher user) {
+    protected Teacher mapUserWithPassword(Teacher user) {        
         return Teacher.builder()
                 .withId(user.getId())
                 .withSex(user.getSex())
@@ -44,6 +48,8 @@ public class TeacherServiceImpl extends AbstractUserServiceImpl<Teacher> impleme
                 .withPassword(encoder.encode(user.getPassword()))
                 .withScientificDegree(user.getScientificDegree())
                 .withPhoto(user.getPhoto())
+                .withRole(roleDao.findByName("TEACHER").get())
+                .withEnabled(true)
                 .build();
     }
 
@@ -75,7 +81,8 @@ public class TeacherServiceImpl extends AbstractUserServiceImpl<Teacher> impleme
                 .withPhone(teacher.getPhone())
                 .withPassword(teacher.getPassword())
                 .withScientificDegree(teacher.getScientificDegree())
-                .withPhoto(teacher.getPhotoName())
+                .withPhoto(teacher.getPhotoName())                
+                .withEnabled(true)
                 .build();
     }
 }

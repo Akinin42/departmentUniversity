@@ -76,7 +76,7 @@ public class LessonServiceImpl implements LessonService {
         if ((!checkTimeNotChange(lessonDto) || !checkGroupAndTeacherNotChange(lessonDto))
                 && (!checkFreeTime(lesson, teacherLessons) || !checkFreeTime(lesson, groupLessons))) {
             throw new InvalidLessonTimeException("groupteacherbusy");
-        }
+        }               
         if ((!checkTimeNotChange(lessonDto) || !checkClassroomNotChange(lessonDto)) && !checkFreeClassroom(lesson)) {
             throw new ClassroomBusyException("classroombusy");
         }

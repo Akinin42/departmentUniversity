@@ -171,11 +171,14 @@ class LessonDaoTest {
         Lesson existLesson = CreatorTestEntities.createLessons().get(0);
         Lesson updatedLesson = Lesson.builder().withId(existLesson.getId())
                 .withStartLesson(LocalDateTime.of(2021, Month.OCTOBER, 21, 10, 00, 00))
-                .withEndLesson(LocalDateTime.of(2021, Month.OCTOBER, 21, 12, 00, 00)).withOnlineLesson(true)
-                .withLessonLink("new link").withClassroom(CreatorTestEntities.createClassrooms().get(1))
+                .withEndLesson(LocalDateTime.of(2021, Month.OCTOBER, 21, 12, 00, 00))
+                .withOnlineLesson(true)
+                .withLessonLink("new link")
+                .withClassroom(CreatorTestEntities.createClassrooms().get(1))
                 .withCourse(CreatorTestEntities.createCourses().get(1))
                 .withTeacher(CreatorTestEntities.createTeachers().get(1))
-                .withGroup(CreatorTestEntities.createGroups().get(1)).build();
+                .withGroup(CreatorTestEntities.createGroups().get(1))
+                .build();
         lessonDao.save(updatedLesson);
         assertThat(lessonDao.findById(1).get()).isEqualTo(updatedLesson);
     }

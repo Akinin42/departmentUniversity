@@ -6,5 +6,5 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper=true)
 public class TeacherDto extends UserDto {    
-    String scientificDegree;
+    private String scientificDegree;
 }

@@ -42,9 +42,10 @@
                 </div>                
                     <label for="startLesson" class="cols-sm-2 control-label" th:text="#{label.startlesson}"></label>
                             <input  class="form-control" type="datetime-local" th:value="${startLesson}" name="startLesson"  id="startLesson" />
-               
+                            <div style="color:red" th:if="${message=='invalid date'}" th:text="#{label.inputemptydate}"></div>
                     <label for="Endlesson" class="cols-sm-2 control-label" th:text="#{label.endlesson}"></label>
                             <input class="form-control" type="datetime-local"  th:value="${endLesson}" name="endLesson"  id="endLesson" />
+                            <div style="color:red" th:if="${message=='invalid date'}" th:text="#{label.inputemptydate}"></div>
                     <label for="onlineLesson" class="cols-sm-2 control-label" th:text="#{label.onlinelesson}"></label>    
                             <input type="radio" name="onlineLesson" th:value="true">                                   
                             <input type="hidden" name="onlineLesson" th:value="false">                            

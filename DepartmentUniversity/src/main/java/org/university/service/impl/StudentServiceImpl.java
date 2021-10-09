@@ -8,15 +8,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.university.dao.CourseDao;
 import org.university.dao.GroupDao;
+import org.university.dao.RoleDao;
 import org.university.dao.StudentDao;
 import org.university.dto.StudentDto;
 import org.university.dto.UserDto;
 import org.university.entity.Course;
 import org.university.entity.Student;
+import org.university.entity.User;
 import org.university.exceptions.AuthorisationFailException;
 import org.university.exceptions.EntityNotExistException;
 import org.university.service.StudentService;
-import org.university.service.validator.UserValidator;
+import org.university.service.validator.Validator;
 
 import lombok.AccessLevel;
 import lombok.NonNull;
@@ -32,13 +34,15 @@ public class StudentServiceImpl extends AbstractUserServiceImpl<Student> impleme
     StudentDao studentDao;
     CourseDao courseDao;
     PasswordEncoder encoder;
+    RoleDao roleDao;
 
     public StudentServiceImpl(StudentDao studentDao, GroupDao groupDao, CourseDao courseDao,
-            UserValidator<Student> validator, PasswordEncoder encoder) {
+            Validator<User> validator, PasswordEncoder encoder, RoleDao roleDao) {
         super(studentDao, validator);
         this.studentDao = studentDao;
         this.courseDao = courseDao;
         this.encoder = encoder;
+        this.roleDao = roleDao;
     }
 
     @Override
@@ -64,6 +68,8 @@ public class StudentServiceImpl extends AbstractUserServiceImpl<Student> impleme
                 .withPhone(user.getPhone())
                 .withPassword(encoder.encode(user.getPassword()))
                 .withPhoto(user.getPhoto())
+                .withRole(roleDao.findByName("STUDENT").get())
+                .withEnabled(true)
                 .build();
     }
 
@@ -110,7 +116,8 @@ public class StudentServiceImpl extends AbstractUserServiceImpl<Student> impleme
                 .withEmail(user.getEmail())
                 .withPhone(user.getPhone())
                 .withPassword(user.getPassword())
-                .withPhoto(user.getPhotoName())
+                .withPhoto(user.getPhotoName())                
+                .withEnabled(true)
                 .build();
     }
 }

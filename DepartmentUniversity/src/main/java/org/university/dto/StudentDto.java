@@ -6,6 +6,6 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper=true)
 public class StudentDto extends UserDto {
-    String courseName;
-    String groupName;
+    private String courseName;
+    private String groupName;
 }

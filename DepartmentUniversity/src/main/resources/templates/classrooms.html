@@ -24,20 +24,20 @@
 								<h4 class="title pull-left" th:text="#{label.classrooms}"></h4>
 								<div class="row pull-right">
 									<div class="input-group mb-3">
-									<div th:switch="${message}">                                        
-                                        <p th:case="'invalidnumber'" th:text="#{label.invalidnumber}"></p>                                       
-                                        <p th:case="'invalidaddress'" th:text="#{label.invalidaddress}"></p>                                       
-                                        <p th:case="'invalidcapacity'" th:text="#{label.invalidcapacity}"></p>                                       
+									<div th:switch="${message}">                                      
                                         <p th:case="'classroomexist'" th:text="#{label.classroomexist}"></p>                                       
                                     </div>
-										<form action="#" th:action="@{/classrooms}"	th:object="${classroom}" method="post">
+										<form action="#" th:action="@{/classrooms}"	th:object="${classroom}" method="post">										    
 											<label for="number" th:text="#{label.number}"></label> 
-											<input type="number" class="form-group" th:field="*{number}" id="number" style="width: 200px;"> 
+											<input type="number" class="form-group" th:field="*{number}" id="number" style="width: 200px;">											
 											<label for="address" th:text="#{label.address}"></label>
-											<input type="text" class="form-group" th:field="*{address}"	id="address" style="width: 200px;"> 
+											<input type="text" class="form-group" th:field="*{address}"	id="address" style="width: 200px;">											
 											<label for="capacity" th:text="#{label.capacity}"></label> 
-											<input type="number" class="form-group" th:field="*{capacity}" id="capacity" style="width: 200px;">
+											<input type="number" class="form-group" th:field="*{capacity}" id="capacity" style="width: 200px;">											
 											<button class="btn btn-sm btn-primary pull-right" type="submit" th:value="classroom" th:text="#{label.addclassroom}"></button>
+											<div style="color:red" th:if="${#fields.hasErrors('number')}" th:text="#{label.invalidnumber}"></div>
+											<div style="color:red" th:if="${#fields.hasErrors('address')}" th:text="#{label.invalidaddress}"></div>
+											<div style="color:red" th:if="${#fields.hasErrors('capacity')}" th:text="#{label.invalidcapacity}"></div>
 										</form>
 									</div>
 								</div>

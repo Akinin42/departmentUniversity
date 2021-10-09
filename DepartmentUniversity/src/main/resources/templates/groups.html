@@ -24,14 +24,14 @@
 								<h4 class="title pull-left" th:text="#{label.groups}"></h4>
 								<div class="row pull-right">
 									<div class="input-group mb-3">
-									<div th:switch="${message}">                                        
-                                        <p th:case="'invalidname'" th:text="#{label.invalidgroupname}"></p>                                       
+									<div th:switch="${message}">                                                                               
                                         <p th:case="'groupexist'" th:text="#{label.groupexist}"></p>                                       
                                     </div>									
 										<form action="#" th:action="@{/groups}"	th:object="${group}" method="post">
 											<label for="name" th:text = "#{label.groupname}"></label> 
 											<input type="text" class="form-group" th:field="*{name}" id="name">
-											<button class="btn btn-sm btn-primary pull-right" type="submit" th:value="timetable" th:text="#{label.addgroup}"></button>
+											<div style="color:red" th:if="${#fields.hasErrors('name')}" th:text="#{label.invalidgroupname}"></div>
+											<button class="btn btn-sm btn-primary pull-right" type="submit" th:value="timetable" th:text="#{label.addgroup}"></button>											
 										</form>
 									</div>
 								</div>
@@ -108,9 +108,9 @@
                                                 </form>
                                             </li>
 											<li>
-												<form action="#" th:action="@{/groups/}" th:object="${group}" th:method="delete">
+												<form action="#" th:action="@{/groups}" th:object="${group}" th:method="delete">
 													<input class="form-control" type="hidden" th:value="${group.id}" id="id" name="id" />
-													<button type="submit" class="btn btn-danger" th:value="teacher">
+													<button type="submit" class="btn btn-danger" th:value="group">
 														<i class="fa fa-trash"></i>
 													</button>
 												</form>

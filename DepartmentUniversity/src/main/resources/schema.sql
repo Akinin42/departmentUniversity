@@ -19,7 +19,9 @@ teacher_name VARCHAR(100) NOT NULL,
 teacher_email VARCHAR(40) NOT NULL, 
 teacher_phone VARCHAR(20) NOT NULL,
 teacher_password VARCHAR(100) NOT NULL,
-teacher_degree VARCHAR(50) NOT NULL 
+teacher_degree VARCHAR(50) NOT NULL,
+teacher_enabled BOOLEAN,
+role INT REFERENCES roles(role_id) ON DELETE CASCADE
 );
 DROP TABLE IF EXISTS students CASCADE;
 CREATE TABLE students(
@@ -59,3 +61,8 @@ lesson_course INT REFERENCES courses(course_id) ON DELETE CASCADE,
 lesson_teacher INT REFERENCES teachers(teacher_id) ON DELETE CASCADE,
 lesson_group INT REFERENCES groups(group_id) ON DELETE CASCADE
 );
+DROP TABLE IF EXISTS roles CASCADE;
+CREATE TABLE roles(
+role_id SERIAL PRIMARY KEY,
+name VARCHAR(50) NOT NULL
+)

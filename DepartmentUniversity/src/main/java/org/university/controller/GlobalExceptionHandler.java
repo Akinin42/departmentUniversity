@@ -10,19 +10,11 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.university.exceptions.AuthorisationFailException;
 import org.university.exceptions.EntityAlreadyExistException;
-import org.university.exceptions.InvalidAddressException;
-import org.university.exceptions.InvalidClassroomCapacityException;
-import org.university.exceptions.InvalidClassroomNumberException;
-import org.university.exceptions.InvalidCourseNameException;
-import org.university.exceptions.InvalidDescriptionException;
-import org.university.exceptions.InvalidGroupNameException;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler({ InvalidClassroomNumberException.class, InvalidClassroomCapacityException.class,
-            InvalidAddressException.class, InvalidCourseNameException.class, InvalidDescriptionException.class,
-            InvalidGroupNameException.class, EntityAlreadyExistException.class })
+    @ExceptionHandler({ EntityAlreadyExistException.class })
     public ModelAndView handleClassroomException(Exception e, HttpServletRequest request) {
         ModelAndView response = new ModelAndView();
         response.addObject("message", e.getMessage());
@@ -45,7 +37,7 @@ public class GlobalExceptionHandler {
     public String handleNotFoundException(Exception e, HttpServletRequest request) {
         return "error404";
     }
-    
+
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public String handleServerException(Exception e, HttpServletRequest request) {

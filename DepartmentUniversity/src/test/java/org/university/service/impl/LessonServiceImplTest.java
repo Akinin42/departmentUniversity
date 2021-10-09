@@ -131,6 +131,16 @@ class LessonServiceImplTest {
         when(mapperMock.mapDtoToEntity(lessonDto)).thenReturn(lessonMock);
         assertThatThrownBy(() -> lessonService.addLesson(lessonDto)).isInstanceOf(EntityAlreadyExistException.class);
     }
+    
+    @Test
+    void addLessonShouldNotThrowEntityAlreadyExistExceptionWhenInputLessonIdNull() {
+        Lesson lessonMock = createLessonMock();
+        when(lessonMock.getId()).thenReturn(null);
+        LessonDto lessonDto = new LessonDto();
+        when(mapperMock.mapDtoToEntity(lessonDto)).thenReturn(lessonMock);
+        lessonService.addLesson(lessonDto);
+        verify(lessonDaoMock).save(lessonMock);
+    }
 
     @Test
     void addLessonShouldThrowInvalidLessonTimeExceptionWhenTeacherBusyThisTime() {
@@ -400,6 +410,68 @@ class LessonServiceImplTest {
     }
     
     @Test
+    void editShouldEditLessonWhenChangeTimesTeacherGroupAndClassroom() {
+        LessonDto lessonDto = new LessonDto();
+        lessonDto.setId(2);
+        lessonDto.setStartLesson(LocalDateTime.of(2021, Month.OCTOBER, 29, 13, 00, 00).toString());
+        lessonDto.setEndLesson(LocalDateTime.of(2021, Month.OCTOBER, 29, 14, 00, 00).toString());
+        lessonDto.setGroupName("AB-22");
+        lessonDto.setTeacherEmail("Bob@mail.ru");
+        lessonDto.setClassroomNumber(1);
+        LessonDao lessonDaoMock = createLessonDaoMock();
+        Group group = Group.builder()
+                .withId(2)
+                .withName("FR-33")
+                .withStudents(new HashSet<>(CreatorTestEntities.createStudents()))
+                .build();
+        Lesson lessonMock = createLessonMock();
+        when(lessonMock.getGroup()).thenReturn(group);
+        when(lessonMock.getTeacher()).thenReturn(CreatorTestEntities.createTeachers().get(1));
+        when(lessonMock.getStartLesson()).thenReturn(LocalDateTime.of(2021, Month.OCTOBER, 29, 13, 00, 00));
+        when(lessonMock.getEndLesson()).thenReturn(LocalDateTime.of(2021, Month.OCTOBER, 29, 16, 00, 00));
+        when(lessonMock.getClassroom()).thenReturn(CreatorTestEntities.createClassrooms().get(1));
+        when(mapperMock.mapDtoToEntity(lessonDto)).thenReturn(lessonMock);
+        List<Lesson> lessons = new ArrayList<>();        
+        when(lessonDaoMock.findAllByStartLessonBetweenAndTeacherIdOrderByStartLesson(LocalDateTime.of(2021, Month.OCTOBER, 29,0,0),LocalDateTime.of(2021, Month.OCTOBER, 29,23,0), 2)).thenReturn(lessons);
+        when(lessonDaoMock.findAllByStartLessonBetweenAndGroupIdOrderByStartLesson(LocalDateTime.of(2021, Month.OCTOBER, 29,0,0),LocalDateTime.of(2021, Month.OCTOBER, 29,23,0), 2)).thenReturn(lessons);        
+        when(lessonDaoMock.findById(2)).thenReturn(Optional.ofNullable(lessonMock));
+        LessonServiceImpl lessonService = new LessonServiceImpl(lessonDaoMock, new LessonValidator(), mapperMock);
+        lessonService.edit(lessonDto);
+        verify(lessonDaoMock).save(lessonMock);
+    }
+    
+    @Test
+    void editShouldEditLessonWhenChangeTimesTeacherGroupButNotClassroom() {
+        LessonDto lessonDto = new LessonDto();
+        lessonDto.setId(2);
+        lessonDto.setStartLesson(LocalDateTime.of(2021, Month.OCTOBER, 29, 13, 00, 00).toString());
+        lessonDto.setEndLesson(LocalDateTime.of(2021, Month.OCTOBER, 29, 14, 00, 00).toString());
+        lessonDto.setGroupName("AB-22");
+        lessonDto.setTeacherEmail("Bob@mail.ru");
+        lessonDto.setClassroomNumber(2);
+        LessonDao lessonDaoMock = createLessonDaoMock();
+        Group group = Group.builder()
+                .withId(2)
+                .withName("FR-33")
+                .withStudents(new HashSet<>(CreatorTestEntities.createStudents()))
+                .build();
+        Lesson lessonMock = createLessonMock();
+        when(lessonMock.getGroup()).thenReturn(group);
+        when(lessonMock.getTeacher()).thenReturn(CreatorTestEntities.createTeachers().get(1));
+        when(lessonMock.getStartLesson()).thenReturn(LocalDateTime.of(2021, Month.OCTOBER, 29, 13, 00, 00));
+        when(lessonMock.getEndLesson()).thenReturn(LocalDateTime.of(2021, Month.OCTOBER, 29, 14, 00, 00));
+        when(lessonMock.getClassroom()).thenReturn(CreatorTestEntities.createClassrooms().get(1));
+        when(mapperMock.mapDtoToEntity(lessonDto)).thenReturn(lessonMock);
+        List<Lesson> lessons = new ArrayList<>();        
+        when(lessonDaoMock.findAllByStartLessonBetweenAndTeacherIdOrderByStartLesson(LocalDateTime.of(2021, Month.OCTOBER, 29,0,0),LocalDateTime.of(2021, Month.OCTOBER, 29,23,0), 2)).thenReturn(lessons);
+        when(lessonDaoMock.findAllByStartLessonBetweenAndGroupIdOrderByStartLesson(LocalDateTime.of(2021, Month.OCTOBER, 29,0,0),LocalDateTime.of(2021, Month.OCTOBER, 29,23,0), 2)).thenReturn(lessons);        
+        when(lessonDaoMock.findById(2)).thenReturn(Optional.ofNullable(lessonMock));
+        LessonServiceImpl lessonService = new LessonServiceImpl(lessonDaoMock, new LessonValidator(), mapperMock);
+        lessonService.edit(lessonDto);
+        verify(lessonDaoMock).save(lessonMock);
+    }
+    
+    @Test
     void editShouldThrowClassroomBusyExceptionWhenNotChangeTimesTeacherGroupButClassroomChange() {
         LessonDto lessonDto = new LessonDto();
         lessonDto.setId(2);
@@ -419,8 +491,75 @@ class LessonServiceImplTest {
         when(lessonMock.getTeacher()).thenReturn(CreatorTestEntities.createTeachers().get(1));
         when(lessonMock.getStartLesson()).thenReturn(LocalDateTime.of(2021, Month.OCTOBER, 19, 13, 00, 00));
         when(lessonMock.getEndLesson()).thenReturn(LocalDateTime.of(2021, Month.OCTOBER, 19, 14, 00, 00));
+        when(lessonMock.getClassroom()).thenReturn(CreatorTestEntities.createClassrooms().get(1));
         when(mapperMock.mapDtoToEntity(lessonDto)).thenReturn(lessonMock);
         List<Lesson> lessons = CreatorTestEntities.createLessons();        
+        when(lessonDaoMock.findAllByStartLessonBetweenAndTeacherIdOrderByStartLesson(LocalDateTime.of(2021, Month.OCTOBER, 19,0,0),LocalDateTime.of(2021, Month.OCTOBER, 19,23,0), 2)).thenReturn(lessons);
+        when(lessonDaoMock.findAllByStartLessonBetweenAndGroupIdOrderByStartLesson(LocalDateTime.of(2021, Month.OCTOBER, 19,0,0),LocalDateTime.of(2021, Month.OCTOBER, 19,23,0), 2)).thenReturn(lessons);        
+        when(lessonDaoMock.findById(2)).thenReturn(Optional.ofNullable(lessonMock));
+        List<Lesson> classroomLessons = new ArrayList<>();
+        classroomLessons.add(lessonMock);
+        when(lessonDaoMock.findAllByStartLessonBetweenOrderByStartLesson(LocalDateTime.of(2021, Month.OCTOBER, 19,0,0),LocalDateTime.of(2021, Month.OCTOBER, 19,23,0))).thenReturn(classroomLessons);
+        LessonServiceImpl lessonService = new LessonServiceImpl(lessonDaoMock, new LessonValidator(), mapperMock);
+        assertThatThrownBy(() -> lessonService.edit(lessonDto)).isInstanceOf(ClassroomBusyException.class);
+    }
+    
+    @Test
+    void editShouldThrowClassroomBusyExceptionWhenChangeTimesTeacherGroupButClassroomNotChange() {
+        LessonDto lessonDto = new LessonDto();
+        lessonDto.setId(2);
+        lessonDto.setStartLesson(LocalDateTime.of(2021, Month.OCTOBER, 19, 13, 00, 00).toString());
+        lessonDto.setEndLesson(LocalDateTime.of(2021, Month.OCTOBER, 19, 14, 00, 00).toString());
+        lessonDto.setGroupName("FR-33");
+        lessonDto.setTeacherEmail("Ann@mail.ru");
+        lessonDto.setClassroomNumber(1);
+        LessonDao lessonDaoMock = createLessonDaoMock();
+        Group group = Group.builder()
+                .withId(2)
+                .withName("FR-33")
+                .withStudents(new HashSet<>(CreatorTestEntities.createStudents()))
+                .build();
+        Lesson lessonMock = createLessonMock();
+        when(lessonMock.getGroup()).thenReturn(group);
+        when(lessonMock.getTeacher()).thenReturn(CreatorTestEntities.createTeachers().get(1));
+        when(lessonMock.getStartLesson()).thenReturn(LocalDateTime.of(2021, Month.OCTOBER, 19, 15, 00, 00));
+        when(lessonMock.getEndLesson()).thenReturn(LocalDateTime.of(2021, Month.OCTOBER, 19, 16, 00, 00));
+        when(lessonMock.getClassroom()).thenReturn(CreatorTestEntities.createClassrooms().get(0));
+        when(mapperMock.mapDtoToEntity(lessonDto)).thenReturn(lessonMock);
+        List<Lesson> lessons = new ArrayList<>();        
+        when(lessonDaoMock.findAllByStartLessonBetweenAndTeacherIdOrderByStartLesson(LocalDateTime.of(2021, Month.OCTOBER, 19,0,0),LocalDateTime.of(2021, Month.OCTOBER, 19,23,0), 2)).thenReturn(lessons);
+        when(lessonDaoMock.findAllByStartLessonBetweenAndGroupIdOrderByStartLesson(LocalDateTime.of(2021, Month.OCTOBER, 19,0,0),LocalDateTime.of(2021, Month.OCTOBER, 19,23,0), 2)).thenReturn(lessons);        
+        when(lessonDaoMock.findById(2)).thenReturn(Optional.ofNullable(lessonMock));
+        List<Lesson> classroomLessons = new ArrayList<>();
+        classroomLessons.add(lessonMock);
+        when(lessonDaoMock.findAllByStartLessonBetweenOrderByStartLesson(LocalDateTime.of(2021, Month.OCTOBER, 19,0,0),LocalDateTime.of(2021, Month.OCTOBER, 19,23,0))).thenReturn(classroomLessons);
+        LessonServiceImpl lessonService = new LessonServiceImpl(lessonDaoMock, new LessonValidator(), mapperMock);
+        assertThatThrownBy(() -> lessonService.edit(lessonDto)).isInstanceOf(ClassroomBusyException.class);
+    }
+    
+    @Test
+    void editShouldThrowClassroomBusyExceptionWhenChangeTimesTeacherGroupAndClassroom() {
+        LessonDto lessonDto = new LessonDto();
+        lessonDto.setId(2);
+        lessonDto.setStartLesson(LocalDateTime.of(2021, Month.OCTOBER, 19, 13, 00, 00).toString());
+        lessonDto.setEndLesson(LocalDateTime.of(2021, Month.OCTOBER, 19, 14, 00, 00).toString());
+        lessonDto.setGroupName("FR-33");
+        lessonDto.setTeacherEmail("Ann@mail.ru");
+        lessonDto.setClassroomNumber(2);
+        LessonDao lessonDaoMock = createLessonDaoMock();
+        Group group = Group.builder()
+                .withId(2)
+                .withName("FR-33")
+                .withStudents(new HashSet<>(CreatorTestEntities.createStudents()))
+                .build();
+        Lesson lessonMock = createLessonMock();
+        when(lessonMock.getGroup()).thenReturn(group);
+        when(lessonMock.getTeacher()).thenReturn(CreatorTestEntities.createTeachers().get(1));
+        when(lessonMock.getStartLesson()).thenReturn(LocalDateTime.of(2021, Month.OCTOBER, 19, 15, 00, 00));
+        when(lessonMock.getEndLesson()).thenReturn(LocalDateTime.of(2021, Month.OCTOBER, 19, 16, 00, 00));
+        when(lessonMock.getClassroom()).thenReturn(CreatorTestEntities.createClassrooms().get(0));
+        when(mapperMock.mapDtoToEntity(lessonDto)).thenReturn(lessonMock);
+        List<Lesson> lessons = new ArrayList<>();        
         when(lessonDaoMock.findAllByStartLessonBetweenAndTeacherIdOrderByStartLesson(LocalDateTime.of(2021, Month.OCTOBER, 19,0,0),LocalDateTime.of(2021, Month.OCTOBER, 19,23,0), 2)).thenReturn(lessons);
         when(lessonDaoMock.findAllByStartLessonBetweenAndGroupIdOrderByStartLesson(LocalDateTime.of(2021, Month.OCTOBER, 19,0,0),LocalDateTime.of(2021, Month.OCTOBER, 19,23,0), 2)).thenReturn(lessons);        
         when(lessonDaoMock.findById(2)).thenReturn(Optional.ofNullable(lessonMock));

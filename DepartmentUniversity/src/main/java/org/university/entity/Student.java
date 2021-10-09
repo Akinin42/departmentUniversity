@@ -37,6 +37,7 @@ import lombok.experimental.SuperBuilder;
 @AttributeOverride(name = "phone", column = @Column(name = "student_phone"))
 @AttributeOverride(name = "password", column = @Column(name = "student_password"))
 @AttributeOverride(name = "photo", column = @Column(name = "student_photo"))
+@AttributeOverride(name = "enabled", column = @Column(name = "student_enabled"))
 public class Student extends User {
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})

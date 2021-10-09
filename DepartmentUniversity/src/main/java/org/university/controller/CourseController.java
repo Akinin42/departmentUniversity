@@ -1,7 +1,10 @@
 package org.university.controller;
 
+import javax.validation.Valid;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -9,9 +12,6 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.university.dto.CourseDto;
-import org.university.exceptions.EntityAlreadyExistException;
-import org.university.exceptions.InvalidCourseNameException;
-import org.university.exceptions.InvalidDescriptionException;
 import org.university.service.CourseService;
 
 import lombok.AccessLevel;
@@ -35,7 +35,11 @@ public class CourseController {
     }
 
     @PostMapping()
-    public String add(@ModelAttribute("course") CourseDto course, Model model) {
+    public String add(@ModelAttribute("course") @Valid CourseDto course, BindingResult bindingResult, Model model) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("courses", courseService.findAllCourses());
+            return "courses";
+        }
         courseService.addCourse(course);
         return REDIRECT;
     }
@@ -54,13 +58,11 @@ public class CourseController {
     }
 
     @PatchMapping()
-    public String edit(@ModelAttribute("course") CourseDto course, Model model) {
-        try {
-            courseService.edit(course);
-            return REDIRECT;
-        } catch (InvalidCourseNameException | InvalidDescriptionException | EntityAlreadyExistException e) {
-            model.addAttribute("message", e.getMessage());
+    public String edit(@ModelAttribute("course") @Valid CourseDto course, BindingResult bindingResult, Model model) {
+        if (bindingResult.hasErrors()) {
             return "updateforms/course";
         }
+        courseService.edit(course);
+        return REDIRECT;
     }
 }

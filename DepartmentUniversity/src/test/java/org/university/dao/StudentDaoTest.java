@@ -9,21 +9,27 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.university.entity.Student;
 import org.university.utils.CreatorTestEntities;
+import org.university.utils.Sex;
 
 @DataJpaTest
 class StudentDaoTest {
     
     @Autowired
     StudentDao studentDao;
+    
+    @Autowired
+    private RoleDao roleDao;
 
     @Test
     void saveShouldSaveStudentWhenInputValidStudent() {
         Student student = Student.builder()                
-                .withSex("Male")
+                .withSex(Sex.MALE)
                 .withName("Test student")
                 .withEmail("test")
                 .withPhone("test")
                 .withPassword("test password")
+                .withEnabled(true)
+                .withRole(roleDao.findByName("STUDENT").get())
                 .build();
         studentDao.save(student);
         assertThat(studentDao.findAll()).contains(student);
@@ -80,7 +86,7 @@ class StudentDaoTest {
         Student existStudent = CreatorTestEntities.createStudents().get(0);
         Student updatedStudent = Student.builder()
                 .withId(existStudent.getId())
-                .withSex("New sex")
+                .withSex(Sex.MALE)
                 .withName("New name")
                 .withEmail("New email")
                 .withPhone("New phone")

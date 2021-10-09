@@ -2,8 +2,12 @@ package org.university.controller;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+
+import javax.validation.Valid;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -24,6 +28,7 @@ import org.university.service.DayTimetableService;
 import org.university.service.GroupService;
 import org.university.service.LessonService;
 import org.university.service.TeacherService;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -50,14 +55,21 @@ public class TimetableController {
 
     @PostMapping("/date")
     public String getTimetableOnDay(@ModelAttribute("timetable") DayTimetableDto timetable, Model model) {
-        model.addAttribute("lessons", timetableService.createDayTimetable(LocalDate.parse(timetable.getDay())).getLessons());
+        if (timetable.getDay().equals("")) {
+            return "redirect:/timetables";
+        }
+        model.addAttribute("lessons",
+                timetableService.createDayTimetable(LocalDate.parse(timetable.getDay())).getLessons());
         return "lessons";
     }
 
     @PostMapping("/group")
     public String createGroupTimetable(@ModelAttribute("timetable") DayTimetableDto timetable, Model model) {
-        model.addAttribute("lessons",
-                timetableService.createGroupTimetable(LocalDate.parse(timetable.getDay()), timetable.getGroupName()).getLessons());
+        if (timetable.getDay().equals("")) {
+            return "redirect:/groups";
+        }
+        model.addAttribute("lessons", timetableService
+                .createGroupTimetable(LocalDate.parse(timetable.getDay()), timetable.getGroupName()).getLessons());
         return "lessons";
     }
 
@@ -77,8 +89,11 @@ public class TimetableController {
 
     @PostMapping("/teacher")
     public String createTeacherTimetable(@ModelAttribute("timetable") DayTimetableDto timetable, Model model) {
-        model.addAttribute("lessons",
-                timetableService.createTeacherTimetable(LocalDate.parse(timetable.getDay()), timetable.getTeacherEmail()).getLessons());
+        if (timetable.getDay().equals("")) {
+            return "redirect:/teachers";
+        }
+        model.addAttribute("lessons", timetableService
+                .createTeacherTimetable(LocalDate.parse(timetable.getDay()), timetable.getTeacherEmail()).getLessons());
         return "lessons";
     }
 
@@ -109,7 +124,12 @@ public class TimetableController {
     }
 
     @PostMapping()
-    public String addLesson(@ModelAttribute("lesson") LessonDto lesson, Model model) {
+    public String addLesson(@ModelAttribute("lesson") @Valid LessonDto lesson, BindingResult bindingResult,
+            Model model) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("message", "invalid date");
+            return "redirect:/timetables/new";
+        }
         try {
             lessonService.addLesson(lesson);
             LocalDate date = LocalDateTime.parse(lesson.getStartLesson()).toLocalDate();
@@ -142,8 +162,12 @@ public class TimetableController {
     }
 
     @PatchMapping()
-    public String edit(@ModelAttribute("lesson") LessonDto lesson, @ModelAttribute("message") String message,
-            Model model) {
+    public String edit(@ModelAttribute("lesson") @Valid LessonDto lesson, BindingResult bindingResult,
+            @ModelAttribute("message") String message, Model model) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("message", "invalid date");
+            return "redirect:/timetables/edit";
+        }
         try {
             lessonService.edit(lesson);
             LocalDate date = LocalDateTime.parse(lesson.getStartLesson()).toLocalDate();

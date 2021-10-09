@@ -10,7 +10,6 @@ import org.university.entity.Classroom;
 import org.university.exceptions.EntityAlreadyExistException;
 import org.university.exceptions.EntityNotExistException;
 import org.university.service.ClassroomService;
-import org.university.service.validator.Validator;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -26,7 +25,6 @@ import lombok.extern.slf4j.Slf4j;
 public class ClassroomServiceImpl implements ClassroomService {
 
     ClassroomDao classroomDao;
-    Validator<Classroom> validator;
 
     @Override
     public Classroom createClassroom(int classroomNumber) {
@@ -39,12 +37,12 @@ public class ClassroomServiceImpl implements ClassroomService {
     @Override
     public void addClassroom(@NonNull ClassroomDto classroomDto) {
         Classroom classroom = mapDtoToEntity(classroomDto);
-        if (classroom.getId() != null && existClassroom(classroom)) {
+        if (existClassroom(classroom)) {
             throw new EntityAlreadyExistException("classroomexist");
-        }
-        validator.validate(classroom);
-        classroomDao.save(classroom);
-        log.info("Classroom with number {} added succesfull!", classroom.getNumber());
+        } else {
+            classroomDao.save(classroom);
+            log.info("Classroom with number {} added succesfull!", classroom.getNumber());
+        }      
     }
 
     @Override
@@ -55,7 +53,7 @@ public class ClassroomServiceImpl implements ClassroomService {
     @Override
     public void delete(@NonNull ClassroomDto classroomDto) {
         Classroom classroom = mapDtoToEntity(classroomDto);
-        if (existClassroom(classroom)) {
+        if (classroomDao.existsById(classroom.getId())) {
             classroomDao.deleteById(classroom.getId());
             log.info("Classroom with number {} deleted!", classroom.getNumber());
         }
@@ -64,13 +62,12 @@ public class ClassroomServiceImpl implements ClassroomService {
     @Override
     public void edit(@NonNull ClassroomDto classroomDto) {
         Classroom classroom = mapDtoToEntity(classroomDto);
-        validator.validate(classroom);
         classroomDao.save(classroom);
         log.info("Classroom with number {} edited succesfull!", classroom.getNumber());        
     }
 
     private boolean existClassroom(Classroom classroom) {
-        return classroomDao.existsById(classroom.getId());
+        return classroomDao.findByNumber(classroom.getNumber()).isPresent();
     }
     
     private Classroom mapDtoToEntity(ClassroomDto classroomDto) {

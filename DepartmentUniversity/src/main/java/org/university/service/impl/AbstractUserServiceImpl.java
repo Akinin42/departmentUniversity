@@ -25,7 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 public abstract class AbstractUserServiceImpl<E extends User> implements UserService<E> {
 
     UserDao<E> userDao;
-    Validator<E> validator;
+    Validator<User> validator;
 
     @Override    
     public void register(@NonNull UserDto userDto) {
@@ -36,7 +36,7 @@ public abstract class AbstractUserServiceImpl<E extends User> implements UserSer
         validator.validate(user);
         userDao.save(mapUserWithPassword(user));
         log.info("User saved in database!");
-    }
+    }    
 
     @Override    
     public void delete(@NonNull UserDto userDto) {

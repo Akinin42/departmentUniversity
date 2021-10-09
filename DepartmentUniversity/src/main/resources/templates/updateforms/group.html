@@ -86,12 +86,12 @@
                             <input class="form-control" type="hidden" th:value="${group.id}" id="id" name="id" />
                             <span class="input-group-addon"><i class="fa fa-user fa" aria-hidden="true"></i></span> 
                             <input type="text" class="form-control" th:value="${group.name}" name="name" id="name" th:placeholder="#{name}" required />
+                            <div style="color:red" th:if="${#fields.hasErrors('name')}" th:text="#{label.invalidgroupname}"></div>
                         </div>
                     </div>
                 </div>
-                <div th:switch="${message}">                                        
-                                        <p th:case="'invalidname'" th:text="#{label.invalidgroupname}"></p>                                       
-                                        <p th:case="'groupexist'" th:text="#{label.groupexist}"></p>                                       
+                <div th:switch="${message}">                                                                               
+                    <p th:case="'groupexist'" th:text="#{label.groupexist}"></p>                                       
                 </div>
                 <div class="form-group ">
                     <button type="submit" id="button" class="btn btn-primary btn-lg btn-block login-button" th:value="group" th:text="#{label.edit}"></button>

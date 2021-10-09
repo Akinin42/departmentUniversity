@@ -1,5 +1,6 @@
 package org.university.utils;
 
+import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 
@@ -20,7 +21,7 @@ import com.lowagie.text.pdf.PdfWriter;
 @Component()
 public class PDFDataGenerator {
 
-    public void generateGroupTimetable(OutputStream output, List<DayTimetable> timetables, String groupName) {
+    public void generateGroupTimetable(OutputStream output, List<DayTimetable> timetables, String groupName) throws IOException {
         Document document = new Document();
         PdfWriter.getInstance(document, output);
         document.setPageSize(PageSize.A4);

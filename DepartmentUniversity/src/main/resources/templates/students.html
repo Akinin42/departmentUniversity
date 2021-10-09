@@ -26,8 +26,7 @@
 					<div class="panel-heading">
 						<div class="row">
 							<div class="col-sm-12 col-xs-12">
-								<h4 class="title pull-left" th:text="#{label.students}"></h4>
-								
+								<h4 class="title pull-left" th:text="#{label.students}"></h4>								
 								<a href="/DepartmentUniversity/students/new"	class="btn btn-sm btn-primary pull-right" th:text="#{label.addstudent}"></a>
 							</div>
 						</div>
@@ -37,7 +36,7 @@
                            <form action="#" th:action="@{/students/login}" th:object="${student}" method="post">                                
                                 <input type="email" class="form-group" th:value="${email}" id="email" name="email" th:placeholder="#{label.email}" autofocus required />
                                 <input type="password" class="form-group" th:value="${password}" id="password" name="password" th:placeholder="#{label.password}" required />                                
-                                <button type="submit" class="btn btn-success" th:text="#{label.signin}"></button>                                                  
+                                <button type="submit" class="btn btn-success" th:text="#{label.profile}"></button>                                                  
                             </form>
                             <div th:switch="${message}">                                        
                                 <p th:case="'passworddontcorrect'" th:text="#{label.passworddontcorrect}"></p>
@@ -111,7 +110,9 @@
 										</ul>
 									</td>
 									<td>
+									
 										<ul class="action-list">
+										    
 										    <li>
                                                 <form action="#" th:action="@{/students/edit}" th:object="${student}" method="post">
                                                     <input class="form-control" type="hidden" th:value="${student.id}" id="id" name="id"/>                                                    
@@ -123,15 +124,16 @@
                                                     </button>
                                                 </form>
                                             </li>
-											<li>
+                                            
+											 <li>											 
 												<form action="#" th:action="@{/students}" th:object="${student}" th:method="delete">
 													<input class="form-control" type="hidden" th:value="${student.id}" id="id" name="id" />
-													<button type="submit" class="btn btn-danger" th:value="student">
+													<button  type="submit" class="btn btn-danger" th:value="student">
 														<i class="fa fa-trash"></i>
 													</button>
-												</form>
-											</li>
-										</ul>
+												</form>												
+											 </li>											
+										</ul>										
 									</td>
 								</tr>
 							</tbody>
@@ -144,11 +146,8 @@
 									<li><a href="/DepartmentUniversity/students/-1">«</a></li>
 									<li><a href="/DepartmentUniversity/students/1">»</a></li>
 								</ul>
-							</div>
-							
-							
-						</div>
-						
+							</div>							
+						</div>						
 						<div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
                             <div class="btn-group me-2" role="group" aria-label="First group">
                                 <a href="/DepartmentUniversity/students/numbers/5" class="btn btn-sm btn-dark pull-right">5</a>

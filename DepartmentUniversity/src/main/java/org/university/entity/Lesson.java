@@ -41,7 +41,7 @@ public class Lesson {
     @JoinColumn(name = "lesson_course", referencedColumnName = "course_id")
     Course course;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "lesson_teacher", referencedColumnName = "teacher_id")
     Teacher teacher;
 

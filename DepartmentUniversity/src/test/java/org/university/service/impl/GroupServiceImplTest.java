@@ -22,8 +22,6 @@ import org.university.entity.Group;
 import org.university.entity.Student;
 import org.university.exceptions.EntityAlreadyExistException;
 import org.university.exceptions.EntityNotExistException;
-import org.university.exceptions.InvalidGroupNameException;
-import org.university.service.validator.GroupValidator;
 import org.university.utils.CreatorTestEntities;
 
 class GroupServiceImplTest {
@@ -36,7 +34,7 @@ class GroupServiceImplTest {
     static void init() {
         groupDaoMock = createGroupDaoMock();
         studentDaoMock = mock(StudentDao.class);
-        groupService = new GroupServiceImpl(groupDaoMock, studentDaoMock, new GroupValidator());
+        groupService = new GroupServiceImpl(groupDaoMock, studentDaoMock);
     }
 
     @Test
@@ -59,20 +57,6 @@ class GroupServiceImplTest {
     @Test
     void addGroupShouldThrowIllegalArgumentExceptionWhenInputNull() {
         assertThatThrownBy(() -> groupService.addGroup(null)).isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    void addGroupShouldThrowInvalidGroupNameExceptionWhenInputGroupWithInvalidName() {
-        GroupDto group = new GroupDto();
-        group.setName("invalid name");
-        assertThatThrownBy(() -> groupService.addGroup(group)).isInstanceOf(InvalidGroupNameException.class);
-    }
-    
-    @Test
-    void addGroupShouldThrowInvalidGroupNameExceptionWhenInputNameNull() {
-        GroupDto group = new GroupDto();
-        group.setName(null);
-        assertThatThrownBy(() -> groupService.addGroup(group)).isInstanceOf(InvalidGroupNameException.class);
     }
 
     @Test
@@ -167,22 +151,6 @@ class GroupServiceImplTest {
     }
 
     @Test
-    void editShouldThrowInvalidGroupNameExceptionWhenInputGroupWithInvalidName() {
-        GroupDto group = new GroupDto();
-        group.setId(1);
-        group.setName("invalid name");
-        assertThatThrownBy(() -> groupService.edit(group)).isInstanceOf(InvalidGroupNameException.class);
-    }
-    
-    @Test
-    void editShouldThrowInvalidGroupNameExceptionWhenInputNameNull() {
-        GroupDto group = new GroupDto();
-        group.setId(1);
-        group.setName(null);
-        assertThatThrownBy(() -> groupService.edit(group)).isInstanceOf(InvalidGroupNameException.class);
-    }
-
-    @Test
     void editShouldThrowEntityAlreadyExistExceptionWhenInputGroupNameExistInDatabase() {
         GroupDto group = new GroupDto();
         group.setId(2);
@@ -224,7 +192,7 @@ class GroupServiceImplTest {
     void addStudentToGroupShouldInsertStudentToGroupAndDeleteFromOld() {
         GroupDao groupDaoMock = createGroupDaoMock();
         StudentDao studentDaoMock = mock(StudentDao.class);
-        GroupServiceImpl groupService = new GroupServiceImpl(groupDaoMock, studentDaoMock, new GroupValidator());
+        GroupServiceImpl groupService = new GroupServiceImpl(groupDaoMock, studentDaoMock);
         StudentDto studentDto = new StudentDto();
         studentDto.setId(6);
         studentDto.setGroupName("AB-22");
@@ -275,7 +243,7 @@ class GroupServiceImplTest {
     void deleteStudentFromGroupShouldDeleteStudentFromGroup() {
         GroupDao groupDaoMock = createGroupDaoMock();
         StudentDao studentDaoMock = mock(StudentDao.class);
-        GroupServiceImpl groupService = new GroupServiceImpl(groupDaoMock, studentDaoMock, new GroupValidator());
+        GroupServiceImpl groupService = new GroupServiceImpl(groupDaoMock, studentDaoMock);
         StudentDto studentDto = new StudentDto();
         studentDto.setId(1);
         studentDto.setGroupName("AB-22");

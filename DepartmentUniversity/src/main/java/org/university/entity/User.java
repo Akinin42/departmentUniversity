@@ -1,9 +1,16 @@
 package org.university.entity;
 
+import javax.persistence.CascadeType;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
+
+import org.university.utils.Sex;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -27,11 +34,17 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     Integer id;
-
-    String sex;
+    
+    @Enumerated(EnumType.STRING)
+    Sex sex;
     String name;
     String email;
     String phone;
     String password;
     String photo;
+    boolean enabled;
+
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.REFRESH})
+    @JoinColumn(name = "role", referencedColumnName = "role_id")
+    Role role;
 }

@@ -11,6 +11,7 @@ import org.university.entity.Classroom;
 import org.university.entity.Course;
 import org.university.entity.Group;
 import org.university.entity.Lesson;
+import org.university.entity.Role;
 import org.university.entity.Student;
 import org.university.entity.Teacher;
 
@@ -83,28 +84,47 @@ public class CreatorTestEntities {
         return classrooms;
     }
     
+    public static List<Role> createRoles() {
+        List<Role> roles = new ArrayList<>();
+        Role role = Role.builder()
+                .withId(1)
+                .withName("STUDENT")
+                .build();
+        roles.add(role);
+        role = Role.builder()
+                .withId(2)
+                .withName("TEACHER")
+                .build();
+        roles.add(role);
+        return roles;
+    }
+    
     public static List<Teacher> createTeachers(){
         List<Teacher> teachers = new ArrayList<>();
         Teacher teacher = Teacher.builder()
                 .withId(1)
-                .withSex("Male")
+                .withSex(Sex.MALE)
                 .withName("Bob Moren")
                 .withEmail("Bob@mail.ru")
                 .withPhone("89758657788")
                 .withPassword("test-password")
                 .withScientificDegree("professor")
                 .withPhoto("default-male-teacher-photo")
+                .withEnabled(true)
+                .withRole(createRoles().get(1))
                 .build();
         teachers.add(teacher);
         teacher = Teacher.builder()
                 .withId(2)
-                .withSex("Female")
+                .withSex(Sex.FEMALE)
                 .withName("Ann Moren")
                 .withEmail("Ann@mail.ru")
                 .withPhone("89758651122")
                 .withPassword("test-password")
                 .withScientificDegree("doctor")
                 .withPhoto("default-female-teacher-photo")
+                .withEnabled(true)
+                .withRole(createRoles().get(1))
                 .build();
         teachers.add(teacher);
         return teachers;
@@ -159,70 +179,82 @@ public class CreatorTestEntities {
         coursesFirstStudent.add(createCourses().get(2));
         Student student = Student.builder()
                 .withId(1)
-                .withSex("Female")
+                .withSex(Sex.FEMALE)
                 .withName("Jane Wood")
                 .withEmail("Wood@email.ru")
                 .withPhone("test-phone")
                 .withPassword("test-password")
                 .withPhoto("default-female-photo")
                 .withCourses(coursesFirstStudent)
+                .withEnabled(true)
+                .withRole(createRoles().get(0))
                 .build();
         students.add(student);
         Set<Course> courses = new HashSet<>();
         courses.add(createCourses().get(0));
         student = Student.builder()
                 .withId(2)
-                .withSex("Female")
+                .withSex(Sex.FEMALE)
                 .withName("Ann Lee")
                 .withEmail("Lee@email.ru")
                 .withPhone("test-phone")
                 .withPassword("test-password")
                 .withPhoto("default-female-photo")
                 .withCourses(courses)
+                .withEnabled(true)
+                .withRole(createRoles().get(0))
                 .build();
         students.add(student);
         student = Student.builder()
                 .withId(3)
-                .withSex("Female")
+                .withSex(Sex.FEMALE)
                 .withName("Mary Born")
                 .withEmail("Born@email.ru")
                 .withPhone("test-phone")
                 .withPassword("test-password")
                 .withPhoto("default-female-photo")
                 .withCourses(courses)
+                .withEnabled(true)
+                .withRole(createRoles().get(0))
                 .build();
         students.add(student);
         student = Student.builder()
                 .withId(4)
-                .withSex("Male")
+                .withSex(Sex.MALE)
                 .withName("Rob Melon")
                 .withEmail("Melon@email.ru")
                 .withPhone("test-phone")
                 .withPassword("test-password")
                 .withPhoto("default-male-photo")
                 .withCourses(courses)
+                .withEnabled(true)
+                .withRole(createRoles().get(0))
                 .build();
         students.add(student);
         student = Student.builder()
                 .withId(5)
-                .withSex("Male")
+                .withSex(Sex.MALE)
                 .withName("John Brown")
                 .withEmail("Brown@email.ru")
                 .withPhone("test-phone")
                 .withPassword("test-password")
                 .withPhoto("default-male-photo")
                 .withCourses(new HashSet<>())
+                .withEnabled(true)
+                .withRole(createRoles().get(0))
                 .build();
         students.add(student);
         student = Student.builder()
                 .withId(6)
-                .withSex("Male")
+                .withSex(Sex.MALE)
                 .withName("Pol Hardy")
                 .withEmail("Hardy@email.ru")
                 .withPhone("test-phone")
                 .withPassword("test-password")
                 .withPhoto("default-male-photo")
                 .withCourses(new HashSet<>())
+                .withEnabled(true)
+                .withRole(createRoles().get(0))
                 .build();
         students.add(student);
         return students;
@@ -241,15 +273,7 @@ public class CreatorTestEntities {
                 .withNumber(1)
                 .withCapacity(10)
                 .build();
-        Teacher teacher = Teacher.builder()                
-                .withSex("Male")
-                .withName("Bob Moren")
-                .withEmail("Bob@mail.ru")
-                .withPhone("89758657788")
-                .withPassword("test-password")
-                .withScientificDegree("professor")
-                .withPhoto("default-male-teacher-photo")
-                .build();
+        Teacher teacher = createTeachers().get(0);
         return Lesson.builder()
                 .withStartLesson(LocalDateTime.of(2021, Month.JULY, 9, 11, 00, 00))
                 .withEndLesson(LocalDateTime.of(2021, Month.JULY, 9, 13, 00, 00))

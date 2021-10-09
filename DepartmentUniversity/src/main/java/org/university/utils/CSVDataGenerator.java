@@ -1,5 +1,6 @@
 package org.university.utils;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,7 +11,7 @@ import org.university.entity.Lesson;
 @Component()
 public class CSVDataGenerator {
 
-    public List<String[]> generateGroupsData(List<DayTimetable> timetables) {
+    public List<String[]> generateGroupsData(List<DayTimetable> timetables) throws IOException {
         List<String[]> groupsData = new ArrayList<>();
         String[] csvHeader = { "Date", "Start lesson", "End lesson", "Teacher", "Course", "Classroom", "Lesson link" };
         groupsData.add(csvHeader);
@@ -35,7 +36,7 @@ public class CSVDataGenerator {
         return groupsData;
     }
 
-    public List<String[]> generateTeachersData(List<DayTimetable> timetables) {
+    public List<String[]> generateTeachersData(List<DayTimetable> timetables) throws IOException {
         List<String[]> teachersData = new ArrayList<>();
         String[] csvHeader = { "Date", "Start lesson", "End lesson", "Group", "Course", "Classroom", "Lesson link" };
         teachersData.add(csvHeader);

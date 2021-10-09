@@ -91,6 +91,7 @@
 							<input type="text" class="form-control" th:value="${teacher.name}" name="name" id="name" th:placeholder="#{label.entername}" required />
 						</div>
 					</div>
+					<div style="color:red" th:if="${#fields.hasErrors('name')}" th:text="#{label.invalidteachername}"></div>
 				</div>
 				
 				<div class="form-group">
@@ -101,8 +102,8 @@
                             <i class="fa fa-user fa" aria-hidden="true"></i>
                             </span> 
                             <select id="sex" th:field="*{sex}" class="form-select" aria-label="Default select example">
-                                <option th:value="Male" th:text="#{label.male}" ></option>
-                                <option th:value="Female" th:text="#{label.female}"></option>
+                                <option th:value="MALE" th:text="#{label.male}" ></option>
+                                <option th:value="FEMALE" th:text="#{label.female}"></option>
                             </select>
                         </div>
                     </div>
@@ -127,6 +128,7 @@
 							<input type="email" class="form-control" th:value="${teacher.email}" name="email" id="email" th:placeholder="#{label.enteremail}" required />
 						</div>
 					</div>
+					<div style="color:red" th:if="${#fields.hasErrors('email')}" th:text="#{label.invalidemail}"></div>
 				</div>
 
 				<div class="form-group">
@@ -139,6 +141,7 @@
 							<input type="text" class="form-control" th:value="${teacher.phone}"	name="phone" id="phone" th:placeholder="#{label.enterphone}" required />
 						</div>
 					</div>
+					<div style="color:red" th:if="${#fields.hasErrors('phone')}" th:text="#{label.invalidphone}"></div>
 				</div>
 				
 				<div class="form-group">
@@ -177,13 +180,14 @@
 							<i class="fa fa-lock fa-lg" aria-hidden="true"></i></span> 
 							<input	type="password" class="form-control" th:value="${teacher.confirmPassword}" name="confirmPassword" id="confirmPassword" th:placeholder="#{label.confirmpassword}" required />
 						</div>
+						<div style="color:red" th:if="${message=='passwordmatch'}" th:text="#{label.passwordmatch}"></div>
 					</div>
 				</div>
-                <div th:switch="${message}">                                        
-                     <p th:case="'invalidemail'" th:text="#{label.invalidemail}"></p>                                       
-                     <p th:case="'invalidphone'" th:text="#{label.invalidphone}"></p>                                       
-                     <p th:case="'invalidusername'" th:text="#{label.invalidteachername}"></p>                                       
-                     <p th:case="'teacheremailexist'" th:text="#{label.teacheremailexist}"></p>                                       
+                <div style="color:red" th:switch="${message}">                                       
+                     <p th:case="'useremailexist'" th:text="#{label.useremailexist}"></p> 
+                     <p th:case="'photosize'" th:text="#{label.photosize}"></p>
+                     <p th:case="'photoextension'" th:text="#{label.photoextension}"></p>
+                     <p th:case="'authorisationfail'" th:text="#{label.passworddontcorrect}"></p>
                 </div>
 				<div class="form-group ">
 					<button type="submit" id="button" class="btn btn-primary btn-lg btn-block login-button" th:value="teacher" th:text="#{label.edit}"></button>

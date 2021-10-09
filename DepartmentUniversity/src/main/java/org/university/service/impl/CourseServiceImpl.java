@@ -11,7 +11,6 @@ import org.university.entity.Course;
 import org.university.exceptions.EntityAlreadyExistException;
 import org.university.exceptions.EntityNotExistException;
 import org.university.service.CourseService;
-import org.university.service.validator.Validator;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -27,7 +26,6 @@ import lombok.extern.slf4j.Slf4j;
 public class CourseServiceImpl implements CourseService {
 
     CourseDao courseDao;
-    Validator<Course> validator;
 
     @Override    
     public Course createCourse(String courseName) {
@@ -43,7 +41,6 @@ public class CourseServiceImpl implements CourseService {
         if (existCourse(course)) {
             throw new EntityAlreadyExistException("courseexist");
         }
-        validator.validate(course);
         courseDao.save(course);
         log.info("Course with name {} added succesfull!", course.getName());
     }
@@ -68,7 +65,6 @@ public class CourseServiceImpl implements CourseService {
         if (!courseDao.findById(course.getId()).get().getName().equals(course.getName())&&existCourse(course)) {
             throw new EntityAlreadyExistException("courseexist");
         }
-        validator.validate(course);
         courseDao.save(course);
         log.info("Course with name {} edited succesfull!", course.getName());
     }

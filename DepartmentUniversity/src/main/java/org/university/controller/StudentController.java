@@ -1,7 +1,10 @@
 package org.university.controller;
 
+import javax.validation.Valid;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -11,12 +14,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.university.dto.StudentDto;
 import org.university.entity.Course;
+import org.university.exceptions.AuthorisationFailException;
 import org.university.exceptions.EmailExistException;
 import org.university.exceptions.EntityNotExistException;
-import org.university.exceptions.InvalidEmailException;
-import org.university.exceptions.InvalidPhoneException;
 import org.university.exceptions.InvalidPhotoException;
-import org.university.exceptions.InvalidUserNameException;
 import org.university.service.CourseService;
 import org.university.service.PhotoService;
 import org.university.service.StudentService;
@@ -34,6 +35,7 @@ public class StudentController {
 
     private static final String REDIRECT = "redirect:/students";
     private static final String STUDENT_FORM = "studentform";
+    private static final String UPDATE_STUDENT_FORM = "updateforms/student";
 
     StudentService studentService;
     CourseService courseService;
@@ -63,13 +65,12 @@ public class StudentController {
         int numberStudentsOnPage = (int) model.getAttribute("numberUsers");
         if (pagesNumber < 0) {
             pagesNumber = 0;
-        }        
+        }
         if (studentService.findNumberOfUsers(numberStudentsOnPage, pagesNumber).isEmpty()) {
             pagesNumber -= page;
         }
         model.addAttribute("pagesNumber", pagesNumber);
-        model.addAttribute("students",
-                studentService.findNumberOfUsers(numberStudentsOnPage, pagesNumber));
+        model.addAttribute("students", studentService.findNumberOfUsers(numberStudentsOnPage, pagesNumber));
         return "students";
     }
 
@@ -86,14 +87,20 @@ public class StudentController {
     }
 
     @PostMapping()
-    public String addStudent(@ModelAttribute("student") StudentDto student, Model model) {
+    public String addStudent(@ModelAttribute("student") @Valid StudentDto student, BindingResult bindingResult,
+            Model model) {
+        if (bindingResult.hasErrors()) {
+            if (bindingResult.hasFieldErrors("password")) {
+                model.addAttribute("message", bindingResult.getFieldError("password").getDefaultMessage());
+            }
+            return STUDENT_FORM;
+        }
         try {
             String photoName = photoService.savePhoto(student);
             student.setPhotoName(photoName);
             studentService.register(student);
             return REDIRECT;
-        } catch (InvalidEmailException | InvalidPhoneException | InvalidUserNameException | EmailExistException
-                | InvalidPhotoException e) {
+        } catch (EmailExistException | InvalidPhotoException e) {
             model.addAttribute("message", e.getMessage());
             return STUDENT_FORM;
         }
@@ -133,19 +140,25 @@ public class StudentController {
     public String getEditForm(@ModelAttribute("student") StudentDto student, @ModelAttribute("message") String message,
             Model model) {
         model.addAttribute("student", student);
-        return "updateforms/student";
+        return UPDATE_STUDENT_FORM;
     }
 
     @PostMapping("/update")
-    public String edit(@ModelAttribute("student") StudentDto student, Model model) {
+    public String edit(@ModelAttribute("student") @Valid StudentDto student, BindingResult bindingResult, Model model) {
+        if (bindingResult.hasErrors()) {
+            if (bindingResult.hasFieldErrors("password")) {
+                model.addAttribute("message", bindingResult.getFieldError("password").getDefaultMessage());
+            }
+            return UPDATE_STUDENT_FORM;
+        }
         try {
             String photoName = photoService.savePhoto(student);
             student.setPhotoName(photoName);
             studentService.edit(student);
             return REDIRECT;
-        } catch (InvalidEmailException | InvalidPhoneException | InvalidUserNameException | EmailExistException e) {
+        } catch (EmailExistException | InvalidPhotoException | AuthorisationFailException e) {
             model.addAttribute("message", e.getMessage());
-            return "updateforms/student";
+            return UPDATE_STUDENT_FORM;
         }
     }
 }

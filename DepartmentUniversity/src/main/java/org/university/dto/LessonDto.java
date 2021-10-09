@@ -1,22 +1,27 @@
 package org.university.dto;
 
+import javax.validation.constraints.NotEmpty;
+
 import org.springframework.format.annotation.DateTimeFormat;
+
 import lombok.Data;
 
 @Data
 public class LessonDto {    
-    Integer id;
-    String courseName;
-    String teacherEmail;
-    String groupName;
+    private Integer id;
+    private String courseName;
+    private String teacherEmail;
+    private String groupName;
     
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
-    String startLesson;
+    @NotEmpty
+    private String startLesson;
     
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
-    String endLesson;
+    @NotEmpty
+    private String endLesson;
     
-    Integer classroomNumber;
-    Boolean onlineLesson;
-    String lessonLink;
+    private Integer classroomNumber;
+    private Boolean onlineLesson;
+    private String lessonLink;
 }

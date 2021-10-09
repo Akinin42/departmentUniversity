@@ -1,7 +1,10 @@
 package org.university.controller;
 
+import javax.validation.Valid;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -11,12 +14,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.university.dto.DayTimetableDto;
 import org.university.dto.TeacherDto;
+import org.university.exceptions.AuthorisationFailException;
 import org.university.exceptions.EmailExistException;
 import org.university.exceptions.EntityNotExistException;
-import org.university.exceptions.InvalidEmailException;
-import org.university.exceptions.InvalidPhoneException;
 import org.university.exceptions.InvalidPhotoException;
-import org.university.exceptions.InvalidUserNameException;
 import org.university.service.PhotoService;
 import org.university.service.TeacherService;
 
@@ -33,6 +34,7 @@ public class TeacherController {
 
     private static final String REDIRECT = "redirect:/teachers";
     private static final String TEACHER_FORM = "teacherform";
+    private static final String UPDATE_TEACHER_FORM = "updateforms/teacher";
 
     private TeacherService teacherService;
     PhotoService photoService;
@@ -66,8 +68,7 @@ public class TeacherController {
             pagesNumber -= page;
         }
         model.addAttribute("pagesNumber", pagesNumber);
-        model.addAttribute("teachers",
-                teacherService.findNumberOfUsers(numberTeachersOnPage, pagesNumber));
+        model.addAttribute("teachers", teacherService.findNumberOfUsers(numberTeachersOnPage, pagesNumber));
         return "teachers";
     }
 
@@ -76,7 +77,7 @@ public class TeacherController {
         model.addAttribute("teacher", new TeacherDto());
         return TEACHER_FORM;
     }
-    
+
     @GetMapping("/numbers/{numbers}")
     public String setNumberUsers(@PathVariable("numbers") int numbers, Model model) {
         model.addAttribute("numberUsers", numbers);
@@ -84,14 +85,20 @@ public class TeacherController {
     }
 
     @PostMapping()
-    public String addTeacher(@ModelAttribute("teacher") TeacherDto teacher, Model model) {
+    public String addTeacher(@ModelAttribute("teacher") @Valid TeacherDto teacher, BindingResult bindingResult,
+            Model model) {
+        if (bindingResult.hasErrors()) {
+            if (bindingResult.hasFieldErrors("password")) {
+                model.addAttribute("message", bindingResult.getFieldError("password").getDefaultMessage());
+            }
+            return TEACHER_FORM;
+        }
         try {
             String photoName = photoService.savePhoto(teacher);
             teacher.setPhotoName(photoName);
             teacherService.register(teacher);
             return REDIRECT;
-        } catch (InvalidEmailException | InvalidPhoneException | InvalidUserNameException | EmailExistException
-                | InvalidPhotoException e) {
+        } catch (EmailExistException | InvalidPhotoException e) {
             model.addAttribute("message", e.getMessage());
             return TEACHER_FORM;
         }
@@ -117,19 +124,25 @@ public class TeacherController {
     public String getEditForm(@ModelAttribute("teacher") TeacherDto teacher, @ModelAttribute("message") String message,
             Model model) {
         model.addAttribute("teacher", teacher);
-        return "updateforms/teacher";
+        return UPDATE_TEACHER_FORM;
     }
 
     @PostMapping("/update")
-    public String edit(@ModelAttribute("teacher") TeacherDto teacher, Model model) {
+    public String edit(@ModelAttribute("teacher") @Valid TeacherDto teacher, BindingResult bindingResult, Model model) {
+        if (bindingResult.hasErrors()) {
+            if (bindingResult.hasFieldErrors("password")) {
+                model.addAttribute("message", bindingResult.getFieldError("password").getDefaultMessage());
+            }
+            return UPDATE_TEACHER_FORM;
+        }
         try {
             String photoName = photoService.savePhoto(teacher);
             teacher.setPhotoName(photoName);
             teacherService.edit(teacher);
             return REDIRECT;
-        } catch (InvalidEmailException | InvalidPhoneException | InvalidUserNameException | EmailExistException e) {
+        } catch (EmailExistException | InvalidPhotoException | AuthorisationFailException e) {
             model.addAttribute("message", e.getMessage());
-            return "updateforms/teacher";
+            return UPDATE_TEACHER_FORM;
         }
     }
 }

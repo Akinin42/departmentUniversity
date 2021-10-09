@@ -1,58 +1,49 @@
 package org.university.service.validator;
 
 import java.util.Optional;
-import java.util.regex.Pattern;
+
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.university.dao.StudentDao;
 import org.university.dao.TeacherDao;
 import org.university.entity.Student;
 import org.university.entity.Teacher;
 import org.university.entity.User;
+import org.university.exceptions.AuthorisationFailException;
 import org.university.exceptions.EmailExistException;
-import org.university.exceptions.InvalidEmailException;
-import org.university.exceptions.InvalidPhoneException;
-import org.university.exceptions.InvalidUserNameException;
+
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @Component
-@Slf4j
 @AllArgsConstructor
-public class UserValidator<E> implements Validator<E> {
+public class UserValidator implements Validator<User> {
 
     private StudentDao studentDao;
     private TeacherDao teacherDao;
-    private static final Pattern NAME_PATTERN = Pattern.compile("^[A-Za-z\\s]{2,50}");
-    private static final Pattern EMAIL_PATTERN = Pattern
-            .compile("^[\\w-\\+]+(\\.[\\w]+)*@[\\w-]+(\\.[\\w]+)*(\\.[a-z]{2,})$");
-    private static final Pattern PHONE_PATTERN = Pattern.compile("^[0-9.()-]{10,25}$");
+    PasswordEncoder encoder;
 
     @Override
-    public void validate(E user) throws InvalidEmailException {
-        String name = ((User) user).getName();
-        if (!NAME_PATTERN.matcher(name).matches()) {
-            log.error("Input user has invalid name: " + name);
-            throw new InvalidUserNameException("invalidusername");
+    public void validate(User user) {
+        String email = user.getEmail();
+        Integer userId = user.getId();
+        if (userId != null && user.getClass() == Student.class
+                && !encoder.matches(user.getPassword(), studentDao.findById(userId).get().getPassword())) {
+            throw new AuthorisationFailException("authorisationfail");
         }
-        String email = ((User) user).getEmail();
-        if (!EMAIL_PATTERN.matcher(email).matches()) {
-            log.error("Input user has invalid email: " + email);
-            throw new InvalidEmailException("invalidemail");
+        if (userId != null && user.getClass() == Teacher.class
+                && !encoder.matches(user.getPassword(), teacherDao.findById(userId).get().getPassword())) {
+            throw new AuthorisationFailException("authorisationfail");
         }
-        String phone = ((User) user).getPhone();
-        if (!PHONE_PATTERN.matcher(phone).matches()) {
-            log.error("Input user has invalid phone: " + phone);
-            throw new InvalidPhoneException("invalidphone");
+        if ((!teacherDao.findByEmail(email).equals(Optional.empty())
+                || !studentDao.findByEmail(email).equals(Optional.empty())) && userId == null) {
+            throw new EmailExistException("useremailexist");
         }
-        if (user.getClass() == Student.class && !studentDao.findByEmail(email).equals(Optional.empty())) {
-            if (((User) user).getId() == null) {
-                throw new EmailExistException("studentemailexist");
-            }
-        }
-        if (user.getClass() == Teacher.class && !teacherDao.findByEmail(email).equals(Optional.empty())) {
-            if (((User) user).getId() == null) {
-                throw new EmailExistException("teacheremailexist");
-            }
+        if (userId != null
+                && (!studentDao.findByEmail(email).equals(Optional.empty())
+                        && !studentDao.findByEmail(email).equals(studentDao.findById(userId)))
+                || (!teacherDao.findByEmail(email).equals(Optional.empty())
+                        && !teacherDao.findByEmail(email).equals(teacherDao.findById(userId)))) {
+            throw new EmailExistException("useremailexist");
         }
     }
 }

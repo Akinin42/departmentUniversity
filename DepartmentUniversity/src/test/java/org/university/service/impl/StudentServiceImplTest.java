@@ -21,36 +21,43 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.university.dao.CourseDao;
 import org.university.dao.GroupDao;
+import org.university.dao.RoleDao;
 import org.university.dao.StudentDao;
+import org.university.dao.TeacherDao;
 import org.university.dto.StudentDto;
 import org.university.entity.Course;
+import org.university.entity.Role;
 import org.university.entity.Student;
+import org.university.entity.Teacher;
 import org.university.exceptions.AuthorisationFailException;
 import org.university.exceptions.EmailExistException;
 import org.university.exceptions.EntityAlreadyExistException;
 import org.university.exceptions.EntityNotExistException;
-import org.university.exceptions.InvalidEmailException;
-import org.university.exceptions.InvalidPhoneException;
-import org.university.exceptions.InvalidUserNameException;
+import org.university.service.StudentService;
 import org.university.service.validator.UserValidator;
 import org.university.utils.CreatorTestEntities;
+import org.university.utils.Sex;
 
 class StudentServiceImplTest {
 
     private static StudentServiceImpl studentService;
     private static StudentDao studentDaoMock;
+    private static TeacherDao teacherDaoMock;
+    private static RoleDao roleDaoMock;
 
     @BeforeAll
     static void init() {
         studentDaoMock = createStudentDaoMock();
+        teacherDaoMock = createTeacherDaoMock();
+        roleDaoMock = createRoleDaoMock();
         studentService = new StudentServiceImpl(studentDaoMock, createGroupDaoMock(), createCourseDaoMock(),
-                new UserValidator<Student>(studentDaoMock, null), createEncoderMock());
+                new UserValidator(studentDaoMock, teacherDaoMock, createEncoderMock()), createEncoderMock(), roleDaoMock);
     }
 
     @Test
     void registerShouldSaveStudentToDatabaseWhenInputStudentNotExistThere() {
         StudentDto student = new StudentDto();        
-        student.setSex("Test");
+        student.setSex(Sex.MALE);
         student.setName("Test");
         student.setEmail("test@test.ru");
         student.setPhone("79236170788");
@@ -58,12 +65,14 @@ class StudentServiceImplTest {
         student.setPhotoName("testphoto");
         studentService.register(student);
         Student studentWithEncodePassword = Student.builder()
-                .withSex("Test")
+                .withSex(Sex.MALE)
                 .withName("Test")
                 .withEmail("test@test.ru")
                 .withPhone("79236170788")
                 .withPassword("encodePassword")
                 .withPhoto("testphoto")
+                .withRole(roleDaoMock.findByName("STUDENT").get())
+                .withEnabled(true)
                 .build();
         verify(studentDaoMock).save(studentWithEncodePassword);
     }
@@ -72,44 +81,62 @@ class StudentServiceImplTest {
     void registerShouldThrowEntityAlreadyExistExceptionWhenInputStudentExistsInDatabase() {
         StudentDto student = new StudentDto();
         student.setId(1);
-        student.setSex("Female");
+        student.setSex(Sex.FEMALE);
         student.setName("Jane Wood");
         student.setEmail("Wood@email.ru");
         student.setPhone("78954756666");
         student.setPassword("test-password");
+        student.setConfirmPassword("test-password");
         assertThatThrownBy(() -> studentService.register(student)).isInstanceOf(EntityAlreadyExistException.class);
+    }
+    
+    @Test
+    void registerShouldSaveStudentToDatabaseWhenInputStudentNotExistThereButHasId() {
+        StudentDto student = new StudentDto();
+        student.setId(2);
+        student.setSex(Sex.MALE);
+        student.setName("Test");
+        student.setEmail("test@test.ru");
+        student.setPhone("79236170788");
+        student.setPassword("Test");
+        student.setPhotoName("testphoto");
+        when(studentDaoMock.existsById(2)).thenReturn(false);        
+        Student studentWithEncodePassword = Student.builder()
+                .withSex(Sex.MALE)
+                .withName("Test")
+                .withEmail("test@test.ru")
+                .withPhone("79236170788")
+                .withPassword("encodePassword")
+                .withPhoto("testphoto")
+                .withRole(roleDaoMock.findByName("STUDENT").get())
+                .withEnabled(true)
+                .build();
+        when(studentDaoMock.findById(2)).thenReturn(Optional.ofNullable(studentWithEncodePassword));
+        when(studentDaoMock.findByEmail("test@test.ru")).thenReturn(Optional.ofNullable(studentWithEncodePassword));
+        studentService.register(student);
+        verify(studentDaoMock).save(studentWithEncodePassword);        
     }
     
     @Test
     void registerShouldThrowEmailExistExceptionWhenInputEmailRegistered() {
         StudentDto student = new StudentDto();        
-        student.setSex("Female");
+        student.setSex(Sex.FEMALE);
         student.setName("New user");
         student.setEmail("existmail@test.ru");
         student.setPhone("78954756666");
         student.setPassword("test-password");
         assertThatThrownBy(() -> studentService.register(student)).isInstanceOf(EmailExistException.class);
     }
-
-    @Test
-    void registerShouldThrowInvalidEmailExceptionWhenInputStudentHasInvalidEmail() {
-        StudentDto student = getTestStudentDto();
-        student.setEmail("invalidemail");
-        assertThatThrownBy(() -> studentService.register(student)).isInstanceOf(InvalidEmailException.class);
-    }
     
     @Test
-    void registerShouldThrowInvalidUserNameExceptionWhenInputStudentHasInvalidName() {
-        StudentDto student = getTestStudentDto();
-        student.setName("4");
-        assertThatThrownBy(() -> studentService.register(student)).isInstanceOf(InvalidUserNameException.class);
-    }
-    
-    @Test
-    void registerShouldThrowInvalidPhoneExceptionWhenInputStudentHasInvalidPhone() {
-        StudentDto student = getTestStudentDto();
-        student.setPhone("invalidphone");
-        assertThatThrownBy(() -> studentService.register(student)).isInstanceOf(InvalidPhoneException.class);
+    void registerShouldThrowEmailExistExceptionWhenInputEmailRegistredHowTeacher() {
+        StudentDto student = new StudentDto();        
+        student.setSex(Sex.FEMALE);
+        student.setName("New user");
+        student.setEmail("existteachermail@test.ru");
+        student.setPhone("78954756666");
+        student.setPassword("test-password");
+        assertThatThrownBy(() -> studentService.register(student)).isInstanceOf(EmailExistException.class);
     }
 
     @Test
@@ -138,13 +165,15 @@ class StudentServiceImplTest {
         when(studentDaoMock.findAll(limit)).thenReturn (new PageImpl<>(students));
         Student student = Student.builder()
                 .withId(1)
-                .withSex("Female")
+                .withSex(Sex.FEMALE)
                 .withName("Jane Wood")
                 .withEmail("Wood@email.ru")
                 .withPhone("test-phone")
                 .withPassword("test-password")
                 .withCourses(new HashSet<Course>(CreatorTestEntities.createCourses()))
                 .withPhoto("default-female-photo")
+                .withRole(roleDaoMock.findByName("STUDENT").get())
+                .withEnabled(true)
                 .build();
         assertThat(studentService.findNumberOfUsers(1, 0)).containsExactly(student);
     }
@@ -173,7 +202,7 @@ class StudentServiceImplTest {
     void loginShouldReturnExpectedStudentWhenStudentExistsInDatabase() {
         Student student = Student.builder()
                 .withId(7)
-                .withSex("Test")
+                .withSex(Sex.MALE)
                 .withName("Test")
                 .withEmail("test2@test.ru")
                 .withPhone("Test")
@@ -267,6 +296,22 @@ class StudentServiceImplTest {
         studentService.deleteStudentFromCourse(studentDto, course);
         verify(studentDaoMock).save(student);
     }
+    
+    @Test
+    void deleteStudentFromCourseShouldNotDeleteStudentWhenStudentWithoutCourse() {
+        StudentDao studentDaoMock = createStudentDaoMock();        
+        StudentService studentService = new StudentServiceImpl(studentDaoMock, createGroupDaoMock(), createCourseDaoMock(),
+                new UserValidator(studentDaoMock, null, createEncoderMock()), createEncoderMock(), roleDaoMock);
+        Student studentWithotCourse = CreatorTestEntities.createStudents().get(0);
+        Course course = CreatorTestEntities.createCourses().get(0);
+        studentWithotCourse.removeCourse(course);
+        when(studentDaoMock.findById(1)).thenReturn(Optional.ofNullable(studentWithotCourse));
+        when(studentDaoMock.existsById(1)).thenReturn(true);
+        StudentDto studentDto = new StudentDto();
+        studentDto.setId(1);       
+        studentService.deleteStudentFromCourse(studentDto, course);
+        verify(studentDaoMock, never()).save(studentWithotCourse);
+    }
 
     @Test
     void deleteStudentFromCourseShouldThrowIllegalArgumentExceptionWhenInputStudentNull() {
@@ -284,57 +329,84 @@ class StudentServiceImplTest {
     }
 
     @Test
-    void editShouldThrowInvalidEmailExceptionWhenInputInvalidEmail() {
-        StudentDto student = getTestStudentDto();        
-        student.setEmail("invalidemail");
-        assertThatThrownBy(() -> studentService.edit(student)).isInstanceOf(InvalidEmailException.class);
-    }
-    
-    @Test
-    void editShouldThrowInvalidUserNameExceptionWhenInputInvalidName() {
-        StudentDto student = getTestStudentDto();
-        student.setName("4");
-        assertThatThrownBy(() -> studentService.edit(student)).isInstanceOf(InvalidUserNameException.class);
-    }
-    
-    @Test
-    void editShouldThrowInvalidPhoneExceptionWhenInputInvalidPhone() {
-        StudentDto student = getTestStudentDto();
-        student.setPhone("invalidphone");
-        assertThatThrownBy(() -> studentService.edit(student)).isInstanceOf(InvalidPhoneException.class);
-    }
-
-    @Test
     void editShouldThrowIllegalArgumentExceptionWhenInputNull() {
         assertThatThrownBy(() -> studentService.edit(null)).isInstanceOf(IllegalArgumentException.class);
     }
     
     @Test
     void editShouldUpdateStudentInDatabaseWhenInputValidStudent() {
+        StudentDao studentDaoMock = createStudentDaoMock();
+        StudentServiceImpl studentService = new StudentServiceImpl(studentDaoMock, createGroupDaoMock(), createCourseDaoMock(),
+                new UserValidator(studentDaoMock, teacherDaoMock, createEncoderMock()), createEncoderMock(), roleDaoMock);
         StudentDto studentDto = new StudentDto();
         studentDto.setId(1);
-        studentDto.setSex("Female");
+        studentDto.setSex(Sex.FEMALE);
         studentDto.setName("Jane Wood");
         studentDto.setEmail("test@test.ru");
         studentDto.setPhone("78954756666");
         studentDto.setPassword("Test");
         Student student = Student.builder()
                 .withId(1)
-                .withSex("Female")
+                .withSex(Sex.FEMALE)
                 .withName("Jane Wood")
                 .withEmail("test@test.ru")
                 .withPhone("78954756666")
-                .withPassword("encodePassword")                
+                .withPassword("encodePassword")
+                .withRole(roleDaoMock.findByName("STUDENT").get())
+                .withEnabled(true)
                 .build();
+        when(studentDaoMock.findById(1)).thenReturn(Optional.ofNullable(student));
         studentService.edit(studentDto);
         verify(studentDaoMock).save(student);
+    }
+    
+    @Test
+    void editShouldShouldThrowEmailExistExceptionWhenEmailChangeAndExistsYet() {
+        StudentDto studentDto = new StudentDto();
+        studentDto.setId(8);
+        studentDto.setSex(Sex.MALE);
+        studentDto.setName("Test");
+        studentDto.setEmail("test2@test.ru");
+        studentDto.setPhone("79236170788");
+        studentDto.setPassword("Test");
+        studentDto.setPhotoName("test-photo");
+        assertThatThrownBy(() -> studentService.edit(studentDto))
+            .isInstanceOf(EmailExistException.class);
+    }
+    
+    @Test
+    void editShouldShouldThrowEmailExistExceptionWhenEmailChangeAndExistsHowTeacherYet() {
+        StudentDto studentDto = new StudentDto();
+        studentDto.setId(8);
+        studentDto.setSex(Sex.MALE);
+        studentDto.setName("Test");
+        studentDto.setEmail("existteachermail@test.ru");
+        studentDto.setPhone("79236170788");
+        studentDto.setPassword("Test");
+        studentDto.setPhotoName("test-photo");
+        assertThatThrownBy(() -> studentService.edit(studentDto))
+        .isInstanceOf(EmailExistException.class);
+    }
+    
+    @Test
+    void editShouldShouldThrowAuthorisationFailExceptionWhenPasswordNotCorrect() {
+        StudentDto studentDto = new StudentDto();
+        studentDto.setId(8);
+        studentDto.setSex(Sex.MALE);
+        studentDto.setName("Test");
+        studentDto.setEmail("test2@test.ru");
+        studentDto.setPhone("79236170788");
+        studentDto.setPassword("Incorrect password");
+        studentDto.setPhotoName("test-photo");
+        assertThatThrownBy(() -> studentService.edit(studentDto))
+            .isInstanceOf(AuthorisationFailException.class);
     }
     
     @Test
     void editShouldUpdateStudentInDatabaseWhenInputValidStudentAndEmailNotChange() {
         StudentDto studentDto = new StudentDto();
         studentDto.setId(8);
-        studentDto.setSex("Test");
+        studentDto.setSex(Sex.MALE);
         studentDto.setName("Test");
         studentDto.setEmail("existmail@test.ru");
         studentDto.setPhone("79236170788");
@@ -342,26 +414,17 @@ class StudentServiceImplTest {
         studentDto.setPhotoName("test-photo");
         Student student = Student.builder()
                 .withId(8)
-                .withSex("Test")
+                .withSex(Sex.MALE)
                 .withName("Test")
                 .withEmail("existmail@test.ru")
                 .withPhone("79236170788")
                 .withPassword("encodePassword")
                 .withPhoto("test-photo")
+                .withRole(roleDaoMock.findByName("STUDENT").get())
+                .withEnabled(true)
                 .build();
         studentService.edit(studentDto);
         verify(studentDaoMock).save(student);
-    }
-
-    private StudentDto getTestStudentDto() {
-        StudentDto student = new StudentDto();
-        student.setId(7);
-        student.setSex("Test");
-        student.setName("Test");
-        student.setEmail("test@test.ru");
-        student.setPhone("79236170788");
-        student.setPassword("Test");
-        return student;
     }
 
     private static CourseDao createCourseDaoMock() {
@@ -381,6 +444,7 @@ class StudentServiceImplTest {
         PasswordEncoder encoderMock = mock(PasswordEncoder.class);
         when(encoderMock.encode("Test")).thenReturn("encodePassword");
         when(encoderMock.matches("Test", "encodePassword")).thenReturn(true);        
+        when(encoderMock.matches("test-password", "test-password")).thenReturn(true);        
         return encoderMock;
     }
 
@@ -388,7 +452,7 @@ class StudentServiceImplTest {
         StudentDao studentDaoMock = mock(StudentDao.class);
         Student student = Student.builder()
                 .withId(7)
-                .withSex("Test")
+                .withSex(Sex.MALE)
                 .withName("Test")
                 .withEmail("test2@test.ru")
                 .withPhone("Test")
@@ -399,7 +463,7 @@ class StudentServiceImplTest {
         when(studentDaoMock.findByEmail("test2@test.ru")).thenReturn(Optional.ofNullable(student));
         Student newStudent = Student.builder()
                 .withId(8)
-                .withSex("Test")
+                .withSex(Sex.MALE)
                 .withName("Test")
                 .withEmail("existmail@test.ru")
                 .withPhone("79236170788")
@@ -408,6 +472,7 @@ class StudentServiceImplTest {
         when(studentDaoMock.findByEmail("existmail@test.ru")).thenReturn(Optional.ofNullable(newStudent));
         when(studentDaoMock.findById(8)).thenReturn(Optional.ofNullable(newStudent));
         when(studentDaoMock.findById(1)).thenReturn(Optional.ofNullable(CreatorTestEntities.createStudents().get(0)));
+        when(studentDaoMock.existsById(1)).thenReturn(true);        
         when(studentDaoMock.findById(6)).thenReturn(Optional.ofNullable(CreatorTestEntities.createStudents().get(5)));       
         List<Student> students = CreatorTestEntities.createStudents();
         students.remove(5);
@@ -416,5 +481,26 @@ class StudentServiceImplTest {
         students.add(CreatorTestEntities.createStudents().get(4));
         students.add(CreatorTestEntities.createStudents().get(5));
         return studentDaoMock;
+    }
+    
+    private static RoleDao createRoleDaoMock() {
+        RoleDao roleDaoMock = mock(RoleDao.class);
+        Role role = Role.builder()
+                .withId(1)
+                .withName("STUDENT")
+                .build();
+        when(roleDaoMock.findByName("STUDENT")).thenReturn(Optional.ofNullable(role));        
+        return roleDaoMock;
+    }
+    
+    private static TeacherDao createTeacherDaoMock() {
+        TeacherDao teacherDaoMock = mock(TeacherDao.class);
+        when(teacherDaoMock.findByEmail("test@test.ru")).thenReturn(Optional.empty());
+        Teacher existTeacher = Teacher.builder()
+                .withId(15)
+                .withEmail("existteachermail@test.ru")
+                .build();
+        when(teacherDaoMock.findByEmail("existteachermail@test.ru")).thenReturn(Optional.ofNullable(existTeacher));
+        return teacherDaoMock;
     }
 }
