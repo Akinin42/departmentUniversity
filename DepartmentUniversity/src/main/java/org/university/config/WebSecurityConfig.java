@@ -22,7 +22,9 @@ import lombok.AllArgsConstructor;
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     
     private static final String ADMIN = "ADMIN";
-    private static final String TEACHER = "TEACHER";
+    private static final String TEACHER = "TEACHER";    
+    private static final String USER = "USER";
+    private static final String STUDENT = "STUDENT";
     
     private UserDetailsService userDetailService;
     
@@ -37,14 +39,23 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         .antMatchers(HttpMethod.POST, "/groups").hasAuthority(ADMIN)
         .antMatchers("/groups/edit").hasAuthority(ADMIN)
         .antMatchers(HttpMethod.POST, "/groups/**").permitAll()
-        .antMatchers("/students/course").hasAnyAuthority(TEACHER,ADMIN)
+        .antMatchers("/students/course").hasAnyAuthority(TEACHER, ADMIN)
         .antMatchers("/teachers/new").hasAuthority(ADMIN)
-        .antMatchers("/teachers/edit").hasAnyAuthority(TEACHER,ADMIN)
-        .antMatchers("/timetables/new").hasAnyAuthority(TEACHER,ADMIN)
-        .antMatchers("/timetables/edit").hasAnyAuthority(TEACHER,ADMIN)
+        .antMatchers("/teachers/edit").hasAnyAuthority(TEACHER, ADMIN)
+        .antMatchers("/timetables/new").hasAnyAuthority(TEACHER, ADMIN)
+        .antMatchers("/timetables/edit").hasAnyAuthority(TEACHER, ADMIN)
         .antMatchers(HttpMethod.DELETE, "/**").hasAuthority(ADMIN)
         .antMatchers(HttpMethod.POST, "/students").permitAll()
-        .antMatchers(HttpMethod.GET).permitAll()
+        .antMatchers(HttpMethod.GET,"/").permitAll()
+        .antMatchers(HttpMethod.GET,"/temporary/new").permitAll()
+        .antMatchers(HttpMethod.GET,"/temporary").hasAuthority(ADMIN)
+        .antMatchers(HttpMethod.POST,"/temporary/login").hasAuthority(USER)
+        .antMatchers(HttpMethod.POST,"/temporary/edit").hasAuthority(USER)
+        .antMatchers(HttpMethod.POST,"/temporary/update").hasAuthority(USER)
+        .antMatchers(HttpMethod.POST,"/temporary").permitAll()        
+        .antMatchers(HttpMethod.GET,"/static/**").permitAll()
+        .antMatchers(HttpMethod.GET,"/teachers").hasAnyAuthority(TEACHER, ADMIN)
+        .antMatchers(HttpMethod.GET).hasAnyAuthority(TEACHER, ADMIN, STUDENT)
         .anyRequest().authenticated()
         .and()
         .formLogin()
@@ -54,7 +65,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         .logoutSuccessUrl("/")
         .and()
         .headers()
-        .contentSecurityPolicy("script-src 'self'");
+        .contentSecurityPolicy("script-src 'self' https://use.fontawesome.com");
     }
 
     @Override

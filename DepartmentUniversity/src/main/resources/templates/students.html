@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html xmlns:th="http://www.thymeleaf.org" lang="en" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -23,26 +23,13 @@
 		<div class="row">
 			<div class="col-md-offset-1 col-md-10">
 				<div class="panel">
-					<div class="panel-heading">
-						<div class="row">
-							<div class="col-sm-12 col-xs-12">
-								<h4 class="title pull-left" th:text="#{label.students}"></h4>								
-								<a href="/DepartmentUniversity/students/new"	class="btn btn-sm btn-primary pull-right" th:text="#{label.addstudent}"></a>
-							</div>
-						</div>
-					</div>
-					<div class="panel-body">
-					   <div class="input-group mb-3">
-                           <form action="#" th:action="@{/students/login}" th:object="${student}" method="post">                                
-                                <input type="email" class="form-group" th:value="${email}" id="email" name="email" th:placeholder="#{label.email}" autofocus required />
-                                <input type="password" class="form-group" th:value="${password}" id="password" name="password" th:placeholder="#{label.password}" required />                                
-                                <button type="submit" class="btn btn-success" th:text="#{label.profile}"></button>                                                  
-                            </form>
-                            <div th:switch="${message}">                                        
-                                <p th:case="'passworddontcorrect'" th:text="#{label.passworddontcorrect}"></p>
+				    <div class="panel-heading">
+                        <div class="row">
+                            <div class="col-sm-12 col-xs-12">
+                                <h4 class="title pull-left" th:text="#{label.students}"></h4>                                
                             </div>
                         </div>
-					</div>
+                    </div>				
 					<div class="panel-body table-responsive">
 						<table class="table">
 							<thead>

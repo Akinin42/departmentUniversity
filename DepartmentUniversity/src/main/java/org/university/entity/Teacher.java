@@ -33,6 +33,6 @@ import lombok.experimental.SuperBuilder;
 @AttributeOverride(name = "enabled", column = @Column(name = "teacher_enabled"))
 public class Teacher extends User {
 
-    @Column(name = "teacher_degree", length = 50, nullable = false)
+    @Column(name = "teacher_degree", length = 50)
     String scientificDegree;
 }

@@ -13,4 +13,6 @@ public interface UserService <E>{
     List<E> findNumberOfUsers(int quantity, int number);
     
     void edit(UserDto user);
+    
+    E getByEmail(String email);
 }

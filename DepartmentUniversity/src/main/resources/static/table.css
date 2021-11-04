@@ -69,7 +69,7 @@
 }
 .panel .panel-footer.btn{
 	background-color: #333;
-    vertical-align: top;
+    vertical-align: middle;
     border: none;
     transition: all 0.3s ease 0s;
 	}

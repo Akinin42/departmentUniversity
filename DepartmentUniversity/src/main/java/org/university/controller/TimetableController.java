@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.university.dto.DayTimetableDto;
 import org.university.dto.GroupDto;
 import org.university.dto.LessonDto;
-import org.university.dto.TeacherDto;
+import org.university.dto.UserDto;
 import org.university.exceptions.ClassroomBusyException;
 import org.university.exceptions.InvalidClassroomCapacityException;
 import org.university.exceptions.InvalidLessonTimeException;
@@ -98,7 +98,7 @@ public class TimetableController {
     }
 
     @PostMapping("/weekteacher")
-    public String createWeekTeacherTimetable(@ModelAttribute("teacher") TeacherDto teacher, Model model) {
+    public String createWeekTeacherTimetable(@ModelAttribute("teacher") UserDto teacher, Model model) {
         model.addAttribute("timetables",
                 timetableService.createWeekTeacherTimetable(LocalDate.now(), teacher.getEmail()));
         model.addAttribute("teacher", teacher);
@@ -106,7 +106,7 @@ public class TimetableController {
     }
 
     @PostMapping("/monthteacher")
-    public String createMonthTeacherTimetable(@ModelAttribute("teacher") TeacherDto teacher, Model model) {
+    public String createMonthTeacherTimetable(@ModelAttribute("teacher") UserDto teacher, Model model) {
         model.addAttribute("timetables",
                 timetableService.createMonthTeacherTimetable(LocalDate.now(), teacher.getEmail()));
         model.addAttribute("teacher", teacher);

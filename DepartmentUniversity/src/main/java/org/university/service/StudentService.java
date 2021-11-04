@@ -8,8 +8,6 @@ import org.university.entity.Student;
 
 public interface StudentService extends UserService<Student> {
     
-    Student login(String email, String password);
-
     void addStudentToCourse(StudentDto studentDto, Course course);
 
     void deleteStudentFromCourse(StudentDto studentDto, Course course);

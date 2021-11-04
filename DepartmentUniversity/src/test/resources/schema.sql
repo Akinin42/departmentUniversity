@@ -96,6 +96,8 @@ INSERT INTO classrooms VALUES(1, 1, 'Test-address', 10);
 INSERT INTO classrooms VALUES(2, 2, 'Test-address', 15);
 INSERT INTO roles VALUES(1,'STUDENT');
 INSERT INTO roles VALUES(2,'TEACHER');
+INSERT INTO roles VALUES(3,'ADMIN');
+insert into roles values(4,'USER');
 INSERT INTO teachers VALUES(1, 'MALE', 'Bob Moren', 'Bob@mail.ru', '89758657788', 'test-password', 'professor', 'default-male-teacher-photo', true, 2);
 INSERT INTO teachers VALUES(2, 'FEMALE', 'Ann Moren', 'Ann@mail.ru', '89758651122', 'test-password','doctor', 'default-female-teacher-photo', true, 2);
 INSERT INTO students VALUES(1, 'FEMALE', 'Jane Wood', 'Wood@email.ru', 'test-phone', 'test-password', 'default-female-photo', true, 1);

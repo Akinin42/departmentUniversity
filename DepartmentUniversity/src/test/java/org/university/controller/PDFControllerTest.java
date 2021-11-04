@@ -26,7 +26,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.university.dto.GroupDto;
-import org.university.dto.TeacherDto;
+import org.university.dto.UserDto;
 import org.university.entity.DayTimetable;
 import org.university.entity.Lesson;
 import org.university.service.DayTimetableService;
@@ -108,7 +108,7 @@ class PDFControllerTest {
 
     @Test
     void testCreateWeekTeacherTimetablePDF() throws Exception {
-        TeacherDto teacher = new TeacherDto();
+        UserDto teacher = new UserDto();
         teacher.setName("test teacher week name");
         teacher.setEmail("test email");
         List<Lesson> lessons = CreatorTestEntities.createLessons();
@@ -132,7 +132,7 @@ class PDFControllerTest {
 
     @Test
     void testCreateMonthTeacherTimetablePDF() throws Exception {
-        TeacherDto teacher = new TeacherDto();
+        UserDto teacher = new UserDto();
         teacher.setName("test teacher month name");
         teacher.setEmail("test email");
         List<Lesson> lessons = CreatorTestEntities.createLessons();

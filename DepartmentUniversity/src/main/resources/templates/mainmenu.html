@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -8,7 +8,6 @@
     rel="stylesheet"
     integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x"
     crossorigin="anonymous">
-    <link rel="stylesheet" href="/static/css/font-awesome.min.css" />
     <link rel="stylesheet" th:href="@{/static/table.css}" />
     <script src="https://use.fontawesome.com/fec1def459.js"></script>
 <title th:text="#{label.title}"></title>
@@ -24,11 +23,38 @@
                     <li class="nav-item"> <a class="nav-link"  th:href="@{courses}"> <span style="color: #333;" th:text="#{label.courses}"/><i style="color: #333;" class="fa fa-book"></i></a></li>
                     <li class="nav-item"> <a class="nav-link"  th:href="@{classrooms}"> <span style="color: #333;" th:text="#{label.classrooms}"/><i style="color: #333;" class="fa fa-university"></i></a></li>
                     <li class="nav-item"> <a class="nav-link"  th:href="@{timetables}"> <span style="color: #333;" th:text="#{label.timetables}"/><i style="color: #333;" class="fa fa-calendar"></i></a></li>
+                    <li class="nav-item"> <a sec:authorize="hasAuthority('ADMIN')" class="nav-link" th:href="@{temporary}"> <span style="color: #333;" th:text="#{label.requests}"/><i style="color: #333;" class="fa fa-question-circle-o"></i></a></li> 
+                    <li class="nav-item"> <a class="nav-link"  th:href="@{login}"> <button class="btn btn-success" th:text="#{label.login}"></button></a></li>
+                    <li class="nav-item"> <a class="nav-link"  th:href="@{logout}"> <button class="btn btn-success" th:text="#{label.logout}"></button></a></li>
+                    <li class="nav-item"> <a class="nav-link"  th:href="@{temporary/new}"> <button class="btn btn-success" th:text="#{label.registration}"></button></a></li>
+                    <li class="nav-item"> <a class="nav-link">
+                        <div sec:authorize="hasAuthority('USER')" class="input-group mb-3">
+                            <form  action="#" th:action="@{/temporary/profile}" th:object="${user}" method="post">                                
+                                <input type="hidden"  th:value="${#authentication.getPrincipal().getUsername()}" id="email" name="email" />
+                                <button type="submit" class="btn btn-success" th:text="#{label.profile}"></button>                                                  
+                            </form>
+                        </div>
+                        <div sec:authorize="hasAuthority('STUDENT')" class="input-group mb-3">
+                            <form  action="#" th:action="@{/students/profile}" th:object="${student}" method="post">                                
+                                <input type="hidden"  th:value="${#authentication.getPrincipal().getUsername()}" id="email" name="email" />
+                                <button type="submit" class="btn btn-success" th:text="#{label.profile}"></button>                                                  
+                            </form>
+                        </div>
+                        <div sec:authorize="hasAnyAuthority('TEACHER', 'ADMIN')" class="input-group mb-3">
+                            <form  action="#" th:action="@{/teachers/profile}" th:object="${teacher}" method="post">                                
+                                <input type="hidden"  th:value="${#authentication.getPrincipal().getUsername()}" id="email" name="email" />
+                                <button type="submit" class="btn btn-success" th:text="#{label.profile}"></button>                                                  
+                            </form>
+                        </div> 
+                    </a>
+                    </li>
+                    <li class="nav-item">
                     <span style="float: right">
                         <a href="?lang=en"><img th:src="@{static/images/united-kingdom.png}" width="24" height="24" alt="English"></a>   
                         <a href="?lang=ru"><img th:src="@{static/images/russia.png}" width="24" height="24" alt="Russian"></a>
-                    </span>                 
-                </ul>
+                    </span>
+                    </li>                                    
+                </ul>                
             </div>
         </div>        
 </body>

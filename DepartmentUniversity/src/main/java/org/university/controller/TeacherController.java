@@ -13,10 +13,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.university.dto.DayTimetableDto;
-import org.university.dto.TeacherDto;
+import org.university.dto.UserDto;
 import org.university.exceptions.AuthorisationFailException;
 import org.university.exceptions.EmailExistException;
-import org.university.exceptions.EntityNotExistException;
 import org.university.exceptions.InvalidPhotoException;
 import org.university.service.PhotoService;
 import org.university.service.TeacherService;
@@ -33,10 +32,9 @@ import lombok.experimental.FieldDefaults;
 public class TeacherController {
 
     private static final String REDIRECT = "redirect:/teachers";
-    private static final String TEACHER_FORM = "teacherform";
     private static final String UPDATE_TEACHER_FORM = "updateforms/teacher";
 
-    private TeacherService teacherService;
+    TeacherService teacherService;
     PhotoService photoService;
 
     @GetMapping()
@@ -48,7 +46,7 @@ public class TeacherController {
             model.addAttribute("teachers",
                     teacherService.findNumberOfUsers((int) model.getAttribute("numberUsers"), 0));
         }
-        model.addAttribute("teacher", new TeacherDto());
+        model.addAttribute("teacher", new UserDto());
         model.addAttribute("timetable", new DayTimetableDto());
         model.addAttribute("pagesNumber", Integer.valueOf(0));
         return "teachers";
@@ -57,7 +55,7 @@ public class TeacherController {
     @GetMapping("/{page}")
     public String getOtherTeachers(@PathVariable("page") int page, Model model) {
         model.addAttribute("teachers", null);
-        model.addAttribute("teacher", new TeacherDto());
+        model.addAttribute("teacher", new UserDto());
         model.addAttribute("timetable", new DayTimetableDto());
         int pagesNumber = (int) model.getAttribute("pagesNumber") + page;
         int numberTeachersOnPage = (int) model.getAttribute("numberUsers");
@@ -72,63 +70,33 @@ public class TeacherController {
         return "teachers";
     }
 
-    @GetMapping("/new")
-    public String newTeacher(Model model) {
-        model.addAttribute("teacher", new TeacherDto());
-        return TEACHER_FORM;
-    }
-
     @GetMapping("/numbers/{numbers}")
     public String setNumberUsers(@PathVariable("numbers") int numbers, Model model) {
         model.addAttribute("numberUsers", numbers);
         return REDIRECT;
     }
 
-    @PostMapping()
-    public String addTeacher(@ModelAttribute("teacher") @Valid TeacherDto teacher, BindingResult bindingResult,
-            Model model) {
-        if (bindingResult.hasErrors()) {
-            if (bindingResult.hasFieldErrors("password")) {
-                model.addAttribute("message", bindingResult.getFieldError("password").getDefaultMessage());
-            }
-            return TEACHER_FORM;
-        }
-        try {
-            String photoName = photoService.savePhoto(teacher);
-            teacher.setPhotoName(photoName);
-            teacherService.register(teacher);
-            return REDIRECT;
-        } catch (EmailExistException | InvalidPhotoException e) {
-            model.addAttribute("message", e.getMessage());
-            return TEACHER_FORM;
-        }
-    }
-
     @DeleteMapping()
-    public String delete(@ModelAttribute("teacher") TeacherDto teacher) {
+    public String delete(@ModelAttribute("teacher") UserDto teacher) {
         teacherService.delete(teacher);
         return REDIRECT;
     }
 
-    @PostMapping("/login")
-    public String login(@ModelAttribute("teacher") TeacherDto teacherDto, Model model) {
-        try {
-            model.addAttribute("teacher", teacherService.login(teacherDto.getEmail(), teacherDto.getPassword()));
-            return "teacherprofile";
-        } catch (EntityNotExistException e) {
-            return TEACHER_FORM;
-        }
+    @PostMapping("/profile")
+    public String getProfile(@ModelAttribute("teacher") UserDto userDto, Model model) {
+        model.addAttribute("user", teacherService.getByEmail(userDto.getEmail()));
+        return "userprofile";
     }
 
     @PostMapping("/edit")
-    public String getEditForm(@ModelAttribute("teacher") TeacherDto teacher, @ModelAttribute("message") String message,
+    public String getEditForm(@ModelAttribute("teacher") UserDto teacher, @ModelAttribute("message") String message,
             Model model) {
         model.addAttribute("teacher", teacher);
         return UPDATE_TEACHER_FORM;
     }
 
     @PostMapping("/update")
-    public String edit(@ModelAttribute("teacher") @Valid TeacherDto teacher, BindingResult bindingResult, Model model) {
+    public String edit(@ModelAttribute("teacher") @Valid UserDto teacher, BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
             if (bindingResult.hasFieldErrors("password")) {
                 model.addAttribute("message", bindingResult.getFieldError("password").getDefaultMessage());

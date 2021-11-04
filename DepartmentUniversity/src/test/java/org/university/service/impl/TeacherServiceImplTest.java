@@ -20,7 +20,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.university.dao.RoleDao;
 import org.university.dao.StudentDao;
 import org.university.dao.TeacherDao;
-import org.university.dto.TeacherDto;
+import org.university.dao.TemporaryUserDao;
+import org.university.dto.UserDto;
 import org.university.entity.Role;
 import org.university.entity.Student;
 import org.university.entity.Teacher;
@@ -37,6 +38,7 @@ class TeacherServiceImplTest {
     private static TeacherServiceImpl teacherService;
     private static TeacherDao teacherDaoMock;
     private static StudentDao studentDaoMock;
+    private static TemporaryUserDao temporaryDaoMock;
     private static RoleDao roleDaoMock;
 
     @BeforeAll
@@ -44,13 +46,14 @@ class TeacherServiceImplTest {
         studentDaoMock = createStudentDaoMock();
         teacherDaoMock = createTeacherDaoMock();
         roleDaoMock = createRoleDaoMock();
+        temporaryDaoMock = createTemporaryUserDaoMock();
         teacherService = new TeacherServiceImpl(teacherDaoMock, 
-                new UserValidator(studentDaoMock, teacherDaoMock,createEncoderMock()), createEncoderMock(), roleDaoMock);
+                new UserValidator(studentDaoMock, teacherDaoMock, temporaryDaoMock, createEncoderMock()), createEncoderMock(), roleDaoMock);
     }
 
     @Test
     void registerShouldSaveTeacherToDatabaseWhenInputTeacherNotExistThere() {
-        TeacherDto teacher = new TeacherDto();        
+        UserDto teacher = new UserDto();        
         teacher.setSex(Sex.MALE);
         teacher.setName("Test");
         teacher.setEmail("test@test.ru");
@@ -75,7 +78,7 @@ class TeacherServiceImplTest {
 
     @Test
     void registerShouldThrowEntityAlreadyExistExceptionWhenInputTeacherExistsInDatabase() {
-        TeacherDto teacher = new TeacherDto();
+        UserDto teacher = new UserDto();
         teacher.setId(1);
         teacher.setSex(Sex.MALE);
         teacher.setName("Bob Moren");
@@ -89,7 +92,7 @@ class TeacherServiceImplTest {
     
     @Test
     void registerShouldThrowEmailExistExceptionWhenInputEmailRegistered() {
-        TeacherDto teacher = new TeacherDto();        
+        UserDto teacher = new UserDto();        
         teacher.setSex(Sex.MALE);
         teacher.setName("New user");
         teacher.setEmail("existe@mail.ru");
@@ -101,7 +104,7 @@ class TeacherServiceImplTest {
     
     @Test
     void registerShouldThrowEmailExistExceptionWhenInputEmailRegisteredHowStudent() {
-        TeacherDto teacher = new TeacherDto();        
+        UserDto teacher = new UserDto();        
         teacher.setSex(Sex.MALE);
         teacher.setName("New user");
         teacher.setEmail("existestudent@test.ru");
@@ -118,7 +121,7 @@ class TeacherServiceImplTest {
 
     @Test
     void deleteShouldDeleteTeacherFromDatabase() {
-        TeacherDto teacher = new TeacherDto();
+        UserDto teacher = new UserDto();
         teacher.setId(1);
         teacherService.delete(teacher);
         verify(teacherDaoMock).deleteById(1);
@@ -144,32 +147,6 @@ class TeacherServiceImplTest {
         when(teacherDaoMock.findAll(limit)).thenReturn(Page.empty());
         assertThat(teacherService.findNumberOfUsers(5, 1)).isEmpty();
     }
-
-    @Test
-    void loginShouldReturnExpectedTeacherWhenTeacherExistsInDatabase() {
-        Teacher teacherWithEncodePassword = Teacher.builder()
-                .withSex(Sex.MALE)
-                .withName("Test")
-                .withEmail("test2@test.ru")
-                .withPhone("Test")
-                .withPassword("encodePassword")
-                .withScientificDegree("Test")
-                .build();
-        assertThat(teacherService.login("test2@test.ru", "Test")).isEqualTo(teacherWithEncodePassword);
-    }
-
-    @Test
-    void loginShouldThrowAuthorisationFailExceptionWhenInputNotValide() {
-        assertThatThrownBy(() -> teacherService.login("test2@test.ru", "invalidpassword"))
-                .isInstanceOf(AuthorisationFailException.class);
-    }
-
-    @Test
-    void loginShouldThrowEntityNotExistExceptionWhenInputEmailNotExistsInDatabase() {
-        when(teacherDaoMock.findByEmail("notExistenEmail")).thenReturn(Optional.empty());
-        assertThatThrownBy(() -> teacherService.login("notExistenEmail", "test@test.ru"))
-                .isInstanceOf(EntityNotExistException.class);
-    }
     
     @Test
     void findAllShouldReturnExpectedTeachersWhenTheyExist() {
@@ -193,8 +170,8 @@ class TeacherServiceImplTest {
     void editShouldUpdateTeacherInDatabaseWhenInputValidTeacher() {
         TeacherDao teacherDaoMock = createTeacherDaoMock();
         TeacherServiceImpl teacherService = new TeacherServiceImpl(teacherDaoMock, 
-                new UserValidator(studentDaoMock, teacherDaoMock,createEncoderMock()), createEncoderMock(), roleDaoMock);
-        TeacherDto teacherDto = new TeacherDto();
+                new UserValidator(studentDaoMock, teacherDaoMock, temporaryDaoMock, createEncoderMock()), createEncoderMock(), roleDaoMock);
+        UserDto teacherDto = new UserDto();
         teacherDto.setId(1);
         teacherDto.setSex(Sex.MALE);
         teacherDto.setName("Bob Moren");
@@ -222,7 +199,7 @@ class TeacherServiceImplTest {
     
     @Test
     void editShouldThrowEmailExistExceptionWhenEmailChangeAndExistsYet() {
-        TeacherDto teacherDto = new TeacherDto();
+        UserDto teacherDto = new UserDto();
         teacherDto.setId(5);
         teacherDto.setSex(Sex.MALE);
         teacherDto.setName("Bob Moren");
@@ -237,7 +214,7 @@ class TeacherServiceImplTest {
     
     @Test
     void editShouldThrowEmailExistExceptionWhenEmailChangeAndExistsHowStudentYet() {
-        TeacherDto teacherDto = new TeacherDto();
+        UserDto teacherDto = new UserDto();
         teacherDto.setId(5);
         teacherDto.setSex(Sex.MALE);
         teacherDto.setName("Bob Moren");
@@ -252,7 +229,7 @@ class TeacherServiceImplTest {
     
     @Test
     void editShouldThrowAuthorisationFailExceptionWhenPasswordNotCorrect() {
-        TeacherDto teacherDto = new TeacherDto();
+        UserDto teacherDto = new UserDto();
         teacherDto.setId(5);
         teacherDto.setSex(Sex.MALE);
         teacherDto.setName("Bob Moren");
@@ -267,7 +244,7 @@ class TeacherServiceImplTest {
     
     @Test
     void editShouldUpdateTeacherInDatabaseWhenInputValidTeacherAndEmailNotChange() {
-        TeacherDto teacherDto = new TeacherDto();
+        UserDto teacherDto = new UserDto();
         teacherDto.setId(5);
         teacherDto.setSex(Sex.MALE);
         teacherDto.setName("Bob Moren");
@@ -290,6 +267,26 @@ class TeacherServiceImplTest {
                 .build();
         teacherService.edit(teacherDto);
         verify(teacherDaoMock).save(teacher);
+    }
+    
+    @Test
+    void getByEmailShouldReturnTeacherWithInputEmail() {
+        Teacher teacher = Teacher.builder()
+                .withId(5)
+                .withSex(Sex.MALE)
+                .withName("Bob Moren")
+                .withEmail("existe@mail.ru")
+                .withPhone("79758657788")
+                .withPassword("encodePassword")
+                .withScientificDegree("professor")
+                .build();
+        assertThat(teacherService.getByEmail("existe@mail.ru")).isEqualTo(teacher);
+    }
+    
+    @Test
+    void getByEmailShouldThrowEntityNotExistExceptionWhenTeacherNotExists() {        
+        assertThatThrownBy(() -> teacherService.getByEmail("usernotexiststodb@mail.ru"))
+            .isInstanceOf(EntityNotExistException.class).hasMessage("Teacher with usernotexiststodb@mail.ru not found");
     }
 
     private static TeacherDao createTeacherDaoMock() {
@@ -346,5 +343,11 @@ class TeacherServiceImplTest {
                 .build();
         when(studentDaoMock.findByEmail("existestudent@test.ru")).thenReturn(Optional.ofNullable(existStudent));
         return studentDaoMock;
+    }
+    
+    private static TemporaryUserDao createTemporaryUserDaoMock() {
+        TemporaryUserDao temporaryDaoMock = mock(TemporaryUserDao.class);
+        when(temporaryDaoMock.findByEmail("existestudent@test.ru")).thenReturn(Optional.empty());
+        return temporaryDaoMock;
     }
 }

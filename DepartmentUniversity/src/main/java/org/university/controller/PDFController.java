@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.university.dto.GroupDto;
-import org.university.dto.TeacherDto;
+import org.university.dto.UserDto;
 import org.university.entity.DayTimetable;
 import org.university.service.DayTimetableService;
 import org.university.utils.PDFDataGenerator;
@@ -47,7 +47,7 @@ public class PDFController {
     }
 
     @PostMapping("/weekteacher")
-    public void createWeekTeacherTimetablePDF(@ModelAttribute("teacher") TeacherDto teacher,
+    public void createWeekTeacherTimetablePDF(@ModelAttribute("teacher") UserDto teacher,
             HttpServletResponse response) {
         List<DayTimetable> timetables = timetableService.createWeekTeacherTimetable(LocalDate.now(),
                 teacher.getEmail());
@@ -55,7 +55,7 @@ public class PDFController {
     }
 
     @PostMapping("/monthteacher")
-    public void createMonthTeacherTimetablePDF(@ModelAttribute("teacher") TeacherDto teacher,
+    public void createMonthTeacherTimetablePDF(@ModelAttribute("teacher") UserDto teacher,
             HttpServletResponse response) {
         List<DayTimetable> timetables = timetableService.createMonthTeacherTimetable(LocalDate.now(),
                 teacher.getEmail());
@@ -69,7 +69,7 @@ public class PDFController {
             if (entity.getClass().equals(GroupDto.class)) {
                 pdfGenerator.generateGroupTimetable(output, timetables, ((GroupDto) entity).getName());
             } else {
-                pdfGenerator.generateTeacherTimetable(output, timetables, ((TeacherDto) entity).getName());
+                pdfGenerator.generateTeacherTimetable(output, timetables, ((UserDto) entity).getName());
             }
         } catch (IOException e) {
             log.error("File creation failed!");

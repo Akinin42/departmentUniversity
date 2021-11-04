@@ -29,14 +29,23 @@ public class PhotoServiceImpl implements PhotoService {
             validator.validate(user.getPhoto());
             photoName = awsS3Service.uploadFile(user.getPhoto());
         } else {
-            if (user.getClass() == StudentDto.class) {
-                photoName = user.getSex() == Sex.MALE ? String.format("%smalestudent.png", DEFAULT_PATH)
+            if (checkUserIsStudent(user)) {
+                photoName = checkUserIsMan(user) ? String.format("%smalestudent.png", DEFAULT_PATH)
                         : String.format("%sfemalestudent.png", DEFAULT_PATH);
             } else {
-                photoName = user.getSex() == Sex.MALE ? String.format("%smaleteacher.png", DEFAULT_PATH)
+                photoName = checkUserIsMan(user) ? String.format("%smaleteacher.png", DEFAULT_PATH)
                         : String.format("%sfemaleteacher.png", DEFAULT_PATH);
             }
         }
         return photoName;
+    }
+
+    private boolean checkUserIsStudent(UserDto user) {
+        return (user.getClass() == StudentDto.class
+                || (user.getDesiredRole() != null && user.getDesiredRole().equals("STUDENT")));
+    }
+
+    private boolean checkUserIsMan(UserDto user) {
+        return user.getSex() == Sex.MALE;
     }
 }

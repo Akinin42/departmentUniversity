@@ -38,4 +38,9 @@ public class UserDto {
 
     private MultipartFile photo;
     private String photoName;
+    private String desiredRole;
+    private String scientificDegree;
+    private String desiredDegree;
+    Boolean confirm;    
+    String confirmDescription;
 }

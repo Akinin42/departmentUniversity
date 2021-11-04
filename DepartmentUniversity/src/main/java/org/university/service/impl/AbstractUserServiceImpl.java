@@ -33,8 +33,12 @@ public abstract class AbstractUserServiceImpl<E extends User> implements UserSer
         if (userDto.getId() != null && existsUser(user) ) {
             throw new EntityAlreadyExistException("userexist");
         }
-        validator.validate(user);
-        userDao.save(mapUserWithPassword(user));
+        if(userDto.getId() == null) {
+            validator.validate(user);
+            userDao.save(mapUserWithPassword(user));
+        }else {
+            userDao.save(user);
+        }        
         log.info("User saved in database!");
     }    
 
@@ -58,7 +62,7 @@ public abstract class AbstractUserServiceImpl<E extends User> implements UserSer
         userDao.save(mapUserWithPassword(user));
         log.info("User edited!");
     }
-
+    
     protected boolean existsUser(E user) {
         return userDao.existsById(user.getId());
     }

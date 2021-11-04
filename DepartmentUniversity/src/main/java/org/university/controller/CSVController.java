@@ -3,17 +3,21 @@ package org.university.controller;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
+
 import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.university.dto.GroupDto;
-import org.university.dto.TeacherDto;
+import org.university.dto.UserDto;
 import org.university.entity.DayTimetable;
 import org.university.service.DayTimetableService;
 import org.university.utils.CSVDataGenerator;
+
 import com.opencsv.CSVWriter;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -44,7 +48,7 @@ public class CSVController {
     }
 
     @PostMapping("/weekteacher")
-    public void createWeekTeacherTimetableCSV(@ModelAttribute("teacher") TeacherDto teacher,
+    public void createWeekTeacherTimetableCSV(@ModelAttribute("teacher") UserDto teacher,
             HttpServletResponse response) {
         List<DayTimetable> timetables = timetableService.createWeekTeacherTimetable(LocalDate.now(),
                 teacher.getEmail());
@@ -52,7 +56,7 @@ public class CSVController {
     }
 
     @PostMapping("/monthteacher")
-    public void createMonthTeacherTimetableCSV(@ModelAttribute("teacher") TeacherDto teacher,
+    public void createMonthTeacherTimetableCSV(@ModelAttribute("teacher") UserDto teacher,
             HttpServletResponse response) {
         List<DayTimetable> timetables = timetableService.createMonthTeacherTimetable(LocalDate.now(),
                 teacher.getEmail());

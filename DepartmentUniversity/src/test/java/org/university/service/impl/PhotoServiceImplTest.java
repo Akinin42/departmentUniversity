@@ -16,7 +16,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 import org.university.dto.StudentDto;
-import org.university.dto.TeacherDto;
 import org.university.dto.UserDto;
 import org.university.exceptions.InvalidPhotoException;
 import org.university.service.AwsS3Service;
@@ -35,8 +34,20 @@ class PhotoServiceImplTest {
     }
 
     @Test
-    void savePhotoShouldReturnDefaultStudentMaleFileUrlWhenInputStudentMaleWitoutPhoto() {
+    void savePhotoShouldReturnDefaultStudentMaleFileUrlWhenInputStudentMaleWithoutPhoto() {
         UserDto user = new StudentDto();
+        user.setDesiredRole("STUDENT");
+        MultipartFile photoMock = mock(MultipartFile.class);
+        when(photoMock.isEmpty()).thenReturn(true);
+        user.setPhoto(photoMock);
+        user.setSex(Sex.MALE);
+        assertThat(photoService.savePhoto(user)).isEqualTo("~/DepartmentUniversity/static/images/malestudent.png");
+    }
+    
+    @Test
+    void savePhotoShouldReturnDefaultStudentMaleFileUrlWhenInputUserMaleWithoutPhoto() {
+        UserDto user = new UserDto();
+        user.setDesiredRole("STUDENT");
         MultipartFile photoMock = mock(MultipartFile.class);
         when(photoMock.isEmpty()).thenReturn(true);
         user.setPhoto(photoMock);
@@ -47,6 +58,7 @@ class PhotoServiceImplTest {
     @Test
     void savePhotoShouldReturnDefaultStudentFemaleFileUrlWhenInputStudentFemaleWitoutPhoto() {
         UserDto user = new StudentDto();
+        user.setDesiredRole("STUDENT");
         MultipartFile photoMock = mock(MultipartFile.class);
         when(photoMock.isEmpty()).thenReturn(true);
         user.setPhoto(photoMock);
@@ -56,7 +68,19 @@ class PhotoServiceImplTest {
 
     @Test
     void savePhotoShouldReturnDefaultTeacherMaleFileUrlWhenInputTeacherMaleWitoutPhoto() {
-        UserDto user = new TeacherDto();
+        UserDto user = new UserDto();
+        user.setDesiredRole("TEACHER");
+        MultipartFile photoMock = mock(MultipartFile.class);
+        when(photoMock.isEmpty()).thenReturn(true);
+        user.setPhoto(photoMock);
+        user.setSex(Sex.MALE);
+        assertThat(photoService.savePhoto(user)).isEqualTo("~/DepartmentUniversity/static/images/maleteacher.png");
+    }
+    
+    @Test
+    void savePhotoShouldReturnDefaultTeacherMaleFileUrlWhenInputUserMaleWithoutPhoto() {
+        UserDto user = new UserDto();
+        user.setDesiredRole(null);
         MultipartFile photoMock = mock(MultipartFile.class);
         when(photoMock.isEmpty()).thenReturn(true);
         user.setPhoto(photoMock);
@@ -66,7 +90,8 @@ class PhotoServiceImplTest {
 
     @Test
     void savePhotoShouldReturnDefaultTeacherFemaleFileUrlWhenInputTeacherFemaleWitoutPhoto() {
-        UserDto user = new TeacherDto();
+        UserDto user = new UserDto();
+        user.setDesiredRole("TEACHER");
         MultipartFile photoMock = mock(MultipartFile.class);
         when(photoMock.isEmpty()).thenReturn(true);
         user.setPhoto(photoMock);
@@ -76,7 +101,7 @@ class PhotoServiceImplTest {
 
     @Test
     void savePhotoShouldThrowInvalidPhotoExceptionWhenInputFileNotImage() throws IOException {
-        UserDto user = new TeacherDto();
+        UserDto user = new UserDto();
         File textFile = new File("src/test/resources/testfile.txt");
         FileInputStream input = new FileInputStream(textFile);
         MultipartFile multipartFile = new MockMultipartFile("textfile", textFile.getName(), "text/plain",
@@ -87,7 +112,7 @@ class PhotoServiceImplTest {
     
     @Test
     void savePhotoShouldThrowInvalidPhotoExceptionWhenInputFileHasHeightMoreThanExpected() throws IOException {
-        UserDto user = new TeacherDto();
+        UserDto user = new UserDto();
         File file = new File("src/test/resources/filewithbigheight.png");
         FileInputStream input = new FileInputStream(file);
         MultipartFile multipartFile = new MockMultipartFile("filewithbigheight", file.getName(), "image/png",
@@ -98,7 +123,7 @@ class PhotoServiceImplTest {
     
     @Test
     void savePhotoShouldThrowInvalidPhotoExceptionWhenInputFileHasWidthMoreThanExpected() throws IOException {
-        UserDto user = new TeacherDto();
+        UserDto user = new UserDto();
         File file = new File("src/test/resources/filewithbigwidth.png");
         FileInputStream input = new FileInputStream(file);
         MultipartFile multipartFile = new MockMultipartFile("filewithbigwidth", file.getName(), "image/png",
@@ -109,7 +134,7 @@ class PhotoServiceImplTest {
     
     @Test
     void savePhotoShouldSavePhotoWhenInputValidImage() throws IOException {
-        UserDto user = new TeacherDto();
+        UserDto user = new UserDto();
         File file = new File("src/test/resources/validimage.png");
         FileInputStream input = new FileInputStream(file);
         MultipartFile multipartFile = new MockMultipartFile("validimage", file.getName(), "image/png",

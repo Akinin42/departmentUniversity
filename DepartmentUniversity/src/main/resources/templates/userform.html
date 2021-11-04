@@ -73,21 +73,21 @@
 	margin-top: 5px;
     }
     </style>
-    <title th:text="#{label.addstudent}"></title>
+    <title th:text="#{label.registration}"></title>
 </head>
 <body>
 	<div class="container">
 		<div class="row main-form">
-			<form class="" th:action="@{/students}" th:object="${student}" method="post" enctype="multipart/form-data">			
+			<form class="" th:action="@{/temporary}" th:object="${user}" method="post" enctype="multipart/form-data">			
 				<div class="form-group">
 					<label for="name" class="cols-sm-2 control-label" th:text="#{label.name}"></label>
 					<div class="cols-sm-10">
 						<div class="input-group">
 							<span class="input-group-addon"><i class="fa fa-user fa" aria-hidden="true"></i></span> 
-							<input type="text" class="form-control" th:value="${student.name}" name="name" id="name" th:placeholder="#{label.entername}" required />
+							<input type="text" class="form-control" th:value="${user.name}" name="name" id="name" th:placeholder="#{label.entername}" required />
 						</div>
 					</div>
-					<div style="color:red" th:if="${#fields.hasErrors('name')}" th:text="#{label.invalidstudentname}"></div>
+					<div style="color:red" th:if="${#fields.hasErrors('name')}" th:text="#{label.invalidusername}"></div>
 				</div>
 				
 				<div class="form-group">
@@ -109,7 +109,7 @@
                     <label for="photo" class="cols-sm-2 control-label" th:text="#{label.photo}"></label>
                     <div class="cols-sm-10">
                         <div class="input-group">
-                            <input type="file" th:value="${student.photo}" name="photo" />
+                            <input type="file" th:value="${user.photo}" name="photo" />
                         </div>
                     </div>
                 </div>
@@ -121,7 +121,7 @@
 							<span class="input-group-addon">
 							<i class="fa fa-envelope fa" aria-hidden="true"></i>
 							</span> 
-							<input type="email" class="form-control" th:value="${student.email}" name="email" id="email" th:placeholder="#{label.enteremail}" required />
+							<input type="email" class="form-control" th:value="${user.email}" name="email" id="email" th:placeholder="#{label.enteremail}" required />
 						</div>
 					</div>
 					<div style="color:red" th:if="${#fields.hasErrors('email')}" th:text="#{label.invalidemail}"></div>
@@ -134,7 +134,7 @@
 							<span class="input-group-addon">
 							<i class="fa fa-users fa" aria-hidden="true"></i>
 							</span> 
-							<input type="text" class="form-control" th:value="${student.phone}"	name="phone" id="phone" th:placeholder="#{label.enterphone}" required />
+							<input type="text" class="form-control" th:value="${user.phone}"	name="phone" id="phone" th:placeholder="#{label.enterphone}" required />
 						</div>
 					</div>
 					<div style="color:red" th:if="${#fields.hasErrors('phone')}" th:text="#{label.invalidphone}"></div>
@@ -147,7 +147,7 @@
 							<span class="input-group-addon">
 							<i class="fa fa-lock fa-lg" aria-hidden="true"></i>
 							</span> 
-							<input type="password" class="form-control" th:value="${student.password}" name="password"	id="password" th:placeholder="#{label.enterpassword}" required />							
+							<input type="password" class="form-control" th:value="${user.password}" name="password"	id="password" th:placeholder="#{label.enterpassword}" required />							
 						</div>
 					</div>
 				</div>
@@ -158,18 +158,48 @@
 						<div class="input-group">
 							<span class="input-group-addon">
 							<i class="fa fa-lock fa-lg" aria-hidden="true"></i></span> 
-							<input	type="password" class="form-control" th:value="${student.confirmPassword}" name="confirmPassword" id="confirmPassword" th:placeholder="#{label.confirmpassword}" required />
+							<input	type="password" class="form-control" th:value="${user.confirmPassword}" name="confirmPassword" id="confirmPassword" th:placeholder="#{label.confirmpassword}" required />
 						</div>
 						<div style="color:red" th:if="${message=='passwordmatch'}" th:text="#{label.passwordmatch}"></div>
 					</div>
 				</div>
+				<div class="form-group">
+                    <label for="gender" class="cols-sm-2 control-label" th:text="#{label.vacancy}"></label>
+                    <div class="cols-sm-10">
+                        <div class="input-group">
+                            <span class="input-group-addon">
+                            <i class="fa fa-user fa" aria-hidden="true"></i>
+                            </span> 
+                            <select id="role" th:field="*{desiredRole}" class="form-select" aria-label="Default select example">
+                                <option th:value="STUDENT" th:text="#{label.student}" ></option>
+                                <option th:value="TEACHER" th:text="#{label.teacher}" ></option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="degree" class="cols-sm-2 control-label" th:text="#{label.scientificdegree}"></label>
+                    <div class="cols-sm-10">
+                        <div class="input-group">
+                            <span class="input-group-addon">
+                            <i class="fa fa-user fa" aria-hidden="true"></i>
+                            </span> 
+                            <select id="desiredDegree" th:field="*{desiredDegree}" class="form-select" aria-label="Default select example" >
+                                <option th:value="Professor" th:text="#{label.professor}" ></option>
+                                <option th:value="Doctor" th:text="#{label.doctor}" ></option>
+                                <option th:value="Assistant" th:text="#{label.assistant}" ></option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
                 <div style="color:red" th:switch="${message}">                                   
                      <p th:case="'useremailexist'" th:text="#{label.useremailexist}"></p>
                      <p th:case="'photosize'" th:text="#{label.photosize}"></p>
                      <p th:case="'photoextension'" th:text="#{label.photoextension}"></p>
                 </div>
 				<div class="form-group ">
-					<button type="submit" id="button" class="btn btn-primary btn-lg btn-block login-button" th:value="student" th:text="#{label.register}"></button>
+					<button type="submit" id="button" class="btn btn-primary btn-lg btn-block login-button" th:value="user" th:text="#{label.register}"></button>
 				</div>
 			</form>
 		</div>

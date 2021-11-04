@@ -14,6 +14,7 @@ import org.university.entity.Lesson;
 import org.university.entity.Role;
 import org.university.entity.Student;
 import org.university.entity.Teacher;
+import org.university.entity.TemporaryUser;
 
 public class CreatorTestEntities {
     
@@ -284,5 +285,30 @@ public class CreatorTestEntities {
                 .withClassroom(classroom)
                 .withTeacher(teacher)
                 .build();
+    }
+    
+    public static List<TemporaryUser> createTemporaryUsers(){
+        List<TemporaryUser> users = new ArrayList<>();
+        TemporaryUser user = TemporaryUser.builder()
+                .withId(1)
+                .withSex(Sex.MALE)
+                .withName("First User")
+                .withEmail("firstuser@mail.ru")
+                .withPhone("81111111111")
+                .withPassword("test")
+                .withEnabled(true)                
+                .build();
+        users.add(user);
+        user = TemporaryUser.builder()
+                .withId(2)
+                .withSex(Sex.FEMALE)
+                .withName("Second User")
+                .withEmail("seconduser@mail.ru")
+                .withPhone("82222222222")
+                .withPassword("test")
+                .withEnabled(true)                
+                .build();
+        users.add(user);
+        return users;        
     }
 }

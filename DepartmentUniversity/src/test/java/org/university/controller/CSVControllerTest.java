@@ -25,7 +25,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.university.dto.GroupDto;
-import org.university.dto.TeacherDto;
+import org.university.dto.UserDto;
 import org.university.entity.DayTimetable;
 import org.university.entity.Lesson;
 import org.university.service.DayTimetableService;
@@ -100,7 +100,7 @@ class CSVControllerTest {
 
     @Test
     void createWeekTeacherTimetableCSV() throws Exception {
-        TeacherDto teacher = new TeacherDto();
+        UserDto teacher = new UserDto();
         teacher.setName("test name");
         teacher.setEmail("test email");
         List<Lesson> lessons = CreatorTestEntities.createLessons();
@@ -123,7 +123,7 @@ class CSVControllerTest {
 
     @Test
     void createMonthTeacherTimetableCSV() throws Exception {
-        TeacherDto teacher = new TeacherDto();
+        UserDto teacher = new UserDto();
         teacher.setName("test name");
         teacher.setEmail("test email");
         List<Lesson> lessons = CreatorTestEntities.createLessons();
@@ -175,7 +175,7 @@ class CSVControllerTest {
         ListAppender<ILoggingEvent> listAppender = new ListAppender<>();
         listAppender.start();
         csvControllerLogger.addAppender(listAppender);
-        TeacherDto teacher = new TeacherDto();
+        UserDto teacher = new UserDto();
         teacher.setName("test name");
         teacher.setEmail("test email");
         List<DayTimetable> timetables = new ArrayList<>();

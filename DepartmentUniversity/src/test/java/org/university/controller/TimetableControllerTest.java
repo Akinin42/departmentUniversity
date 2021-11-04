@@ -25,7 +25,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.university.dto.DayTimetableDto;
 import org.university.dto.GroupDto;
 import org.university.dto.LessonDto;
-import org.university.dto.TeacherDto;
+import org.university.dto.UserDto;
 import org.university.entity.Classroom;
 import org.university.entity.Course;
 import org.university.entity.DayTimetable;
@@ -207,7 +207,7 @@ class TimetableControllerTest {
 
     @Test
     void testCreateWeekTeacherTimetable() throws Exception {
-        TeacherDto teacher = new TeacherDto();
+        UserDto teacher = new UserDto();
         teacher.setEmail("test");
         List<Lesson> lessons = CreatorTestEntities.createLessons();
         List<DayTimetable> timetables = new ArrayList<>();
@@ -225,7 +225,7 @@ class TimetableControllerTest {
 
     @Test
     void testCreateMonthTeacherTimetable() throws Exception {
-        TeacherDto teacher = new TeacherDto();
+        UserDto teacher = new UserDto();
         teacher.setEmail("test");
         List<Lesson> lessons = CreatorTestEntities.createLessons();
         List<DayTimetable> timetables = new ArrayList<>();

@@ -16,7 +16,6 @@ import org.university.dto.StudentDto;
 import org.university.entity.Course;
 import org.university.exceptions.AuthorisationFailException;
 import org.university.exceptions.EmailExistException;
-import org.university.exceptions.EntityNotExistException;
 import org.university.exceptions.InvalidPhotoException;
 import org.university.service.CourseService;
 import org.university.service.PhotoService;
@@ -34,7 +33,6 @@ import lombok.experimental.FieldDefaults;
 public class StudentController {
 
     private static final String REDIRECT = "redirect:/students";
-    private static final String STUDENT_FORM = "studentform";
     private static final String UPDATE_STUDENT_FORM = "updateforms/student";
 
     StudentService studentService;
@@ -80,32 +78,6 @@ public class StudentController {
         return REDIRECT;
     }
 
-    @GetMapping("/new")
-    public String newStudent(Model model) {
-        model.addAttribute("student", new StudentDto());
-        return STUDENT_FORM;
-    }
-
-    @PostMapping()
-    public String addStudent(@ModelAttribute("student") @Valid StudentDto student, BindingResult bindingResult,
-            Model model) {
-        if (bindingResult.hasErrors()) {
-            if (bindingResult.hasFieldErrors("password")) {
-                model.addAttribute("message", bindingResult.getFieldError("password").getDefaultMessage());
-            }
-            return STUDENT_FORM;
-        }
-        try {
-            String photoName = photoService.savePhoto(student);
-            student.setPhotoName(photoName);
-            studentService.register(student);
-            return REDIRECT;
-        } catch (EmailExistException | InvalidPhotoException e) {
-            model.addAttribute("message", e.getMessage());
-            return STUDENT_FORM;
-        }
-    }
-
     @DeleteMapping()
     public String delete(@ModelAttribute("student") StudentDto student) {
         studentService.delete(student);
@@ -126,14 +98,10 @@ public class StudentController {
         return REDIRECT;
     }
 
-    @PostMapping("/login")
-    public String login(@ModelAttribute("student") StudentDto studentDto, Model model) {
-        try {
-            model.addAttribute("student", studentService.login(studentDto.getEmail(), studentDto.getPassword()));
-            return "studentprofile";
-        } catch (EntityNotExistException e) {
-            return STUDENT_FORM;
-        }
+    @PostMapping("/profile")
+    public String getProfile(@ModelAttribute("student") StudentDto studentDto, Model model) {
+        model.addAttribute("user", studentService.getByEmail(studentDto.getEmail()));
+        return "userprofile";
     }
 
     @PostMapping("/edit")

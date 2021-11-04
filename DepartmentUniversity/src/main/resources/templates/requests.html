@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css"
+	rel="stylesheet"
+	integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x"
+	crossorigin="anonymous">
+<link rel="stylesheet" th:href="@{/static/table.css}" />
+<script src="https://use.fontawesome.com/fec1def459.js"></script>
+<title th:text="#{label.joinrequests}"></title>
+<style>
+   .round {
+    border-radius: 50%;
+   }
+</style>
+</head>
+<body>
+	<div th:replace="header :: navbar"></div>
+	<div class="container">
+		<div class="row">
+			<div class="col-md-offset-1 col-md-10">
+				<div class="panel">
+					<div class="panel-heading">
+						<div class="row">
+							<div class="col-sm-12 col-xs-12">
+								<h4 class="title pull-left" th:text="#{label.joinrequests}"></h4>								
+							</div>
+						</div>
+					</div>
+					<div class="panel-body table-responsive">
+						<table class="table">
+							<thead>
+								<tr>
+									<th th:text="#{label.id}"></th>
+									<th th:text="#{label.gender}"></th>
+									<th th:text="#{label.photo}"></th>
+									<th th:text="#{label.name}"></th>
+									<th th:text="#{label.email}"></th>
+									<th th:text="#{label.phone}"></th>
+									<th th:text="#{label.vacancy}"></th>
+									<th th:text="#{label.actions}"></th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr th:each="user : ${temporaryUsers}">
+									<td th:text="${user.id}" />
+									<td th:text="${user.sex}" />
+									<td>
+									   <img class="round" th:src="@{${user.photo}}" alt="Avatar">    
+									</td>
+									<td th:text="${user.name}" />
+									<td th:text="${user.email}" />
+									<td th:text="${user.phone}" />
+									<td th:text="${user.desiredRole.name}" />
+									                                   <td>
+                                    
+                                        <ul class="action-list">
+                                            
+                                            <li>
+                                                <form action="#" th:action="@{/requests}" th:object="${user}" method="post" enctype="multipart/form-data" >
+                                                    <input class="form-control" type="hidden" th:value="${user.email}" id="email" name="email"/>
+                                                    <button type="submit" class="btn btn-primary" th:value="user">
+                                                        <i class="fa fa-plus"></i>
+                                                    </button>
+                                                </form>
+                                            </li>
+                                            
+                                             <li>                                            
+                                                <form action="#" th:action="@{/requests/unconfirm}" th:object="${user}" method="post" enctype="multipart/form-data" >
+                                                    <input class="form-control" type="hidden" th:value="${user.email}" id="email" name="email"/>
+                                                    <input type="text" class="form-control" th:value="${user.confirmDescription}" name="confirmDescription" id="confirmDescription" th:placeholder="#{label.unconfirmdescription}" required />
+                                                    <button type="submit" class="btn btn-primary" th:value="user">
+                                                        <i class="fa fa-plus"></i>
+                                                    </button>
+                                                </form>
+                                             </li>                                          
+                                        </ul>                                       
+                                    </td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

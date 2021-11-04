@@ -605,6 +605,8 @@ class LessonServiceImplTest {
         when(groupMock.getId()).thenReturn(2);
         when(teacherMock.getId()).thenReturn(2);
         when(students.size()).thenReturn(2);
+        when(lessonMock.getOnlineLesson()).thenReturn(true);
+        when(lessonMock.getLessonLink()).thenReturn("valid lesson link");
         return lessonMock;
     }
 

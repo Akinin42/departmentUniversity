@@ -8,8 +8,7 @@
 	rel="stylesheet"
 	integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x"
 	crossorigin="anonymous">
-<link rel="stylesheet" href="/static/css/font-awesome.min.css" />
-    
+	<script src="https://use.fontawesome.com/fec1def459.js"></script>
     <style>
     .form-group {
 	margin-bottom: 15px;
@@ -29,7 +28,7 @@
 	padding: 8px 12px !important;
     }
 
-    .input-group {
+    .input-group {    
 	box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.21) !important;
     }
 
@@ -74,23 +73,22 @@
 	margin-top: 5px;
     }
     </style>
-    <title th:text="#{label.addteacher}"></title>
+    <title th:text="#{label.edit}"></title>
 </head>
 <body>
 	<div class="container">
 		<div class="row main-form">
-			<form class="" th:action="@{/teachers}" th:object="${teacher}" method="post" enctype="multipart/form-data">
+			<form class="" th:action="@{/temporary/update}" th:object="${user}" method="post" enctype="multipart/form-data">			
 				<div class="form-group">
 					<label for="name" class="cols-sm-2 control-label" th:text="#{label.name}"></label>
 					<div class="cols-sm-10">
 						<div class="input-group">
-							<span class="input-group-addon">
-							<i class="fa fa-user fa" aria-hidden="true"></i>
-							</span> 
-							<input type="text" class="form-control" th:value="${teacher.name}" name="name" id="name" th:placeholder="#{label.entername}" required />
+						    <input class="form-control" type="hidden" th:value="${user.id}" id="id" name="id" />
+							<span class="input-group-addon"><i class="fa fa-user fa" aria-hidden="true"></i></span> 
+							<input type="text" class="form-control" th:value="${user.name}" name="name" id="name" th:placeholder="#{label.entername}" required />
 						</div>
 					</div>
-					<div style="color:red" th:if="${#fields.hasErrors('name')}" th:text="#{label.invalidteachername}"></div>
+					<div style="color:red" th:if="${#fields.hasErrors('name')}" th:text="#{label.invalidusername}"></div>
 				</div>
 				
 				<div class="form-group">
@@ -102,7 +100,7 @@
                             </span> 
                             <select id="sex" th:field="*{sex}" class="form-select" aria-label="Default select example">
                                 <option th:value="MALE" th:text="#{label.male}" ></option>
-                                <option th:value="FEMALE" th:text="#{label.female}"></option>
+                                <option th:value="FEMALE" th:text="#{label.female}" ></option>
                             </select>
                         </div>
                     </div>
@@ -112,19 +110,19 @@
                     <label for="photo" class="cols-sm-2 control-label" th:text="#{label.photo}"></label>
                     <div class="cols-sm-10">
                         <div class="input-group">
-                            <input type="file" th:value="${teacher.photo}" name="photo" />
+                            <input type="file" th:value="${user.photo}" name="photo" />
                         </div>
                     </div>
                 </div>
 
 				<div class="form-group">
-					<label for="email" class="cols-sm-2 control-label" th:text="#{label.email}"></label>
+					<label for="email" class="cols-sm-2 control-label" th:text="#{label.email}" ></label>
 					<div class="cols-sm-10">
 						<div class="input-group">
 							<span class="input-group-addon">
 							<i class="fa fa-envelope fa" aria-hidden="true"></i>
 							</span> 
-							<input type="email" class="form-control" th:value="${teacher.email}" name="email" id="email" th:placeholder="#{label.enteremail}" required />
+							<input type="email" class="form-control" th:value="${user.email}" name="email" id="email" th:placeholder="#{label.enteremail}" required />
 						</div>
 					</div>
 					<div style="color:red" th:if="${#fields.hasErrors('email')}" th:text="#{label.invalidemail}"></div>
@@ -137,27 +135,11 @@
 							<span class="input-group-addon">
 							<i class="fa fa-users fa" aria-hidden="true"></i>
 							</span> 
-							<input type="text" class="form-control" th:value="${teacher.phone}"	name="phone" id="phone" th:placeholder="#{label.enterphone}" required />
+							<input type="text" class="form-control" th:value="${user.phone}"	name="phone" id="phone" th:placeholder="#{label.enterphone}" required />
 						</div>
 					</div>
 					<div style="color:red" th:if="${#fields.hasErrors('phone')}" th:text="#{label.invalidphone}"></div>
 				</div>
-				
-				<div class="form-group">
-                    <label for="degree" class="cols-sm-2 control-label" th:text="#{label.scientificdegree}"></label>
-                    <div class="cols-sm-10">
-                        <div class="input-group">
-                            <span class="input-group-addon">
-                            <i class="fa fa-user fa" aria-hidden="true"></i>
-                            </span> 
-                            <select id="scientificDegree" th:field="*{scientificDegree}" class="form-select" aria-label="Default select example" >
-                                <option th:value="Professor" th:text="#{label.professor}" ></option>
-                                <option th:value="Doctor" th:text="#{label.doctor}" ></option>
-                                <option th:value="Assistant" th:text="#{label.assistant}" ></option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
 
 				<div class="form-group">
 					<label for="password" class="cols-sm-2 control-label" th:text="#{label.password}"></label>
@@ -166,7 +148,7 @@
 							<span class="input-group-addon">
 							<i class="fa fa-lock fa-lg" aria-hidden="true"></i>
 							</span> 
-							<input type="password" class="form-control" th:value="${teacher.password}" name="password"	id="password" th:placeholder="#{label.enterpassword}" required />
+							<input type="password" class="form-control" th:value="${user.password}" name="password"	id="password" th:placeholder="#{label.enterpassword}" required />							
 						</div>
 					</div>
 				</div>
@@ -177,18 +159,48 @@
 						<div class="input-group">
 							<span class="input-group-addon">
 							<i class="fa fa-lock fa-lg" aria-hidden="true"></i></span> 
-							<input	type="password" class="form-control" th:value="${teacher.confirmPassword}" name="confirmPassword" id="confirmPassword" th:placeholder="#{label.confirmpassword}" required />
+							<input	type="password" class="form-control" th:value="${user.confirmPassword}" name="confirmPassword" id="confirmPassword" th:placeholder="#{label.confirmpassword}" required />
 						</div>
 						<div style="color:red" th:if="${message=='passwordmatch'}" th:text="#{label.passwordmatch}"></div>
 					</div>
 				</div>
-                <div style="color:red" th:switch="${message}">
+				<div class="form-group">
+                    <label for="gender" class="cols-sm-2 control-label" th:text="#{label.vacancy}"></label>
+                    <div class="cols-sm-10">
+                        <div class="input-group">
+                            <span class="input-group-addon">
+                            <i class="fa fa-user fa" aria-hidden="true"></i>
+                            </span> 
+                            <select id="role" th:field="*{desiredRole}" class="form-select" aria-label="Default select example">
+                                <option th:value="STUDENT" th:text="#{label.student}" ></option>
+                                <option th:value="TEACHER" th:text="#{label.teacher}" ></option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="degree" class="cols-sm-2 control-label" th:text="#{label.scientificdegree}"></label>
+                    <div class="cols-sm-10">
+                        <div class="input-group">
+                            <span class="input-group-addon">
+                            <i class="fa fa-user fa" aria-hidden="true"></i>
+                            </span> 
+                            <select id="desiredDegree" th:field="*{desiredDegree}" class="form-select" aria-label="Default select example" >
+                                <option th:value="Professor" th:text="#{label.professor}" ></option>
+                                <option th:value="Doctor" th:text="#{label.doctor}" ></option>
+                                <option th:value="Assistant" th:text="#{label.assistant}" ></option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div style="color:red" th:switch="${message}">                                   
                      <p th:case="'useremailexist'" th:text="#{label.useremailexist}"></p>
                      <p th:case="'photosize'" th:text="#{label.photosize}"></p>
-                     <p th:case="'photoextension'" th:text="#{label.photoextension}"></p>                                      
+                     <p th:case="'photoextension'" th:text="#{label.photoextension}"></p>
                 </div>
 				<div class="form-group ">
-					<button type="submit" id="button" class="btn btn-primary btn-lg btn-block login-button" th:value="teacher" th:text="#{label.register}"></button>
+					<button type="submit" id="button" class="btn btn-primary btn-lg btn-block login-button" th:value="user" th:text="#{label.register}"></button>
 				</div>
 			</form>
 		</div>

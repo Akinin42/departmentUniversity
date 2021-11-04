@@ -23,7 +23,7 @@ public class FieldMatchValidator implements ConstraintValidator<FieldMatch, Obje
         BeanWrapper beanWrapper = PropertyAccessorFactory.forBeanPropertyAccess(value);
         final Object firstObj = beanWrapper.getPropertyValue(firstFieldName);
         final Object secondObj = beanWrapper.getPropertyValue(secondFieldName);
-        boolean isValid = firstObj == null && secondObj == null || firstObj != null && firstObj.equals(secondObj);
+        boolean isValid = firstObj != null && firstObj.equals(secondObj);
         if (!isValid) {
             context.disableDefaultConstraintViolation();
             context.buildConstraintViolationWithTemplate(context.getDefaultConstraintMessageTemplate())
