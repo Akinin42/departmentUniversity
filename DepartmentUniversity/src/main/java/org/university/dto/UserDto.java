@@ -1,5 +1,7 @@
 package org.university.dto;
 
+import java.util.Locale;
+
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
@@ -43,4 +45,5 @@ public class UserDto {
     private String desiredDegree;
     Boolean confirm;    
     String confirmDescription;
+    Locale locale;
 }

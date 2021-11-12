@@ -11,7 +11,7 @@
     <artifactId>university</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>war</packaging>
-    
+
     <properties>
         <java.version>1.8</java.version>
         <failOnMissingWebXml>false</failOnMissingWebXml>
@@ -119,6 +119,10 @@
             <groupId>org.thymeleaf.extras</groupId>
             <artifactId>thymeleaf-extras-springsecurity5</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
@@ -160,6 +164,7 @@
                                         <exclude>org.university.entity*</exclude>
                                         <exclude>org.university.dto*</exclude>
                                         <exclude>org.university.config*</exclude>
+                                        <exclude>org.university.email*</exclude>
                                         <exclude>org.university.ApplicationStarter*</exclude>
                                     </excludes>
                                     <limits>

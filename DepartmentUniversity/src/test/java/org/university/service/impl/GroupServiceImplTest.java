@@ -96,8 +96,6 @@ class GroupServiceImplTest {
 
     @Test
     void findAllGroupsShouldReturnGroupsWithStudentsWhenTheyExist() {
-        List<Group> expected = createGroupsWithStudents();
-        List<Group> actual = groupService.findAllGroups();
         assertThat(groupService.findAllGroups()).isEqualTo(createGroupsWithStudents());
     }
 

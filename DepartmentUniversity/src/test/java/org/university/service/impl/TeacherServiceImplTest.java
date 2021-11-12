@@ -25,10 +25,13 @@ import org.university.dto.UserDto;
 import org.university.entity.Role;
 import org.university.entity.Student;
 import org.university.entity.Teacher;
+import org.university.entity.User;
 import org.university.exceptions.AuthorisationFailException;
 import org.university.exceptions.EmailExistException;
 import org.university.exceptions.EntityAlreadyExistException;
 import org.university.exceptions.EntityNotExistException;
+import org.university.service.EmailService;
+import org.university.service.SecureTokenService;
 import org.university.service.validator.UserValidator;
 import org.university.utils.CreatorTestEntities;
 import org.university.utils.Sex;
@@ -40,6 +43,7 @@ class TeacherServiceImplTest {
     private static StudentDao studentDaoMock;
     private static TemporaryUserDao temporaryDaoMock;
     private static RoleDao roleDaoMock;
+    private static  SecureTokenService secureTokenServiceMock;
 
     @BeforeAll
     static void init() {
@@ -47,22 +51,25 @@ class TeacherServiceImplTest {
         teacherDaoMock = createTeacherDaoMock();
         roleDaoMock = createRoleDaoMock();
         temporaryDaoMock = createTemporaryUserDaoMock();
-        teacherService = new TeacherServiceImpl(teacherDaoMock, 
+        secureTokenServiceMock = createTokenServiceMock();
+        teacherService = new TeacherServiceImpl(teacherDaoMock, createEmailServiceMock(), secureTokenServiceMock, 
                 new UserValidator(studentDaoMock, teacherDaoMock, temporaryDaoMock, createEncoderMock()), createEncoderMock(), roleDaoMock);
     }
 
     @Test
     void registerShouldSaveTeacherToDatabaseWhenInputTeacherNotExistThere() {
-        UserDto teacher = new UserDto();        
+        UserDto teacher = new UserDto();
+        teacher.setId(45);
         teacher.setSex(Sex.MALE);
         teacher.setName("Test");
         teacher.setEmail("test@test.ru");
         teacher.setPhone("78956547475");
-        teacher.setPassword("Test");
+        teacher.setPassword("encodePassword");
         teacher.setScientificDegree("Test");
         teacher.setPhotoName("test-photo");
         teacherService.register(teacher);
         Teacher teacherWithEncodePassword = Teacher.builder()
+                .withId(45)
                 .withSex(Sex.MALE)
                 .withName("Test")
                 .withEmail("test@test.ru")
@@ -70,7 +77,6 @@ class TeacherServiceImplTest {
                 .withPassword("encodePassword")
                 .withScientificDegree("Test")
                 .withPhoto("test-photo")
-                .withRole(roleDaoMock.findByName("TEACHER").get())
                 .withEnabled(true)
                 .build();
         verify(teacherDaoMock).save(teacherWithEncodePassword);
@@ -169,7 +175,7 @@ class TeacherServiceImplTest {
     @Test
     void editShouldUpdateTeacherInDatabaseWhenInputValidTeacher() {
         TeacherDao teacherDaoMock = createTeacherDaoMock();
-        TeacherServiceImpl teacherService = new TeacherServiceImpl(teacherDaoMock, 
+        TeacherServiceImpl teacherService = new TeacherServiceImpl(teacherDaoMock, createEmailServiceMock(), secureTokenServiceMock,
                 new UserValidator(studentDaoMock, teacherDaoMock, temporaryDaoMock, createEncoderMock()), createEncoderMock(), roleDaoMock);
         UserDto teacherDto = new UserDto();
         teacherDto.setId(1);
@@ -349,5 +355,16 @@ class TeacherServiceImplTest {
         TemporaryUserDao temporaryDaoMock = mock(TemporaryUserDao.class);
         when(temporaryDaoMock.findByEmail("existestudent@test.ru")).thenReturn(Optional.empty());
         return temporaryDaoMock;
+    }
+    
+    private static SecureTokenService createTokenServiceMock() {
+        SecureTokenService secureTokenServiceMock = mock(SecureTokenService.class);        
+        return secureTokenServiceMock;
+    }
+    
+    @SuppressWarnings("unchecked")
+    private static EmailService<User> createEmailServiceMock() {
+        EmailService<User> emailServiceMock = (EmailService<User>)mock(EmailService.class);        
+        return emailServiceMock;
     }
 }

@@ -8,6 +8,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -54,6 +55,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         .antMatchers(HttpMethod.POST,"/temporary/update").hasAuthority(USER)
         .antMatchers(HttpMethod.POST,"/temporary").permitAll()        
         .antMatchers(HttpMethod.GET,"/static/**").permitAll()
+        .antMatchers(HttpMethod.GET,"/register").permitAll()
         .antMatchers(HttpMethod.GET,"/teachers").hasAnyAuthority(TEACHER, ADMIN)
         .antMatchers(HttpMethod.GET).hasAnyAuthority(TEACHER, ADMIN, STUDENT)
         .anyRequest().authenticated()
@@ -66,6 +68,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         .and()
         .headers()
         .contentSecurityPolicy("script-src 'self' https://use.fontawesome.com");
+        http.sessionManagement()
+        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+        .invalidSessionUrl("/login");
     }
 
     @Override

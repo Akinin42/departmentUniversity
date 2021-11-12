@@ -11,6 +11,8 @@ import org.university.dto.UserDto;
 import org.university.entity.TemporaryUser;
 import org.university.entity.User;
 import org.university.exceptions.EntityNotExistException;
+import org.university.service.EmailService;
+import org.university.service.SecureTokenService;
 import org.university.service.TemporaryUserService;
 import org.university.service.validator.Validator;
 
@@ -26,11 +28,12 @@ public class TemporaryUserServiceImpl extends AbstractUserServiceImpl<TemporaryU
     
     TemporaryUserDao temporaryUserDao;
     RoleDao roleDao;    
-    PasswordEncoder encoder;    
+    PasswordEncoder encoder;
     
-    public TemporaryUserServiceImpl(TemporaryUserDao temporaryUserDao, 
+    public TemporaryUserServiceImpl(TemporaryUserDao temporaryUserDao, EmailService<User> emailService,
+            SecureTokenService secureTokenService,
             Validator<User> validator, PasswordEncoder encoder, RoleDao roleDao) {
-        super(temporaryUserDao, validator);
+        super(temporaryUserDao, validator, emailService, secureTokenService);
         this.temporaryUserDao = temporaryUserDao;       
         this.encoder = encoder;
         this.roleDao = roleDao;
@@ -52,7 +55,6 @@ public class TemporaryUserServiceImpl extends AbstractUserServiceImpl<TemporaryU
                 .withPassword(encoder.encode(user.getPassword()))
                 .withPhoto(user.getPhoto())                
                 .withRole(roleDao.findByName(USER).get())
-                .withEnabled(true)
                 .withDesiredRole(user.getDesiredRole())
                 .withDesiredDegree(user.getDesiredDegree())
                 .withConfirm(user.getConfirm())
@@ -71,7 +73,6 @@ public class TemporaryUserServiceImpl extends AbstractUserServiceImpl<TemporaryU
                 .withPassword(user.getPassword())
                 .withPhoto(user.getPhotoName())
                 .withRole(roleDao.findByName(USER).get())
-                .withEnabled(true)
                 .withDesiredRole(roleDao.findByName(user.getDesiredRole()).get())
                 .withDesiredDegree(user.getDesiredDegree())
                 .withConfirm(user.getConfirm())

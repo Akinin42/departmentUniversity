@@ -211,7 +211,7 @@ class StudentControllerTest {
         verify(studentServiceMock).edit(student);
         verify(photoServiceMock).savePhoto(student);
     }
-
+    
     @Test
     void testEditWhenInputDifferentPasswords() throws Exception {
         StudentDto student = new StudentDto();
@@ -317,5 +317,20 @@ class StudentControllerTest {
         ResultActions result = mockMvc.perform(request);
         result.andExpect(MockMvcResultMatchers.status().isNotFound())
                 .andExpect(MockMvcResultMatchers.view().name("error404"));
+    }
+    
+    @Test
+    void testEditShouldReturnServerExceptionWhenOutherExcetion() throws Exception {
+        StudentDto student = new StudentDto();
+        student.setName("validName");
+        student.setEmail("validEmail@mail.ru");
+        student.setPhone("80000000000");
+        student.setPassword("password");
+        student.setConfirmPassword("password");
+        doThrow(new IllegalArgumentException()).when(studentServiceMock).edit(student);
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/students/update/").flashAttr("student",
+                student);
+        ResultActions result = mockMvc.perform(request);
+        result.andExpect(MockMvcResultMatchers.view().name("error500"));
     }
 }

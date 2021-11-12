@@ -2,32 +2,50 @@ package org.university.service.impl;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
+
+import javax.mail.MessagingException;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.university.dao.RoleDao;
 import org.university.dao.StudentDao;
 import org.university.dao.TeacherDao;
 import org.university.dao.TemporaryUserDao;
 import org.university.dto.UserDto;
+import org.university.email.AbstractEmailContext;
+import org.university.email.AccountVerificationEmailContext;
 import org.university.entity.Role;
+import org.university.entity.SecureToken;
 import org.university.entity.Student;
 import org.university.entity.Teacher;
 import org.university.entity.TemporaryUser;
+import org.university.entity.User;
 import org.university.exceptions.AuthorisationFailException;
 import org.university.exceptions.EmailExistException;
 import org.university.exceptions.EntityAlreadyExistException;
 import org.university.exceptions.EntityNotExistException;
+import org.university.exceptions.InvalidTokenException;
+import org.university.service.EmailService;
+import org.university.service.SecureTokenService;
 import org.university.service.validator.UserValidator;
 import org.university.utils.CreatorTestEntities;
 import org.university.utils.Sex;
+
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.read.ListAppender;
 
 class TemporaryUserServiceImplTest {
 
@@ -36,6 +54,8 @@ class TemporaryUserServiceImplTest {
     private static TemporaryUserDao temporaryDaoMock;
     private static StudentDao studentDaoMock;
     private static TeacherDao teacherDaoMock;
+    private static  SecureTokenService secureTokenServiceMock;
+    private static EmailService<User> emailServiceMock;
 
     @BeforeAll
     static void init() {
@@ -43,25 +63,32 @@ class TemporaryUserServiceImplTest {
         temporaryDaoMock = createTemporaryUserDaoMock();        
         studentDaoMock = createStudentDaoMock();
         teacherDaoMock = createTeacherDaoMock();
-        temporaryService = new TemporaryUserServiceImpl(temporaryDaoMock,
+        secureTokenServiceMock = createTokenServiceMock();
+        emailServiceMock = createEmailServiceMock();
+        temporaryService = new TemporaryUserServiceImpl(temporaryDaoMock, emailServiceMock, secureTokenServiceMock,
                 new UserValidator(studentDaoMock, teacherDaoMock, temporaryDaoMock, createEncoderMock()), createEncoderMock(),
                 roleDaoMock);
     }
     
     @Test
-    void registerShouldSaveUserToDatabaseWhenInputUserNotExistThere() {
-        UserDto user = new UserDto();        
-        user.setSex(Sex.MALE);
-        user.setName("Test");
-        user.setEmail("test@test.ru");
-        user.setPhone("78956547475");
-        user.setPassword("Test");
-        user.setDesiredRole("TEACHER");
-        user.setDesiredDegree("professor");
-        user.setPhotoName("test-photo");
-        user.setConfirm(true);
-        temporaryService.register(user);
-        TemporaryUser userForSaving = TemporaryUser.builder()                
+    void registerShouldSaveUserToDatabaseAndSendVerifyEmailWhenInputUserNotExistThere() throws MessagingException {
+        TemporaryUserDao temporaryDaoMock = createTemporaryUserDaoMock();
+        TemporaryUserServiceImpl temporaryService =  new TemporaryUserServiceImpl(temporaryDaoMock, emailServiceMock, secureTokenServiceMock,
+                new UserValidator(studentDaoMock, teacherDaoMock, temporaryDaoMock, createEncoderMock()), createEncoderMock(),
+                roleDaoMock); 
+        UserDto userDto = new UserDto();        
+        userDto.setSex(Sex.MALE);
+        userDto.setName("Test");
+        userDto.setEmail("test@test.ru");
+        userDto.setPhone("78956547475");
+        userDto.setPassword("Test");
+        userDto.setDesiredRole("TEACHER");
+        userDto.setDesiredDegree("professor");
+        userDto.setPhotoName("test-photo");
+        userDto.setConfirm(true);
+        Locale locale = new Locale("en");
+        userDto.setLocale(locale);                
+        TemporaryUser user = TemporaryUser.builder()                
                 .withSex(Sex.MALE)
                 .withName("Test")
                 .withEmail("test@test.ru")
@@ -69,13 +96,65 @@ class TemporaryUserServiceImplTest {
                 .withPassword("encodePassword")                
                 .withPhoto("test-photo")
                 .withRole(roleDaoMock.findByName("USER").get())
-                .withEnabled(true)
+                .withEnabled(false)
                 .withDesiredRole(roleDaoMock.findByName("TEACHER").get())
                 .withDesiredDegree("professor")
                 .withConfirm(true)
                 .withConfirmDescription(null)
-                .build();
-        verify(temporaryDaoMock).save(userForSaving);
+                .build();      
+        SecureToken secureTokenMock = createSecureTokenMock();
+        when(secureTokenMock.getUser()).thenReturn(user);
+        when(secureTokenServiceMock.createSecureToken(user)).thenReturn(secureTokenMock);        
+        AbstractEmailContext<User> email = createEmailContextMock();        
+        when(emailServiceMock.createEmailContext(user, locale, secureTokenMock)).thenReturn(email);
+        temporaryService.register(userDto);
+        verify(temporaryDaoMock).save(user);
+        verify(emailServiceMock).sendMail(email);
+    }
+    
+    @Test
+    void registerShouldSaveUserToDatabaseAndLoggingExceptionIfEmailNotSend() throws MessagingException {
+        Logger temporaryUserServiceLogger = (Logger) LoggerFactory.getLogger(AbstractUserServiceImpl.class);
+        ListAppender<ILoggingEvent> listAppender = new ListAppender<>();
+        listAppender.start();
+        temporaryUserServiceLogger.addAppender(listAppender);
+        UserDto userDto = new UserDto();        
+        userDto.setSex(Sex.MALE);
+        userDto.setName("Test");
+        userDto.setEmail("test@test.ru");
+        userDto.setPhone("78956547475");
+        userDto.setPassword("Test");
+        userDto.setDesiredRole("TEACHER");
+        userDto.setDesiredDegree("professor");
+        userDto.setPhotoName("test-photo");
+        userDto.setConfirm(true);
+        Locale locale = new Locale("en");
+        userDto.setLocale(locale);                
+        TemporaryUser user = TemporaryUser.builder()                
+                .withSex(Sex.MALE)
+                .withName("Test")
+                .withEmail("test@test.ru")
+                .withPhone("78956547475")
+                .withPassword("encodePassword")                
+                .withPhoto("test-photo")
+                .withRole(roleDaoMock.findByName("USER").get())
+                .withEnabled(false)
+                .withDesiredRole(roleDaoMock.findByName("TEACHER").get())
+                .withDesiredDegree("professor")
+                .withConfirm(true)
+                .withConfirmDescription(null)
+                .build();      
+        SecureToken secureTokenMock = createSecureTokenMock();
+        when(secureTokenMock.getUser()).thenReturn(user);
+        when(secureTokenServiceMock.createSecureToken(user)).thenReturn(secureTokenMock);        
+        AbstractEmailContext<User> email = createEmailContextMock();        
+        when(emailServiceMock.createEmailContext(user, locale, secureTokenMock)).thenReturn(email);
+        doThrow(new MessagingException()).when(emailServiceMock).sendMail(email);
+        temporaryService.register(userDto);
+        verify(temporaryDaoMock).save(user);
+        List<ILoggingEvent> logsList = listAppender.list;
+        assertEquals("Send email is fail!", logsList.get(0).getMessage());
+        assertEquals(Level.ERROR, logsList.get(0).getLevel());
     }
     
     @Test
@@ -189,7 +268,6 @@ class TemporaryUserServiceImplTest {
                 .withPassword("encodePassword")                
                 .withPhoto("test-photo")
                 .withRole(roleDaoMock.findByName("USER").get())
-                .withEnabled(true)
                 .withDesiredRole(roleDaoMock.findByName("TEACHER").get())
                 .withDesiredDegree("professor")
                 .withConfirm(false)
@@ -231,6 +309,54 @@ class TemporaryUserServiceImplTest {
         user.setConfirm(true);
         assertThatThrownBy(() -> temporaryService.edit(user))
                 .isInstanceOf(EmailExistException.class);
+    }
+    
+    @Test
+    void verifyUserShouldReturnTrueAndSaveEnabledUserAndDeleteTokenFromDBIfTokenValid() throws InvalidTokenException {
+        TemporaryUser user = TemporaryUser.builder()
+                .withId(1)
+                .withEnabled(false)
+                .build();
+        SecureToken secureTokenMock = createSecureTokenMock();
+        when(secureTokenMock.getToken()).thenReturn("token");
+        when(secureTokenMock.getUser()).thenReturn(user);
+        when(secureTokenMock.isExpired()).thenReturn(false);
+        when(secureTokenServiceMock.findByToken("token")).thenReturn(secureTokenMock);
+        when(temporaryDaoMock.getById(1)).thenReturn(user);
+        TemporaryUser enabledUser = TemporaryUser.builder()
+                .withId(1)
+                .withEnabled(true)
+                .build();
+        temporaryService.verifyUser("token");
+        verify(temporaryDaoMock).save(enabledUser);
+        verify(secureTokenServiceMock).removeToken(secureTokenMock);
+        assertThat(temporaryService.verifyUser("token")).isTrue();
+    }
+    
+    @Test
+    void verifyUserShouldThrowInvalidTokenExceptionIfTokenNotExist() throws InvalidTokenException {
+        when(secureTokenServiceMock.findByToken("notexisted")).thenReturn(null);
+        assertThatThrownBy(() -> temporaryService.verifyUser("notexisted"))
+            .isInstanceOf(InvalidTokenException.class);
+    }
+    
+    @Test
+    void verifyUserShouldThrowInvalidTokenExceptionIfTokenNotEquals() throws InvalidTokenException {
+        SecureToken secureTokenMock = createSecureTokenMock();
+        when(secureTokenMock.getToken()).thenReturn("token");
+        when(secureTokenServiceMock.findByToken("notequals")).thenReturn(secureTokenMock);
+        assertThatThrownBy(() -> temporaryService.verifyUser("notequals"))
+            .isInstanceOf(InvalidTokenException.class);
+    }
+    
+    @Test
+    void verifyUserShouldThrowInvalidTokenExceptionIfTokenExpired() throws InvalidTokenException {
+        SecureToken secureTokenMock = createSecureTokenMock();
+        when(secureTokenMock.getToken()).thenReturn("token");
+        when(secureTokenMock.isExpired()).thenReturn(true);
+        when(secureTokenServiceMock.findByToken("token")).thenReturn(secureTokenMock);
+        assertThatThrownBy(() -> temporaryService.verifyUser("token"))
+            .isInstanceOf(InvalidTokenException.class);
     }
     
     private static TemporaryUserDao createTemporaryUserDaoMock() {
@@ -277,7 +403,6 @@ class TemporaryUserServiceImplTest {
         PasswordEncoder encoderMock = mock(PasswordEncoder.class);
         when(encoderMock.encode("Test")).thenReturn("encodePassword");
         when(encoderMock.matches("Test", "encodePassword")).thenReturn(true);        
-//        when(encoderMock.matches("test-password", "test-password")).thenReturn(true);        
         return encoderMock;
     }
 
@@ -322,5 +447,26 @@ class TemporaryUserServiceImplTest {
         when(teacherDaoMock.findByEmail("existteachermail@test.ru")).thenReturn(Optional.ofNullable(existTeacher));
         return teacherDaoMock;
     }
-
+    
+    private static SecureTokenService createTokenServiceMock() {
+        return mock(SecureTokenService.class);
+    }
+    
+    @SuppressWarnings("unchecked")
+    private static EmailService<User> createEmailServiceMock() {
+        EmailService<User> emailServiceMock = (EmailService<User>)mock(EmailService.class);
+        return emailServiceMock;
+    }
+    
+    private static SecureToken createSecureTokenMock() {
+        SecureToken secureTokenMock = mock(SecureToken.class);
+//        when(secureTokenMock.getToken()).thenReturn("token");
+        return secureTokenMock;
+    }
+    
+    @SuppressWarnings("unchecked")
+    private static AbstractEmailContext<User> createEmailContextMock() {
+        AccountVerificationEmailContext<User> emailContext = (AccountVerificationEmailContext<User>)mock(AccountVerificationEmailContext.class);
+        return emailContext;
+    }
 }

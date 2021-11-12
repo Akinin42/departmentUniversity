@@ -1,5 +1,7 @@
 package org.university.controller;
 
+import java.util.Locale;
+
 import javax.validation.Valid;
 
 import org.springframework.stereotype.Controller;
@@ -46,7 +48,8 @@ public class TemporaryUserController {
     }
 
     @PostMapping()
-    public String addUser(@ModelAttribute("user") @Valid UserDto user, BindingResult bindingResult, Model model) {
+    public String addUser(@ModelAttribute("user") @Valid UserDto user, BindingResult bindingResult, Model model,
+            Locale locale) {
         if (bindingResult.hasErrors()) {
             if (bindingResult.hasFieldErrors("password")) {
                 model.addAttribute("message", bindingResult.getFieldError("password").getDefaultMessage());
@@ -57,6 +60,7 @@ public class TemporaryUserController {
             String photoName = photoService.savePhoto(user);
             user.setPhotoName(photoName);
             user.setConfirm(true);
+            user.setLocale(locale);
             temporaryUserService.register(user);
             return "mainmenu";
         } catch (EmailExistException | InvalidPhotoException e) {
@@ -70,14 +74,14 @@ public class TemporaryUserController {
         model.addAttribute("user", temporaryUserService.getByEmail(userDto.getEmail()));
         return "userprofile";
     }
-    
+
     @PostMapping("/edit")
     public String getEditForm(@ModelAttribute("user") UserDto user, @ModelAttribute("message") String message,
             Model model) {
         model.addAttribute("user", user);
         return UPDATE_STUDENT_FORM;
     }
-    
+
     @PostMapping("/update")
     public String edit(@ModelAttribute("user") @Valid UserDto user, BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {

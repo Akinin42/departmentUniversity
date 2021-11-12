@@ -20,7 +20,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.university.dao.CourseDao;
-import org.university.dao.GroupDao;
 import org.university.dao.RoleDao;
 import org.university.dao.StudentDao;
 import org.university.dao.TeacherDao;
@@ -30,10 +29,13 @@ import org.university.entity.Course;
 import org.university.entity.Role;
 import org.university.entity.Student;
 import org.university.entity.Teacher;
+import org.university.entity.User;
 import org.university.exceptions.AuthorisationFailException;
 import org.university.exceptions.EmailExistException;
 import org.university.exceptions.EntityAlreadyExistException;
 import org.university.exceptions.EntityNotExistException;
+import org.university.service.EmailService;
+import org.university.service.SecureTokenService;
 import org.university.service.StudentService;
 import org.university.service.validator.UserValidator;
 import org.university.utils.CreatorTestEntities;
@@ -45,7 +47,8 @@ class StudentServiceImplTest {
     private static StudentDao studentDaoMock;
     private static TeacherDao teacherDaoMock;
     private static TemporaryUserDao temporaryDaoMock;
-    private static RoleDao roleDaoMock;
+    private static RoleDao roleDaoMock;   
+    private static  SecureTokenService secureTokenServiceMock;
 
     @BeforeAll
     static void init() {
@@ -53,21 +56,24 @@ class StudentServiceImplTest {
         studentDaoMock = createStudentDaoMock();
         teacherDaoMock = createTeacherDaoMock();
         roleDaoMock = createRoleDaoMock();
-        studentService = new StudentServiceImpl(studentDaoMock, createCourseDaoMock(),
+        secureTokenServiceMock = createTokenServiceMock();        
+        studentService = new StudentServiceImpl(studentDaoMock, createCourseDaoMock(), createEmailServiceMock(), secureTokenServiceMock,
                 new UserValidator(studentDaoMock, teacherDaoMock, temporaryDaoMock, createEncoderMock()), createEncoderMock(), roleDaoMock);
     }
 
     @Test
     void registerShouldSaveStudentToDatabaseWhenInputStudentNotExistThere() {
-        StudentDto student = new StudentDto();        
+        StudentDto student = new StudentDto(); 
+        student.setId(45);
         student.setSex(Sex.MALE);
         student.setName("Test");
         student.setEmail("test@test.ru");
         student.setPhone("79236170788");
-        student.setPassword("Test");
+        student.setPassword("encodePassword");
         student.setPhotoName("testphoto");
         studentService.register(student);
         Student studentWithEncodePassword = Student.builder()
+                .withId(45)
                 .withSex(Sex.MALE)
                 .withName("Test")
                 .withEmail("test@test.ru")
@@ -278,7 +284,7 @@ class StudentServiceImplTest {
     @Test
     void deleteStudentFromCourseShouldNotDeleteStudentWhenStudentWithoutCourse() {
         StudentDao studentDaoMock = createStudentDaoMock();        
-        StudentService studentService = new StudentServiceImpl(studentDaoMock, createCourseDaoMock(),
+        StudentService studentService = new StudentServiceImpl(studentDaoMock, createCourseDaoMock(), createEmailServiceMock(), secureTokenServiceMock,
                 new UserValidator(studentDaoMock, null, temporaryDaoMock, createEncoderMock()), createEncoderMock(), roleDaoMock);
         Student studentWithotCourse = CreatorTestEntities.createStudents().get(0);
         Course course = CreatorTestEntities.createCourses().get(0);
@@ -314,7 +320,7 @@ class StudentServiceImplTest {
     @Test
     void editShouldUpdateStudentInDatabaseWhenInputValidStudent() {
         StudentDao studentDaoMock = createStudentDaoMock();
-        StudentServiceImpl studentService = new StudentServiceImpl(studentDaoMock, createCourseDaoMock(),
+        StudentServiceImpl studentService = new StudentServiceImpl(studentDaoMock, createCourseDaoMock(), createEmailServiceMock(), secureTokenServiceMock,
                 new UserValidator(studentDaoMock, teacherDaoMock, temporaryDaoMock, createEncoderMock()), createEncoderMock(), roleDaoMock);
         StudentDto studentDto = new StudentDto();
         studentDto.setId(1);
@@ -430,13 +436,6 @@ class StudentServiceImplTest {
         return courseDaoMock;
     }
 
-    private static GroupDao createGroupDaoMock() {
-        GroupDao groupDaoMock = mock(GroupDao.class);
-        when(groupDaoMock.findById(2)).thenReturn(Optional.ofNullable(CreatorTestEntities.createGroups().get(1)));
-        when(groupDaoMock.findById(1)).thenReturn(Optional.ofNullable(CreatorTestEntities.createGroups().get(0)));
-        return groupDaoMock;
-    }
-
     private static PasswordEncoder createEncoderMock() {
         PasswordEncoder encoderMock = mock(PasswordEncoder.class);
         when(encoderMock.encode("Test")).thenReturn("encodePassword");
@@ -505,5 +504,16 @@ class StudentServiceImplTest {
         TemporaryUserDao temporaryDaoMock = mock(TemporaryUserDao.class);
         when(temporaryDaoMock.findByEmail("existteachermail@test.ru")).thenReturn(Optional.empty());
         return temporaryDaoMock;
+    }
+    
+    private static SecureTokenService createTokenServiceMock() {
+        SecureTokenService secureTokenServiceMock = mock(SecureTokenService.class);        
+        return secureTokenServiceMock;
+    }
+    
+    @SuppressWarnings("unchecked")
+    private static EmailService<User> createEmailServiceMock() {
+        EmailService<User> emailServiceMock = (EmailService<User>)mock(EmailService.class);        
+        return emailServiceMock;
     }
 }

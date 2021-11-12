@@ -15,6 +15,8 @@ import org.university.entity.Course;
 import org.university.entity.Student;
 import org.university.entity.User;
 import org.university.exceptions.EntityNotExistException;
+import org.university.service.EmailService;
+import org.university.service.SecureTokenService;
 import org.university.service.StudentService;
 import org.university.service.validator.Validator;
 
@@ -36,9 +38,10 @@ public class StudentServiceImpl extends AbstractUserServiceImpl<Student> impleme
     RoleDao roleDao;
     PasswordEncoder encoder;    
 
-    public StudentServiceImpl(StudentDao studentDao, CourseDao courseDao,
-            Validator<User> validator, PasswordEncoder encoder, RoleDao roleDao) {
-        super(studentDao, validator);        
+    public StudentServiceImpl(StudentDao studentDao, CourseDao courseDao, EmailService<User> emailService,
+            SecureTokenService secureTokenService, Validator<User> validator,
+            PasswordEncoder encoder, RoleDao roleDao) {
+        super(studentDao, validator, emailService, secureTokenService);        
         this.studentDao = studentDao;
         this.courseDao = courseDao;
         this.encoder = encoder;
