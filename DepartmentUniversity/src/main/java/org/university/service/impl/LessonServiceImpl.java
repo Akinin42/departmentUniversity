@@ -1,5 +1,7 @@
 package org.university.service.impl;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -15,6 +17,7 @@ import org.university.exceptions.ClassroomBusyException;
 import org.university.exceptions.EntityAlreadyExistException;
 import org.university.exceptions.EntityNotExistException;
 import org.university.exceptions.InvalidLessonTimeException;
+import org.university.service.CalendarService;
 import org.university.service.LessonService;
 import org.university.service.mapper.LessonDtoMapper;
 import org.university.service.validator.LessonValidator;
@@ -35,6 +38,7 @@ public class LessonServiceImpl implements LessonService {
     LessonDao lessonDao;
     LessonValidator validator;
     LessonDtoMapper mapper;
+    CalendarService calendarService;
 
     @Override
     public Lesson createLesson(LocalDateTime startLesson, int teacherId, int groupId) {
@@ -48,20 +52,17 @@ public class LessonServiceImpl implements LessonService {
     public void addLesson(@NonNull LessonDto lessonDto) {
         Lesson lesson = mapper.mapDtoToEntity(lessonDto);
         validator.validate(lesson);
-        if (lesson.getId() != null && existLesson(lesson)) {
-            throw new EntityAlreadyExistException("Lesson already exist!");
-        }
-        LocalDateTime startLessons = lesson.getStartLesson().toLocalDate().atStartOfDay();
-        LocalDateTime endLessons = startLessons.plusHours(23);
-        List<Lesson> teacherLessons = lessonDao.findAllByStartLessonBetweenAndTeacherIdOrderByStartLesson(startLessons,endLessons, lesson.getTeacher().getId());
-        List<Lesson> groupLessons = lessonDao.findAllByStartLessonBetweenAndGroupIdOrderByStartLesson(startLessons,endLessons, lesson.getGroup().getId());
-        if (!checkFreeTime(lesson, teacherLessons) || !checkFreeTime(lesson, groupLessons)) {
-            throw new InvalidLessonTimeException("groupteacherbusy");
-        }
+        checkLessonExist(lesson);
+        checkLessonTime(lesson, lessonDto);
         if (!checkFreeClassroom(lesson)) {
             throw new ClassroomBusyException("classroombusy");
         }
         lessonDao.save(lesson);
+        try {
+            calendarService.createLesson(lesson);
+        } catch (IOException | GeneralSecurityException e) {
+            log.error("Add in calendar failed");
+        }
         log.info("Lesson added succesfull!");
     }
 
@@ -69,27 +70,57 @@ public class LessonServiceImpl implements LessonService {
     public void edit(@NonNull LessonDto lessonDto) {
         Lesson lesson = mapper.mapDtoToEntity(lessonDto);
         validator.validate(lesson);
-        LocalDateTime startLessons = lesson.getStartLesson().toLocalDate().atStartOfDay();
-        LocalDateTime endLessons = startLessons.plusHours(23);
-        List<Lesson> teacherLessons = lessonDao.findAllByStartLessonBetweenAndTeacherIdOrderByStartLesson(startLessons,endLessons, lesson.getTeacher().getId());
-        List<Lesson> groupLessons = lessonDao.findAllByStartLessonBetweenAndGroupIdOrderByStartLesson(startLessons,endLessons, lesson.getGroup().getId());
-        if ((!checkTimeNotChange(lessonDto) || !checkGroupAndTeacherNotChange(lessonDto))
-                && (!checkFreeTime(lesson, teacherLessons) || !checkFreeTime(lesson, groupLessons))) {
-            throw new InvalidLessonTimeException("groupteacherbusy");
-        }               
+        checkLessonTime(lesson, lessonDto);
         if ((!checkTimeNotChange(lessonDto) || !checkClassroomNotChange(lessonDto)) && !checkFreeClassroom(lesson)) {
             throw new ClassroomBusyException("classroombusy");
         }
         lessonDao.save(lesson);
+        try {
+            calendarService.updateLesson(lesson);
+        } catch (IOException | GeneralSecurityException e) {
+            log.error("Edit in calendar failed");
+        }
         log.info("Lesson edited succesfull!");
     }
 
     @Override
-    public void delete(@NonNull LessonDto lessonDto) {        
+    public void delete(@NonNull LessonDto lessonDto) {
         Lesson lesson = deleteChainedEntities(lessonDao.findById(lessonDto.getId()).get());
         lessonDao.save(lesson);
-        lessonDao.deleteById(lesson.getId());        
+        lessonDao.deleteById(lesson.getId());
+        try {
+            calendarService.deleteLesson(Integer.toString(lesson.getId()));
+        } catch (IOException | GeneralSecurityException e) {
+            log.error("Delete from calendar failed");
+        }
         log.info("Lesson deleted succesfull!");
+    }
+
+    private void checkLessonExist(Lesson lesson) {
+        if (lesson.getId() != null && existLesson(lesson)) {
+            throw new EntityAlreadyExistException("Lesson already exist!");
+        }
+    }
+
+    private void checkLessonTime(Lesson lesson, LessonDto lessonDto) {
+        LocalDateTime startLessons = lesson.getStartLesson().toLocalDate().atStartOfDay();
+        LocalDateTime endLessons = startLessons.plusHours(23);
+        List<Lesson> teacherLessons = lessonDao.findAllByStartLessonBetweenAndTeacherIdOrderByStartLesson(startLessons,
+                endLessons, lesson.getTeacher().getId());
+        List<Lesson> groupLessons = lessonDao.findAllByStartLessonBetweenAndGroupIdOrderByStartLesson(startLessons,
+                endLessons, lesson.getGroup().getId());
+        if (lessonDto.getId() == null
+                && (!checkFreeTime(lesson, teacherLessons) || !checkFreeTime(lesson, groupLessons))) {
+            throw new InvalidLessonTimeException("groupteacherbusy");
+        }
+        if (lessonDto.getId() != null && chechLessonChange(lessonDto)
+                && (!checkFreeTime(lesson, teacherLessons) || !checkFreeTime(lesson, groupLessons))) {
+            throw new InvalidLessonTimeException("groupteacherbusy");
+        }
+    }
+    
+    private boolean chechLessonChange(LessonDto lessonDto) {
+        return !checkTimeNotChange(lessonDto) || !checkGroupAndTeacherNotChange(lessonDto);
     }
 
     private boolean checkTimeNotChange(LessonDto lessonDto) {
@@ -137,7 +168,8 @@ public class LessonServiceImpl implements LessonService {
 
     private boolean checkFreeClassroom(Lesson inputLesson) {
         LocalDate lessonDate = inputLesson.getStartLesson().toLocalDate();
-        List<Lesson> dayLessons = lessonDao.findAllByStartLessonBetweenOrderByStartLesson(lessonDate.atStartOfDay(), lessonDate.atStartOfDay().plusHours(23));
+        List<Lesson> dayLessons = lessonDao.findAllByStartLessonBetweenOrderByStartLesson(lessonDate.atStartOfDay(),
+                lessonDate.atStartOfDay().plusHours(23));
         List<Lesson> classroomLessons = new ArrayList<>();
         for (Lesson lesson : dayLessons) {
             if (inputLesson.getClassroom().equals(lesson.getClassroom())) {
@@ -146,7 +178,7 @@ public class LessonServiceImpl implements LessonService {
         }
         return checkFreeTime(inputLesson, classroomLessons);
     }
-    
+
     private Lesson deleteChainedEntities(Lesson lesson) {
         return Lesson.builder()
                 .withId(lesson.getId())
