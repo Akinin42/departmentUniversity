@@ -16,7 +16,7 @@ public class ClassroomDto {
     private Integer number;
 
     @Pattern(regexp = "[a-zA-Z0-9\\_\\- ]+")
-    @NotBlank
+    @NotBlank(message = "address can't be empty")
     @Size(min = 5, max = 100)
     private String address;
 
