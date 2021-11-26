@@ -104,9 +104,11 @@ public class TemporaryUserServiceImpl extends AbstractUserServiceImpl<TemporaryU
     @Override
     public void addConfirmDescription(UserDto inputUser) {
         TemporaryUser temporaryUser = getByEmail(inputUser.getEmail());
-        UserDto user = mapEntityToDto(temporaryUser);        
-        user.setConfirm(false);
-        user.setConfirmDescription(inputUser.getConfirmDescription());
-        temporaryUserDao.save(mapDtoToEntity(user));
+        UserDto userDto = mapEntityToDto(temporaryUser);        
+        userDto.setConfirm(false);
+        userDto.setConfirmDescription(inputUser.getConfirmDescription());
+        TemporaryUser user = mapDtoToEntity(userDto);
+        user.setEnabled(true);
+        temporaryUserDao.save(user);
     }
 }

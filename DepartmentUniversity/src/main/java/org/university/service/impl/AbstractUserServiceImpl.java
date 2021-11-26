@@ -40,7 +40,7 @@ public abstract class AbstractUserServiceImpl<E extends User> implements UserSer
     SecureTokenService secureTokenService;
 
     @Override
-    public void register(@NonNull UserDto userDto) {
+    public void register(@NonNull UserDto userDto) {        
         E user = mapDtoToEntity(userDto);
         if (userDto.getId() != null && existsUser(user)) {
             throw new EntityAlreadyExistException("userexist");

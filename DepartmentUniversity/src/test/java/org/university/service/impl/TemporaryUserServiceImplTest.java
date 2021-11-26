@@ -267,6 +267,7 @@ class TemporaryUserServiceImplTest {
                 .withPhone("78956547475")
                 .withPassword("encodePassword")                
                 .withPhoto("test-photo")
+                .withEnabled(true)
                 .withRole(roleDaoMock.findByName("USER").get())
                 .withDesiredRole(roleDaoMock.findByName("TEACHER").get())
                 .withDesiredDegree("professor")
