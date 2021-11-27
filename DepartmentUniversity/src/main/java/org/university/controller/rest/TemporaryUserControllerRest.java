@@ -58,13 +58,13 @@ public class TemporaryUserControllerRest {
     }
 
     @GetMapping("/{email}")
-    public TemporaryUser getProfile(@PathVariable("email") String email) {
+    public TemporaryUser findUserByEmail(@PathVariable("email") String email) {
         return temporaryUserService.getByEmail(email);
     }
 
     @PostMapping(value = "/update", consumes = { "multipart/form-data" })
     @ResponseStatus(HttpStatus.OK)
-    public TemporaryUser edit(@Valid @RequestPart("user") UserDto user, @RequestPart("photo") MultipartFile photo) {
+    public void edit(@Valid @RequestPart("user") UserDto user, @RequestPart("photo") MultipartFile photo) {
         try {
             user.setPhoto(photo);
             String photoName = photoService.savePhoto(user);
@@ -72,7 +72,6 @@ public class TemporaryUserControllerRest {
             user.setConfirm(true);
             user.setConfirmDescription(null);
             temporaryUserService.edit(user);
-            return temporaryUserService.getByEmail(user.getEmail());
         } catch (EmailExistException | InvalidPhotoException | AuthorisationFailException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }

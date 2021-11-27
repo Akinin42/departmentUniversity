@@ -42,7 +42,7 @@ public class StudentControllerRest {
     PhotoService photoService;
 
     @GetMapping(params = { "page", "size" })
-    public List<Student> getOtherStudents(@RequestParam("page") int page, @RequestParam("size") int size) {
+    public List<Student> getStudents(@RequestParam("page") int page, @RequestParam("size") int size) {
         int lastPage = getLastPage(size);
         if (page < 0) {
             page = 0;

@@ -39,7 +39,7 @@ public class TeacherControllerRest {
     PhotoService photoService;
 
     @GetMapping(params = { "page", "size" })
-    public List<Teacher> getOtherTeachers(@RequestParam("page") int page, @RequestParam("size") int size) {
+    public List<Teacher> getTeachers(@RequestParam("page") int page, @RequestParam("size") int size) {
         int lastPage = getLastPage(size);
         if (page < 0) {
             page = 0;
