@@ -44,7 +44,7 @@ public class TimetableControllerRest {
         return timetableService.createDayTimetable(LocalDate.now());
     }
 
-    @PostMapping("/date")
+    @GetMapping("/date")
     public DayTimetable getTimetableOnDay(@RequestBody DayTimetableDto timetable) {
         if (timetable.getDay().equals("")) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Date can not be empty!");
@@ -52,7 +52,7 @@ public class TimetableControllerRest {
         return timetableService.createDayTimetable(LocalDate.parse(timetable.getDay()));
     }
 
-    @PostMapping("/group")
+    @GetMapping("/group")
     public DayTimetable createGroupTimetable(@RequestBody DayTimetableDto timetable) {
         if (timetable.getDay().equals("")) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Date can not be empty!");
@@ -60,17 +60,17 @@ public class TimetableControllerRest {
         return timetableService.createGroupTimetable(LocalDate.parse(timetable.getDay()), timetable.getGroupName());
     }
 
-    @PostMapping("/weekgroup/{groupname}")
+    @GetMapping("/weekgroup/{groupname}")
     public List<DayTimetable> createWeekGroupTimetable(@PathVariable("groupname") String groupName) {
         return timetableService.createWeekGroupTimetable(LocalDate.now(), groupName);
     }
 
-    @PostMapping("/monthgroup/{groupname}")
+    @GetMapping("/monthgroup/{groupname}")
     public List<DayTimetable> createMonthGroupTimetable(@PathVariable("groupname") String groupName) {
         return timetableService.createMonthGroupTimetable(LocalDate.now(), groupName);
     }
 
-    @PostMapping("/teacher")
+    @GetMapping("/teacher")
     public DayTimetable createTeacherTimetable(@RequestBody DayTimetableDto timetable) {
         if (timetable.getDay().equals("")) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Date can not be empty!");
@@ -79,12 +79,12 @@ public class TimetableControllerRest {
                 timetable.getTeacherEmail());
     }
 
-    @PostMapping("/weekteacher/{teacheremail}")
+    @GetMapping("/weekteacher/{teacheremail}")
     public List<DayTimetable> createWeekTeacherTimetable(@PathVariable("teacheremail") String teacherEmail) {
         return timetableService.createWeekTeacherTimetable(LocalDate.now(), teacherEmail);
     }
 
-    @PostMapping("/monthteacher/{teacheremail}")
+    @GetMapping("/monthteacher/{teacheremail}")
     public List<DayTimetable> createMonthTeacherTimetable(@PathVariable("teacheremail") String teacherEmail) {
         return timetableService.createMonthTeacherTimetable(LocalDate.now(), teacherEmail);
     }
