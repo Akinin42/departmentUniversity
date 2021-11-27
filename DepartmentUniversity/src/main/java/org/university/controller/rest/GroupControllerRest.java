@@ -13,9 +13,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 import org.university.dto.GroupDto;
 import org.university.dto.StudentDto;
 import org.university.entity.Group;
+import org.university.exceptions.EntityAlreadyExistException;
 import org.university.service.GroupService;
 
 import lombok.AccessLevel;
@@ -38,7 +40,11 @@ public class GroupControllerRest {
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
     public void add(@Valid @RequestBody GroupDto group) {
-        groupService.addGroup(group);
+        try {
+            groupService.addGroup(group);
+        } catch (EntityAlreadyExistException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
     }
 
     @PostMapping("/student")
@@ -62,6 +68,10 @@ public class GroupControllerRest {
     @PatchMapping()
     @ResponseStatus(HttpStatus.OK)
     public void edit(@Valid @RequestBody GroupDto group) {
-        groupService.edit(group);
+        try {
+            groupService.edit(group);
+        } catch (EntityAlreadyExistException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
     }
 }
