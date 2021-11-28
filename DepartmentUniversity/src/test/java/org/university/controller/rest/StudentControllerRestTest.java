@@ -90,15 +90,17 @@ class StudentControllerRestTest {
     void testGetStudents() throws Exception {
         List<Student> nextStudents = CreatorTestEntities.createStudents();
         nextStudents.remove(1);
+        nextStudents.remove(0);
         when(studentServiceMock.findNumberOfUsers(5, 1)).thenReturn(nextStudents);
+        when(studentServiceMock.findAll()).thenReturn(nextStudents);
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/api/v1/students?page=1&size=5")
                 .contentType(MediaType.APPLICATION_JSON);
         ResultActions result = mockMvc.perform(request);
         result.andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$[3].name", is("John Brown")))
-                .andExpect(jsonPath("$[4].name", is("Pol Hardy")))
-                .andExpect(jsonPath("$", Matchers.hasSize(5)));
+                .andExpect(jsonPath("$[2].name", is("John Brown")))
+                .andExpect(jsonPath("$[3].name", is("Pol Hardy")))
+                .andExpect(jsonPath("$", Matchers.hasSize(4)));
     }
 
     @Test
