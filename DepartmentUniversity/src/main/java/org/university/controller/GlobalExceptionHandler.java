@@ -19,7 +19,7 @@ import org.university.exceptions.EntityAlreadyExistException;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
-
+    
     @ExceptionHandler(EntityAlreadyExistException.class)
     public ModelAndView handleEntityAlreadyExistException(Exception e, HttpServletRequest request) {
         ModelAndView response = new ModelAndView();
@@ -47,12 +47,12 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler({ ResponseStatusException.class })
     public ResponseEntity<String> handleResponseStatusExceptions(ResponseStatusException e) {
-        return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(e.getMessage(), e.getStatus());
     }
-
+    
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public String handleServerException(Exception e, HttpServletRequest request) {
         return "error500";
-    }
+    }    
 }

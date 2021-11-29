@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 import org.university.dto.GroupDto;
 import org.university.dto.UserDto;
 import org.university.entity.DayTimetable;
@@ -77,6 +78,7 @@ public class PDFControllerRest {
             }
         } catch (IOException e) {
             log.error("File creation failed!");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "File creation failed!");
         }
     }
 }

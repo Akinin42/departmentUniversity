@@ -49,7 +49,7 @@ import ch.qos.logback.core.read.ListAppender;
 class PDFControllerRestTest {
 
     private MockMvc mockMvc;
-    
+
     private ObjectMapper mapper;
 
     @Mock
@@ -195,7 +195,10 @@ class PDFControllerRestTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(groupDto));
-        mockMvc.perform(request);
+        ResultActions result = mockMvc.perform(request);
+        result.andExpect(exception -> assertEquals(exception.getResolvedException().getMessage(),
+                "500 INTERNAL_SERVER_ERROR \"File creation failed!\""))
+                .andExpect(status().isInternalServerError());
         List<ILoggingEvent> logsList = listAppender.list;
         assertEquals("File creation failed!", logsList.get(0).getMessage());
         assertEquals(Level.ERROR, logsList.get(0).getLevel());

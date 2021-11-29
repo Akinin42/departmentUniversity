@@ -24,6 +24,7 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.university.controller.GlobalExceptionHandler;
 import org.university.dto.GroupDto;
 import org.university.dto.UserDto;
 import org.university.entity.DayTimetable;
@@ -55,7 +56,7 @@ class CSVControllerRestTest {
     public void setUpBeforeClass() throws Exception {
         mapper = new ObjectMapper();
         csvController = new CSVControllerRest(timetableServiceMock, new CSVDataGenerator());
-        mockMvc = MockMvcBuilders.standaloneSetup(csvController).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(csvController).setControllerAdvice(new GlobalExceptionHandler()).build();
     }
 
     @Test
@@ -164,7 +165,7 @@ class CSVControllerRestTest {
     void createWeekGroupTimetableCSVWhenIOException() throws Exception {
         CSVDataGenerator csvDataGeneratorMock = mock(CSVDataGenerator.class);
         CSVControllerRest csvController = new CSVControllerRest(timetableServiceMock, csvDataGeneratorMock);
-        mockMvc = MockMvcBuilders.standaloneSetup(csvController).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(csvController).setControllerAdvice(new GlobalExceptionHandler()).build();
         Logger csvControllerLogger = (Logger) LoggerFactory.getLogger(CSVControllerRest.class);
         ListAppender<ILoggingEvent> listAppender = new ListAppender<>();
         listAppender.start();
@@ -178,7 +179,10 @@ class CSVControllerRestTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(groupDto));
-        mockMvc.perform(request);
+        ResultActions result = mockMvc.perform(request);
+        result.andExpect(exception -> assertEquals(
+                exception.getResolvedException().getMessage(), "500 INTERNAL_SERVER_ERROR \"File creation failed!\""))
+                    .andExpect(status().isInternalServerError());
         List<ILoggingEvent> logsList = listAppender.list;
         assertEquals("File creation failed!", logsList.get(0).getMessage());
         assertEquals(Level.ERROR, logsList.get(0).getLevel());
@@ -188,7 +192,7 @@ class CSVControllerRestTest {
     void createWeekTeacherTimetableCSVWhenIOException() throws Exception {
         CSVDataGenerator csvDataGeneratorMock = mock(CSVDataGenerator.class);
         CSVControllerRest csvController = new CSVControllerRest(timetableServiceMock, csvDataGeneratorMock);
-        mockMvc = MockMvcBuilders.standaloneSetup(csvController).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(csvController).setControllerAdvice(new GlobalExceptionHandler()).build();
         Logger csvControllerLogger = (Logger) LoggerFactory.getLogger(CSVControllerRest.class);
         ListAppender<ILoggingEvent> listAppender = new ListAppender<>();
         listAppender.start();
@@ -203,7 +207,10 @@ class CSVControllerRestTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(teacher));
-        mockMvc.perform(request);
+        ResultActions result = mockMvc.perform(request);
+        result.andExpect(exception -> assertEquals(
+                exception.getResolvedException().getMessage(), "500 INTERNAL_SERVER_ERROR \"File creation failed!\""))
+                .andExpect(status().isInternalServerError());
         List<ILoggingEvent> logsList = listAppender.list;
         assertEquals("File creation failed!", logsList.get(0).getMessage());
         assertEquals(Level.ERROR, logsList.get(0).getLevel());

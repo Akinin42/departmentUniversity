@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 import org.university.dto.GroupDto;
 import org.university.dto.UserDto;
 import org.university.entity.DayTimetable;
@@ -41,7 +42,7 @@ public class CSVControllerRest {
     @ResponseStatus(HttpStatus.OK)
     public void createWeekGroupTimetableCSV(@RequestBody GroupDto group, HttpServletResponse response) {
         List<DayTimetable> timetables = timetableService.createWeekGroupTimetable(LocalDate.now(), group.getName());
-        createGroupTimetable(timetables, response, group.getName());
+        createGroupTimetable(timetables, response, group.getName());        
     }
 
     @PostMapping("/monthgroup")
@@ -69,15 +70,18 @@ public class CSVControllerRest {
         createTeacherTimetable(timetables, response, teacher.getName());
     }
 
-    private void createGroupTimetable(List<DayTimetable> timetables, HttpServletResponse response, String groupName) {
+    private void createGroupTimetable(List<DayTimetable> timetables, HttpServletResponse response, String groupName){
         response.setContentType(CSV);
         String headerKey = "Content-Disposition";
         String headerValue = String.format("attachment; filename=%s timetable.csv", groupName);
         response.setHeader(headerKey, headerValue);
+        response.setStatus(500);
         try (CSVWriter writer = new CSVWriter(response.getWriter())) {
             writer.writeAll(csvGenerator.generateGroupsData(timetables));
+            response.setStatus(200);
         } catch (IOException e) {
-            log.error("File creation failed!");
+            log.error("File creation failed!");            
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "File creation failed!");
         }
     }
 
@@ -87,10 +91,13 @@ public class CSVControllerRest {
         String headerKey = "Content-Disposition";
         String headerValue = String.format("attachment; filename=%s timetable.csv", teacherName);
         response.setHeader(headerKey, headerValue);
-        try (CSVWriter writer = new CSVWriter(response.getWriter())) {
+        response.setStatus(500);
+        try (CSVWriter writer = new CSVWriter(response.getWriter())) {            
             writer.writeAll(csvGenerator.generateTeachersData(timetables));
+            response.setStatus(200);
         } catch (IOException e) {
             log.error("File creation failed!");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "File creation failed!");
         }
     }
 }
