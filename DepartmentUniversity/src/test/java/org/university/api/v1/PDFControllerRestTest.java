@@ -1,4 +1,4 @@
-package org.university.controller.rest;
+package org.university.api.v1;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
@@ -73,7 +73,7 @@ class PDFControllerRestTest {
         timetables.add(new DayTimetable(LocalDate.parse("2020-10-20"), lessons));
         when(timetableServiceMock.createWeekGroupTimetable(LocalDate.now(), "test group week name"))
                 .thenReturn(timetables);
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/api/v1/pdf/weekgroup")
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/api/v1/pdf/weekgroup")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(groupDto));
@@ -101,7 +101,7 @@ class PDFControllerRestTest {
         timetables.add(new DayTimetable(LocalDate.parse("2020-10-20"), lessons));
         when(timetableServiceMock.createMonthGroupTimetable(LocalDate.now(), "test group mounth name"))
                 .thenReturn(timetables);
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/api/v1/pdf/monthgroup")
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/api/v1/pdf/monthgroup")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(groupDto));
@@ -127,7 +127,7 @@ class PDFControllerRestTest {
         List<DayTimetable> timetables = new ArrayList<>();
         timetables.add(new DayTimetable(LocalDate.parse("2020-10-20"), lessons));
         when(timetableServiceMock.createWeekTeacherTimetable(LocalDate.now(), "test email")).thenReturn(timetables);
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/api/v1/pdf/weekteacher")
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/api/v1/pdf/weekteacher")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(teacher));
@@ -155,7 +155,7 @@ class PDFControllerRestTest {
         List<DayTimetable> timetables = new ArrayList<>();
         timetables.add(new DayTimetable(LocalDate.parse("2020-10-20"), lessons));
         when(timetableServiceMock.createMonthTeacherTimetable(LocalDate.now(), "test email")).thenReturn(timetables);
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/api/v1/pdf/monthteacher")
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/api/v1/pdf/monthteacher")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(teacher));
@@ -191,7 +191,7 @@ class PDFControllerRestTest {
         timetables.add(new DayTimetable(LocalDate.parse("2020-10-20"), lessons));
         when(timetableServiceMock.createWeekGroupTimetable(LocalDate.now(), "test group week name"))
                 .thenReturn(timetables);
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/api/v1/pdf/weekgroup")
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/api/v1/pdf/weekgroup")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(groupDto));

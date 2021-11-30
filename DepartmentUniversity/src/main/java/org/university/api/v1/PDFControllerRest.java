@@ -1,4 +1,4 @@
-package org.university.controller.rest;
+package org.university.api.v1;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -8,10 +8,9 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import org.university.dto.GroupDto;
@@ -37,30 +36,26 @@ public class PDFControllerRest {
     DayTimetableService timetableService;
     PDFDataGenerator pdfGenerator;
 
-    @PostMapping("/weekgroup")
-    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/weekgroup")    
     public void createWeekGroupTimetablePDF(@RequestBody GroupDto group, HttpServletResponse response) {
         List<DayTimetable> timetables = timetableService.createWeekGroupTimetable(LocalDate.now(), group.getName());
         createTimetable(timetables, response, group);
     }
 
-    @PostMapping("/monthgroup")
-    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/monthgroup")    
     public void createMonthGroupTimetablePDF(@RequestBody GroupDto group, HttpServletResponse response) {
         List<DayTimetable> timetables = timetableService.createMonthGroupTimetable(LocalDate.now(), group.getName());
         createTimetable(timetables, response, group);
     }
 
-    @PostMapping("/weekteacher")
-    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/weekteacher")    
     public void createWeekTeacherTimetablePDF(@RequestBody UserDto teacher, HttpServletResponse response) {
         List<DayTimetable> timetables = timetableService.createWeekTeacherTimetable(LocalDate.now(),
                 teacher.getEmail());
         createTimetable(timetables, response, teacher);
     }
 
-    @PostMapping("/monthteacher")
-    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/monthteacher")    
     public void createMonthTeacherTimetablePDF(@RequestBody UserDto teacher, HttpServletResponse response) {
         List<DayTimetable> timetables = timetableService.createMonthTeacherTimetable(LocalDate.now(),
                 teacher.getEmail());

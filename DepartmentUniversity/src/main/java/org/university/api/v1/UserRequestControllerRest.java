@@ -1,4 +1,4 @@
-package org.university.controller.rest;
+package org.university.api.v1;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,7 +27,7 @@ public class UserRequestControllerRest {
     TemporaryUserService temporaryUserService;
 
     @PostMapping()
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.CREATED)
     public void registerUser(@RequestBody UserDto user) {
         TemporaryUser temporaryUser = temporaryUserService.getByEmail(user.getEmail());
         user = temporaryUserService.mapEntityToDto(temporaryUser);
@@ -40,7 +40,6 @@ public class UserRequestControllerRest {
     }
 
     @PostMapping("/unconfirm")
-    @ResponseStatus(HttpStatus.OK)
     public void unconfirmUser(@RequestBody UserDto user) {
         temporaryUserService.addConfirmDescription(user);        
     }

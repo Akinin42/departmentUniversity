@@ -1,4 +1,4 @@
-package org.university.controller.rest;
+package org.university.api.v1;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -101,13 +101,11 @@ public class TimetableControllerRest {
     }
 
     @DeleteMapping()
-    @ResponseStatus(HttpStatus.OK)
     public void deleteLesson(@RequestBody LessonDto lesson) {
         lessonService.delete(lesson);
     }
 
     @PatchMapping()
-    @ResponseStatus(HttpStatus.OK)
     public void edit(@Valid @RequestBody LessonDto lesson) {
         try {
             lessonService.edit(lesson);

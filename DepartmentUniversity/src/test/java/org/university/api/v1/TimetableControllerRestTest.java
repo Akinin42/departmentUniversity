@@ -1,4 +1,4 @@
-package org.university.controller.rest;
+package org.university.api.v1;
 
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.Matchers.is;
@@ -39,12 +39,8 @@ import org.university.exceptions.ClassroomBusyException;
 import org.university.exceptions.InvalidClassroomCapacityException;
 import org.university.exceptions.InvalidLessonTimeException;
 import org.university.exceptions.InvalidLinkException;
-import org.university.service.ClassroomService;
-import org.university.service.CourseService;
 import org.university.service.DayTimetableService;
-import org.university.service.GroupService;
 import org.university.service.LessonService;
-import org.university.service.TeacherService;
 import org.university.utils.CreatorTestEntities;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -56,18 +52,6 @@ class TimetableControllerRestTest {
     private MockMvc mockMvc;
     
     private ObjectMapper mapper;
-
-    @Mock
-    private GroupService groupServiceMock;
-
-    @Mock
-    private CourseService courseServiceMock;
-
-    @Mock
-    private ClassroomService classroomServiceMock;
-
-    @Mock
-    private TeacherService teacherServiceMock;
 
     @Mock
     private LessonService lessonServiceMock;

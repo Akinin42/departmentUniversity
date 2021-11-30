@@ -1,4 +1,4 @@
-package org.university.controller.rest;
+package org.university.api.v1;
 
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -69,7 +69,7 @@ class UserRequestControllerRestTest {
                 .accept(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(user));
         ResultActions result = mockMvc.perform(request);
-        result.andExpect(status().isOk());
+        result.andExpect(status().isCreated());
         verify(studentServiceMock).register(user);
         verify(temporaryUserServiceMock).delete(user);
     }
@@ -88,7 +88,7 @@ class UserRequestControllerRestTest {
                 .accept(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(user));
         ResultActions result = mockMvc.perform(request);
-        result.andExpect(status().isOk());
+        result.andExpect(status().isCreated());
         verify(teacherServiceMock).register(user);
         verify(temporaryUserServiceMock).delete(user);
     }

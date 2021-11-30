@@ -1,4 +1,4 @@
-package org.university.controller.rest;
+package org.university.api.v1;
 
 import java.util.List;
 
@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
@@ -54,20 +53,17 @@ public class StudentControllerRest {
     }
 
     @DeleteMapping()
-    @ResponseStatus(HttpStatus.OK)
     public void delete(@RequestBody StudentDto student) {
         studentService.delete(student);
     }
 
     @PostMapping("/course")
-    @ResponseStatus(HttpStatus.OK)
     public void addCourse(@RequestBody StudentDto student) {
         Course course = courseService.createCourse(student.getCourseName());
         studentService.addStudentToCourse(student, course);
     }
 
     @DeleteMapping("/course")
-    @ResponseStatus(HttpStatus.OK)
     public void deleteCourse(@RequestBody StudentDto student) {
         Course course = courseService.createCourse(student.getCourseName());
         studentService.deleteStudentFromCourse(student, course);
@@ -79,7 +75,6 @@ public class StudentControllerRest {
     }
 
     @PostMapping(consumes = { "multipart/form-data" })
-    @ResponseStatus(HttpStatus.OK)
     public void edit(@Valid @RequestPart("student") StudentDto student, @RequestPart("photo") MultipartFile photo) {
         try {
             student.setPhoto(photo);

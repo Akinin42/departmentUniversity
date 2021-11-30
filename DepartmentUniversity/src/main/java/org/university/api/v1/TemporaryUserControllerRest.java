@@ -1,4 +1,4 @@
-package org.university.controller.rest;
+package org.university.api.v1;
 
 import java.util.List;
 import java.util.Locale;
@@ -63,7 +63,6 @@ public class TemporaryUserControllerRest {
     }
 
     @PostMapping(value = "/update", consumes = { "multipart/form-data" })
-    @ResponseStatus(HttpStatus.OK)
     public void edit(@Valid @RequestPart("user") UserDto user, @RequestPart("photo") MultipartFile photo) {
         try {
             user.setPhoto(photo);

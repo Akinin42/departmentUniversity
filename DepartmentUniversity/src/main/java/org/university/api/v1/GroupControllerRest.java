@@ -1,4 +1,4 @@
-package org.university.controller.rest;
+package org.university.api.v1;
 
 import java.util.List;
 
@@ -47,26 +47,22 @@ public class GroupControllerRest {
         }
     }
 
-    @PostMapping("/student")
-    @ResponseStatus(HttpStatus.OK)
+    @PostMapping("/student")    
     public void addStudent(@RequestBody StudentDto student) {
         groupService.addStudentToGroup(student);
     }
 
-    @DeleteMapping("/student")
-    @ResponseStatus(HttpStatus.OK)
+    @DeleteMapping("/student")    
     public void deleteStudent(@RequestBody StudentDto student) {
         groupService.deleteStudentFromGroup(student);
     }
 
-    @DeleteMapping()
-    @ResponseStatus(HttpStatus.OK)
+    @DeleteMapping()    
     public void delete(@RequestBody GroupDto group) {
         groupService.delete(group);
     }
 
-    @PatchMapping()
-    @ResponseStatus(HttpStatus.OK)
+    @PatchMapping()    
     public void edit(@Valid @RequestBody GroupDto group) {
         try {
             groupService.edit(group);

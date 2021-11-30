@@ -1,4 +1,4 @@
-package org.university.controller.rest;
+package org.university.api.v1;
 
 import java.util.List;
 
@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
@@ -51,7 +50,6 @@ public class TeacherControllerRest {
     }
 
     @DeleteMapping()
-    @ResponseStatus(HttpStatus.OK)
     public void delete(@RequestBody UserDto teacher) {
         teacherService.delete(teacher);
     }
@@ -62,7 +60,6 @@ public class TeacherControllerRest {
     }
 
     @PostMapping(consumes = { "multipart/form-data" })
-    @ResponseStatus(HttpStatus.OK)
     public void edit(@Valid @RequestPart("teacher") UserDto teacher, @RequestPart("photo") MultipartFile photo) {
         try {
             teacher.setPhoto(photo);

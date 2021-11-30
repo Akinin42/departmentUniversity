@@ -1,4 +1,4 @@
-package org.university.controller.rest;
+package org.university.api.v1;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.doThrow;
