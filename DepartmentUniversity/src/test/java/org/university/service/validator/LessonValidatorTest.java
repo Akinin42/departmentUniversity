@@ -1,5 +1,6 @@
 package org.university.service.validator;
 
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -112,7 +113,44 @@ class LessonValidatorTest {
                                 .withLessonLink("   ")
                                 .build();
         assertThatThrownBy(() -> validator.validate(lesson)).isInstanceOf(InvalidLinkException.class);
-    }    
+    }
+    
+    @Test
+    void validateShouldNotThrowWhenInputValidLesson() {
+        Group groupMock = mock(Group.class);
+        Classroom classroomMock = mock(Classroom.class);
+        Set students = mock(Set.class);
+        when(groupMock.getStudents()).thenReturn(students);
+        when(students.size()).thenReturn(10);
+        when(classroomMock.getCapacity()).thenReturn(15);
+        Lesson lesson = Lesson.builder()
+                                .withGroup(groupMock)
+                                .withClassroom(classroomMock)
+                                .withStartLesson(LocalDateTime.of(2021, Month.MAY, 28, 13, 00, 00))
+                                .withEndLesson(LocalDateTime.of(2021, Month.MAY, 28, 15, 00, 00))
+                                .withOnlineLesson(true)
+                                .withLessonLink("valid link")
+                                .build();        
+        assertThatCode(() -> validator.validate(lesson)).doesNotThrowAnyException();
+    }
+    
+    @Test
+    void validateShouldNotThrowWhenInputValidOfflineLesson() {
+        Group groupMock = mock(Group.class);
+        Classroom classroomMock = mock(Classroom.class);
+        Set students = mock(Set.class);
+        when(groupMock.getStudents()).thenReturn(students);
+        when(students.size()).thenReturn(10);
+        when(classroomMock.getCapacity()).thenReturn(15);
+        Lesson lesson = Lesson.builder()
+                                .withGroup(groupMock)
+                                .withClassroom(classroomMock)
+                                .withStartLesson(LocalDateTime.of(2021, Month.MAY, 28, 13, 00, 00))
+                                .withEndLesson(LocalDateTime.of(2021, Month.MAY, 28, 15, 00, 00))
+                                .withOnlineLesson(false)                                
+                                .build();        
+        assertThatCode(() -> validator.validate(lesson)).doesNotThrowAnyException();
+    }
 
     private Lesson createTestLesson(LocalDateTime start, LocalDateTime end) {
         Group groupMock = mock(Group.class);

@@ -109,18 +109,13 @@ public class LessonServiceImpl implements LessonService {
                 endLessons, lesson.getTeacher().getId());
         List<Lesson> groupLessons = lessonDao.findAllByStartLessonBetweenAndGroupIdOrderByStartLesson(startLessons,
                 endLessons, lesson.getGroup().getId());
-        if (lessonDto.getId() == null
-                && (!checkFreeTime(lesson, teacherLessons) || !checkFreeTime(lesson, groupLessons))) {
+        if (lessonDto.getId() != null) {
+            teacherLessons = deleteEditedLessonFromList(lessonDto.getId(), teacherLessons);
+            groupLessons = deleteEditedLessonFromList(lessonDto.getId(), groupLessons);
+        }
+        if (!checkFreeTime(lesson, teacherLessons) || !checkFreeTime(lesson, groupLessons)) {
             throw new InvalidLessonTimeException("groupteacherbusy");
         }
-        if (lessonDto.getId() != null && chechLessonChange(lessonDto)
-                && (!checkFreeTime(lesson, teacherLessons) || !checkFreeTime(lesson, groupLessons))) {
-            throw new InvalidLessonTimeException("groupteacherbusy");
-        }
-    }
-    
-    private boolean chechLessonChange(LessonDto lessonDto) {
-        return !checkTimeNotChange(lessonDto) || !checkGroupAndTeacherNotChange(lessonDto);
     }
 
     private boolean checkTimeNotChange(LessonDto lessonDto) {
@@ -128,12 +123,6 @@ public class LessonServiceImpl implements LessonService {
                 .isEqual(LocalDateTime.parse(lessonDto.getStartLesson()))
                 && lessonDao.findById(lessonDto.getId()).get().getEndLesson()
                         .isEqual(LocalDateTime.parse(lessonDto.getEndLesson())));
-    }
-
-    private boolean checkGroupAndTeacherNotChange(LessonDto lessonDto) {
-        return (lessonDao.findById(lessonDto.getId()).get().getGroup().getName().equals(lessonDto.getGroupName())
-                && lessonDao.findById(lessonDto.getId()).get().getTeacher().getEmail()
-                        .equals(lessonDto.getTeacherEmail()));
     }
 
     private boolean checkClassroomNotChange(LessonDto lessonDto) {
@@ -152,10 +141,10 @@ public class LessonServiceImpl implements LessonService {
         LocalDateTime inputLessonStart = lesson.getStartLesson();
         LocalDateTime inputLessonEnd = lesson.getEndLesson();
         for (int i = 0; i < lessons.size(); i++) {
-            if (inputLessonEnd.isBefore(lessons.get(i).getStartLesson()) && i == 0) {
+            if (i == 0 && inputLessonEnd.isBefore(lessons.get(i).getStartLesson())) {
                 return true;
             }
-            if (inputLessonStart.isAfter(lessons.get(i).getEndLesson()) && (i + 1) == lessons.size()) {
+            if ((i + 1) == lessons.size() && inputLessonStart.isAfter(lessons.get(i).getEndLesson())) {
                 return true;
             }
             if (inputLessonStart.isAfter(lessons.get(i).getEndLesson())
@@ -176,20 +165,25 @@ public class LessonServiceImpl implements LessonService {
                 classroomLessons.add(lesson);
             }
         }
+        if (inputLesson.getId() != null) {
+            classroomLessons = deleteEditedLessonFromList(inputLesson.getId(), classroomLessons);
+        }
         return checkFreeTime(inputLesson, classroomLessons);
     }
 
+    private List<Lesson> deleteEditedLessonFromList(int editedLessonId, List<Lesson> lessons) {
+        List<Lesson> lessonsWithoutEdited = new ArrayList<>();
+        for (int i = 0; i < lessons.size(); i++) {
+            if (lessons.get(i).getId() != editedLessonId) {
+                lessonsWithoutEdited.add(lessons.get(i));
+            }
+        }
+        return lessonsWithoutEdited;
+    }
+
     private Lesson deleteChainedEntities(Lesson lesson) {
-        return Lesson.builder()
-                .withId(lesson.getId())
-                .withCourse(null)
-                .withGroup(null)
-                .withTeacher(null)
-                .withClassroom(null)
-                .withStartLesson(lesson.getStartLesson())
-                .withEndLesson(lesson.getEndLesson())
-                .withOnlineLesson(lesson.getOnlineLesson())
-                .withLessonLink(lesson.getLessonLink())
-                .build();
+        return Lesson.builder().withId(lesson.getId()).withCourse(null).withGroup(null).withTeacher(null)
+                .withClassroom(null).withStartLesson(lesson.getStartLesson()).withEndLesson(lesson.getEndLesson())
+                .withOnlineLesson(lesson.getOnlineLesson()).withLessonLink(lesson.getLessonLink()).build();
     }
 }
