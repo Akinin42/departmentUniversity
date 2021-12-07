@@ -100,8 +100,10 @@ public class TimetableControllerRest {
         }
     }
 
-    @DeleteMapping()
-    public void deleteLesson(@RequestBody LessonDto lesson) {
+    @DeleteMapping("/{id}")
+    public void deleteLesson(@PathVariable("id") int id) {
+        LessonDto lesson = new LessonDto();
+        lesson.setId(id);
         lessonService.delete(lesson);
     }
 

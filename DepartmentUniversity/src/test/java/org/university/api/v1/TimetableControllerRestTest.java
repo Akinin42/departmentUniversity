@@ -362,11 +362,9 @@ class TimetableControllerRestTest {
     @Test
     void testDeleteLesson() throws Exception {
         LessonDto lesson = new LessonDto();
-        lesson.setStartLesson("2010-10-10T10:00");
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.delete("/api/v1/timetables")
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON)
-                .content(mapper.writeValueAsString(lesson));
+        lesson.setId(1);
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.delete("/api/v1/timetables/1")
+                .contentType(MediaType.APPLICATION_JSON);
         ResultActions result = mockMvc.perform(request);
         result.andExpect(status().isOk());
         verify(lessonServiceMock).delete(lesson);

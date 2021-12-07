@@ -41,7 +41,7 @@ class PhotoServiceImplTest {
         when(photoMock.isEmpty()).thenReturn(true);
         user.setPhoto(photoMock);
         user.setSex(Sex.MALE);
-        assertThat(photoService.savePhoto(user)).isEqualTo("~/DepartmentUniversity/static/images/malestudent.png");
+        assertThat(photoService.savePhoto(user)).isEqualTo("~/university/static/images/malestudent.png");
     }
     
     @Test
@@ -52,7 +52,7 @@ class PhotoServiceImplTest {
         when(photoMock.isEmpty()).thenReturn(true);
         user.setPhoto(photoMock);
         user.setSex(Sex.MALE);
-        assertThat(photoService.savePhoto(user)).isEqualTo("~/DepartmentUniversity/static/images/malestudent.png");
+        assertThat(photoService.savePhoto(user)).isEqualTo("~/university/static/images/malestudent.png");
     }
 
     @Test
@@ -63,7 +63,7 @@ class PhotoServiceImplTest {
         when(photoMock.isEmpty()).thenReturn(true);
         user.setPhoto(photoMock);
         user.setSex(Sex.FEMALE);
-        assertThat(photoService.savePhoto(user)).isEqualTo("~/DepartmentUniversity/static/images/femalestudent.png");
+        assertThat(photoService.savePhoto(user)).isEqualTo("~/university/static/images/femalestudent.png");
     }
 
     @Test
@@ -74,7 +74,7 @@ class PhotoServiceImplTest {
         when(photoMock.isEmpty()).thenReturn(true);
         user.setPhoto(photoMock);
         user.setSex(Sex.MALE);
-        assertThat(photoService.savePhoto(user)).isEqualTo("~/DepartmentUniversity/static/images/maleteacher.png");
+        assertThat(photoService.savePhoto(user)).isEqualTo("~/university/static/images/maleteacher.png");
     }
     
     @Test
@@ -85,7 +85,7 @@ class PhotoServiceImplTest {
         when(photoMock.isEmpty()).thenReturn(true);
         user.setPhoto(photoMock);
         user.setSex(Sex.MALE);
-        assertThat(photoService.savePhoto(user)).isEqualTo("~/DepartmentUniversity/static/images/maleteacher.png");
+        assertThat(photoService.savePhoto(user)).isEqualTo("~/university/static/images/maleteacher.png");
     }
 
     @Test
@@ -96,7 +96,7 @@ class PhotoServiceImplTest {
         when(photoMock.isEmpty()).thenReturn(true);
         user.setPhoto(photoMock);
         user.setSex(Sex.FEMALE);
-        assertThat(photoService.savePhoto(user)).isEqualTo("~/DepartmentUniversity/static/images/femaleteacher.png");
+        assertThat(photoService.savePhoto(user)).isEqualTo("~/university/static/images/femaleteacher.png");
     }
 
     @Test

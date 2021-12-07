@@ -52,10 +52,9 @@ public class ClassroomServiceImpl implements ClassroomService {
 
     @Override
     public void delete(@NonNull ClassroomDto classroomDto) {
-        Classroom classroom = mapDtoToEntity(classroomDto);
-        if (classroomDao.existsById(classroom.getId())) {
-            classroomDao.deleteById(classroom.getId());
-            log.info("Classroom with number {} deleted!", classroom.getNumber());
+        if (classroomDao.existsById(classroomDto.getId())) {
+            classroomDao.deleteById(classroomDto.getId());
+            log.info("Classroom with id {} deleted!", classroomDto.getId());
         }
     }
     

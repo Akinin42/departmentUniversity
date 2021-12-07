@@ -142,10 +142,9 @@ class ClassroomControllerRestTest {
     @Test
     void testDelete() throws Exception {
         ClassroomDto classroom = new ClassroomDto();
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.delete("/api/v1/classrooms")
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON)
-                .content(mapper.writeValueAsString(classroom));
+        classroom.setId(1);
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.delete("/api/v1/classrooms/1")
+                .contentType(MediaType.APPLICATION_JSON);
         ResultActions result = mockMvc.perform(request);
         result.andExpect(status().isOk());
         verify(classroomServiceMock).delete(classroom);

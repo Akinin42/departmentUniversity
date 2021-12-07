@@ -58,8 +58,7 @@ public abstract class AbstractUserServiceImpl<E extends User> implements UserSer
 
     @Override
     public void delete(@NonNull UserDto userDto) {
-        User user = mapDtoToEntity(userDto);
-        userDao.deleteById(user.getId());
+        userDao.deleteById(userDto.getId());
         log.info("User deleted from database!");
     }
 

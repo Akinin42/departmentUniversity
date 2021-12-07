@@ -52,8 +52,10 @@ public class StudentControllerRest {
         return studentService.findNumberOfUsers(size, page);
     }
 
-    @DeleteMapping()
-    public void delete(@RequestBody StudentDto student) {
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable("id") int id) {
+        StudentDto student = new StudentDto();
+        student.setId(id);
         studentService.delete(student);
     }
 

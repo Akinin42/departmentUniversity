@@ -110,15 +110,12 @@ class TeacherControllerRestTest {
                 .andExpect(jsonPath("$", Matchers.hasSize(1)));
     }
 
-
-
     @Test
     void testDelete() throws Exception {
         UserDto teacher = new UserDto();
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.delete("/api/v1/teachers")
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON)
-                .content(mapper.writeValueAsString(teacher));
+        teacher.setId(1);
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.delete("/api/v1/teachers/1")
+                .contentType(MediaType.APPLICATION_JSON);
         ResultActions result = mockMvc.perform(request);
         result.andExpect(status().isOk());
         verify(teacherServiceMock).delete(teacher);

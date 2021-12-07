@@ -123,10 +123,9 @@ class StudentControllerRestTest {
     @Test
     void testDelete() throws Exception {
         StudentDto student = new StudentDto();
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.delete("/api/v1/students")
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON)
-                .content(mapper.writeValueAsString(student));
+        student.setId(1);
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.delete("/api/v1/students/1")
+                .contentType(MediaType.APPLICATION_JSON);
         ResultActions result = mockMvc.perform(request);
         result.andExpect(status().isOk());
         verify(studentServiceMock).delete(student);

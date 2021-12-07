@@ -17,7 +17,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 public class PhotoServiceImpl implements PhotoService {
 
-    private static final String DEFAULT_PATH = "~/DepartmentUniversity/static/images/";
+    private static final String DEFAULT_PATH = "~/university/static/images/";
 
     AwsS3Service awsS3Service;
     PhotoValidator validator;
