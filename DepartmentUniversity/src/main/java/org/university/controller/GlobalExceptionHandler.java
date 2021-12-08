@@ -16,6 +16,7 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.university.exceptions.EntityAlreadyExistException;
+import org.university.exceptions.EntityNotExistException;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -48,6 +49,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler({ ResponseStatusException.class })
     public ResponseEntity<String> handleResponseStatusExceptions(ResponseStatusException e) {
         return new ResponseEntity<>(e.getMessage(), e.getStatus());
+    }
+    
+    @ExceptionHandler({ EntityNotExistException.class })
+    public ResponseEntity<String> handleEntityNotExistException(EntityNotExistException e) {
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
     }
     
     @ExceptionHandler(Exception.class)

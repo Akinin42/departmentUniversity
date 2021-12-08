@@ -35,6 +35,7 @@ import org.university.dto.StudentDto;
 import org.university.entity.Course;
 import org.university.entity.Student;
 import org.university.exceptions.EmailExistException;
+import org.university.exceptions.EntityNotExistException;
 import org.university.exceptions.InvalidPhotoException;
 import org.university.service.CourseService;
 import org.university.service.PhotoService;
@@ -162,7 +163,7 @@ class StudentControllerRestTest {
     }
 
     @Test
-    void testfFindStudentByEmailWhenStudentWithInputEmailAndPasswordExists() throws Exception {
+    void testfFindStudentByEmailWhenStudentWithInputEmailExists() throws Exception {
         Student expectedStudent = Student.builder().withEmail("test").build();
         when(studentServiceMock.getByEmail("test")).thenReturn(expectedStudent);
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/api/v1/students/test")
@@ -171,6 +172,16 @@ class StudentControllerRestTest {
         result.andExpect(status().isOk())
                 .andExpect(jsonPath("$", notNullValue()))
                 .andExpect(jsonPath("$.email", is("test")));
+    }
+    
+    @Test
+    void testfFindStudentByEmailWhenStudentWithInputEmailNotExists() throws Exception {        
+        doThrow(new EntityNotExistException("Student with unexistedemail not found")).when(studentServiceMock)
+            .getByEmail("unexistedemail");        
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/api/v1/students/unexistedemail")
+                .contentType(MediaType.APPLICATION_JSON);
+        ResultActions result = mockMvc.perform(request);
+        result.andExpect(status().isNotFound());
     }
 
     @Test

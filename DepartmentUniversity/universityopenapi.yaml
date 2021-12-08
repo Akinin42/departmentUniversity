@@ -1,0 +1,204 @@
+openapi: 3.0.0
+info: 
+  description: "This is an University user interface. You can interact with different objects in university: students, teachers, groups, courses, classrooms, lessons, shedules. You can use CRUD operations for it. User registration is implemented through confirmation of the email address and manual verification by the administration."
+  version: 1.0.0
+  title: University
+servers:
+- url: http://api/v1
+  description: university server
+tags:
+- name: students
+  description: Everything about students
+paths:
+  /students/{page}&{size}:
+    get:
+      tags: 
+      - "students"
+      summary: "Find the number of students"
+      description: "Returns a number of students equals size, pageable"
+      responses:
+        '200':
+          description: A list of students
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Student'
+    parameters:
+    - name: page
+      in: path
+      description: page number from 0
+      required: true
+      schema:
+        type: integer
+    - name: size
+      in: path
+      description: page's size
+      required: true
+      schema:
+        type: integer
+  /students/{email}:
+    get:
+      tags: 
+      - "students"
+      summary: "Find the student by email"
+      description: "Returns a student with input email"
+      responses:
+        '200':
+          description: A student
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Student'
+        '404':
+          description: A user with the specified Email was not found
+    parameters:
+    - name: email
+      in: path
+      description: student's email
+      required: true
+      schema:
+        type: string
+  /students:
+    post:
+      tags: 
+      - "students"
+      summary: "Edit input student"
+      description: "Edit student"
+      responses:
+        '200':
+          description: Student edited successfull
+        '400':
+          description: Input student has invalid data.
+    parameters:
+    - name: studentDto
+      in: query
+      description: user Dto with id and courseName
+      content: 
+        'application/json':
+          schema:
+            $ref: '#/components/schemas/StudentDto'
+  /students/{id}:
+    delete:
+      tags: 
+      - "students"
+      summary: Delete the student
+      description: Delete student from university
+      responses:
+        '200':
+          description: Student delete successfull
+    parameters:
+    - name: id
+      in: path
+      description: student ID
+      required: true
+      schema:
+        type: integer
+  /students/course:
+    post:
+      tags:
+      - "students"
+      summary: Add the student to the course
+      description: Add the student to the course
+      responses:
+        '200':
+          description: Student added to course
+    delete:
+      tags:
+      - "students"
+      summary: Delete the student from the course
+      description: Delete the student from the course
+      responses:
+        '200':
+          description: Student deleted from the course
+    parameters:
+    - name: studentDto
+      in: query
+      description: user Dto with id and courseName
+      content: 
+        'application/json':
+          schema:
+            $ref: '#/components/schemas/StudentDto'
+  
+
+      
+components:
+  schemas:
+    Student:
+      type: object
+      properties:
+        id:
+          type: integer
+        sex:
+          type: string
+          enum:
+            - MALE
+            - FEMALE
+        name:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+        password:
+          type: string
+        photo:
+          type: string
+          description: link to photo
+        enabled:
+          type: boolean
+          description: verification users by email
+        role:
+          $ref: '#/components/schemas/Role'
+    StudentDto:
+      type: object
+      properties:
+        id:
+          type: integer
+        sex:
+          type: string
+          enum:
+            - MALE
+            - FEMALE
+        name:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+        password:
+          type: string
+        confirmPassword:
+          type: string
+        photo:
+          type: object
+          description: Photo file
+        photoName:
+          type: string
+        desiredRole:
+          type: string
+        scientificDegree:
+          type: string
+        desiredDegree:
+          type: string
+        confirm:
+          type: boolean
+          description: manual verification users by administration
+        confirmDescription:
+          type: string
+        locale:
+          type: object
+          description: user locale
+        courseName:
+          type: string
+        groupName:
+          type: string
+    Role:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
