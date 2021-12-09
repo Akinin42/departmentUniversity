@@ -1,6 +1,6 @@
 openapi: 3.0.0
 info: 
-  description: "This is an University user interface. You can interact with different objects in university: students, teachers, groups, courses, classrooms, lessons, shedules. You can use CRUD operations for it. User registration is implemented through confirmation of the email address and manual verification by the administration."
+  description: 'This is an University user interface. You can interact with different objects in university: students, teachers, groups, courses, classrooms, lessons, shedules. You can use CRUD operations for it. User registration is implemented through confirmation of the email address and manual verification by the administration.'
   version: 1.0.0
   title: University
 servers:
@@ -9,13 +9,17 @@ servers:
 tags:
 - name: students
   description: Everything about students
+- name: teachers
+  description: Everything about teachers
+- name: courses
+  description: Everything about courses
 paths:
   /students/{page}&{size}:
     get:
       tags: 
-      - "students"
-      summary: "Find the number of students"
-      description: "Returns a number of students equals size, pageable"
+      - 'students'
+      summary: 'Find the number of students'
+      description: 'Returns a number of students equals size, pageable'
       responses:
         '200':
           description: A list of students
@@ -41,9 +45,9 @@ paths:
   /students/{email}:
     get:
       tags: 
-      - "students"
-      summary: "Find the student by email"
-      description: "Returns a student with input email"
+      - 'students'
+      summary: Find the student by email
+      description: Returns a student with input email
       responses:
         '200':
           description: A student
@@ -64,26 +68,45 @@ paths:
   /students:
     post:
       tags: 
-      - "students"
-      summary: "Edit input student"
-      description: "Edit student"
+      - 'students'
+      summary: Edit student
+      description: Edit input student
+      requestBody:
+        content: 
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                studentDto:            
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                    sex:
+                      type: string
+                    email:
+                      type: string
+                    phone:
+                      type: string
+                    photo:
+                      type: object
+                      description: Photo file
+                    password:
+                      type: string
+                    confirmPassword:
+                      type: string
+                photo:
+                  type: string
+                  format: binary
       responses:
         '200':
           description: Student edited successfull
         '400':
-          description: Input student has invalid data.
-    parameters:
-    - name: studentDto
-      in: query
-      description: user Dto with id and courseName
-      content: 
-        'application/json':
-          schema:
-            $ref: '#/components/schemas/StudentDto'
+          description: Input student has invalid data
   /students/{id}:
     delete:
       tags: 
-      - "students"
+      - 'students'
       summary: Delete the student
       description: Delete student from university
       responses:
@@ -99,7 +122,7 @@ paths:
   /students/course:
     post:
       tags:
-      - "students"
+      - 'students'
       summary: Add the student to the course
       description: Add the student to the course
       responses:
@@ -107,7 +130,7 @@ paths:
           description: Student added to course
     delete:
       tags:
-      - "students"
+      - 'students'
       summary: Delete the student from the course
       description: Delete the student from the course
       responses:
@@ -121,9 +144,168 @@ paths:
         'application/json':
           schema:
             $ref: '#/components/schemas/StudentDto'
-  
-
-      
+  /teachers/{page}&{size}:
+    get:
+      tags: 
+      - 'teachers'
+      summary: 'Find the number of teachers'
+      description: 'Returns a number of teachers equals size, pageable'
+      responses:
+        '200':
+          description: A list of teachers
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Teacher'
+    parameters:
+    - name: page
+      in: path
+      description: page number from 0
+      required: true
+      schema:
+        type: integer
+    - name: size
+      in: path
+      description: page's size
+      required: true
+      schema:
+        type: integer
+  /teachers/{email}:
+    get:
+      tags: 
+      - 'teachers'
+      summary: Find the teacher by email
+      description: Returns a teacher with input email
+      responses:
+        '200':
+          description: A teacher
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Teacher'
+        '404':
+          description: A user with the specified Email was not found
+    parameters:
+    - name: email
+      in: path
+      description: teacher's email
+      required: true
+      schema:
+        type: string
+  /teachers:
+    post:
+      tags: 
+      - 'teachers'
+      summary: Edit teacher
+      description: Edit input teacher
+      requestBody:
+        content: 
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                teacherDto:            
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                    sex:
+                      type: string
+                    email:
+                      type: string
+                    phone:
+                      type: string
+                    photo:
+                      type: object
+                      description: Photo file
+                    scientificDegree:
+                      type: string
+                    password:
+                      type: string
+                    confirmPassword:
+                      type: string
+                photo:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: Teacher edited successfull
+        '400':
+          description: Input teacher has invalid data
+  /teacher/{id}:
+    delete:
+      tags: 
+      - 'teachers'
+      summary: Delete the teacher
+      description: Delete teacher from university
+      responses:
+        '200':
+          description: Teacher delete successfull
+    parameters:
+    - name: id
+      in: path
+      description: teacher ID
+      required: true
+      schema:
+        type: integer
+  /courses:
+    get:
+      tags:
+      - 'courses'
+      summary: Get all courses
+      description: Return all courses
+      responses:
+        '200':
+          description: A list of courses
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Course'
+    post:
+      tags:
+      - 'courses'
+      summary: Add new course
+      description: Add new course
+      responses:
+        '201':
+          description: Course added successfull
+        '400':
+          description: Course with this name exists yet
+    delete:
+      tags:
+      - 'courses'
+      summary: Delete course
+      description: Delete course from university
+      requestBody:
+        content:
+          application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/CourseDto'
+      responses:
+        '200':
+          description: Course deleted successfull
+    patch:
+      tags:
+      - 'courses'
+      summary: Edit course
+      description: Edit input course
+      requestBody:
+        content:
+          application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/CourseDto'  
+      responses:
+        '200':
+          description: Course edited successfull
+        '400':
+          description: Outher course has same name yet
 components:
   schemas:
     Student:
@@ -152,6 +334,10 @@ components:
           description: verification users by email
         role:
           $ref: '#/components/schemas/Role'
+        courses:
+          type: array
+          items:
+            $ref: '#/components/schemas/Course'
     StudentDto:
       type: object
       properties:
@@ -201,4 +387,48 @@ components:
         id:
           type: integer
         name:
+          type: string
+    Teacher:
+      type: object
+      properties:
+        id:
+          type: integer
+        sex:
+          type: string
+          enum:
+            - MALE
+            - FEMALE
+        name:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+        password:
+          type: string
+        photo:
+          type: string
+          description: link to photo
+        enabled:
+          type: boolean
+          description: verification users by email
+        role:
+          $ref: '#/components/schemas/Role'
+        scientificDegree:
+          type: string
+    Course:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+    CourseDto:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
           type: string
